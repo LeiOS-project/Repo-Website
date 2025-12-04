@@ -4,10 +4,12 @@
     "private": true,
     "scripts": {
         "build": "nuxt build",
-        "dev": "nuxt dev",
+		"start": "bun run .output/server/index.mjs",
+        "dev": "nuxt dev --host 0.0.0.0 --port 12151",
         "generate": "nuxt generate",
         "preview": "nuxt preview",
-        "postinstall": "nuxt prepare"
+        "postinstall": "nuxt prepare",
+		"api-client:generate": "openapi-ts",
     },
     "dependencies": {
         "@hey-api/nuxt": "^0.2.1",
