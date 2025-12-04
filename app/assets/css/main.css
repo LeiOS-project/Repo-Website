@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --font-sans: "Rubik", sans-serif;
+
+  --color-aurora-50: #e8fbff;
+  --color-aurora-100: #c8f3ff;
+  --color-aurora-200: #92e4ff;
+  --color-aurora-300: #5ccffc;
+  --color-aurora-400: #2db5f5;
+  --color-aurora-500: #009cde;
+  --color-aurora-600: #0078ba;
+  --color-aurora-700: #005c95;
+  --color-aurora-800: #02456f;
+  --color-aurora-900: #043452;
+  --color-aurora-950: #021624;
+
+  --color-pulse-50: #fdf2ff;
+  --color-pulse-100: #fbe5ff;
+  --color-pulse-200: #f5c8ff;
+  --color-pulse-300: #eda3fb;
+  --color-pulse-400: #e074f5;
+  --color-pulse-500: #cd4ae6;
+  --color-pulse-600: #a830c2;
+  --color-pulse-700: #82239a;
+  --color-pulse-800: #611b74;
+  --color-pulse-900: #431352;
+  --color-pulse-950: #26072f;
+
+  --color-nocturne-50: #f3f6ff;
+  --color-nocturne-100: #dfe6fb;
+  --color-nocturne-200: #c3ccf1;
+  --color-nocturne-300: #a0abda;
+  --color-nocturne-400: #7c86b8;
+  --color-nocturne-500: #626c99;
+  --color-nocturne-600: #4b5477;
+  --color-nocturne-700: #363d57;
+  --color-nocturne-800: #23293c;
+  --color-nocturne-900: #151a27;
+  --color-nocturne-950: #07090f;
+}
+
+:root {
+  color-scheme: dark;
+  --surface-1: #05070d;
+  --surface-2: #0b0f1c;
+  --surface-3: #11182b;
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #f5f7ff;
+  --text-muted: #9aa6c4;
+  --glow-aurora: rgba(0, 156, 222, 0.18);
+  --glow-pulse: rgba(205, 74, 230, 0.16);
+
+  background-color: var(--surface-1);
+}
+
+html,
+body {
+  background-color: var(--surface-1);
+  color: var(--text-primary);
+}
+
+body {
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  line-height: 1.6;
+  /* Nebula-like glow to reinforce the dark aesthetic */
+  background-image:
+    radial-gradient(circle at 12% 20%, var(--glow-aurora) 0, transparent 45%),
+    radial-gradient(circle at 80% 0%, var(--glow-pulse) 0, transparent 40%),
+    linear-gradient(180deg, rgba(5, 8, 17, 0.95) 0%, rgba(5, 8, 17, 1) 35%, rgba(3, 6, 12, 1) 100%);
+  background-attachment: fixed;
+}
+
+#__nuxt {
+  min-height: 100vh;
+  background: transparent;
+}
+
+::selection {
+  color: var(--surface-1);
+  background-color: var(--color-pulse-400);
+}
+
+a {
+  color: var(--color-aurora-200);
+  transition: color 150ms ease, text-shadow 150ms ease;
+}
+
+a:hover {
+  color: var(--color-aurora-50);
+  text-shadow: 0 0 12px rgba(0, 156, 222, 0.45);
+}
+
+* {
+  border-color: var(--surface-border);
+}

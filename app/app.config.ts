@@ -4,8 +4,13 @@ export default defineAppConfig({
             // base: 'min-h-[calc(100vh-var(--ui-header-height))]'
         },
         colors: {
-            primary: 'emerald',
-            secondary: 'pink'
+            primary: 'aurora',
+            secondary: 'pulse',
+            info: 'aurora',
+            success: 'emerald',
+            warning: 'amber',
+            error: 'rose',
+            neutral: 'nocturne'
         }
     },
     theme: {

@@ -4,6 +4,12 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 	modules: ['@nuxt/ui'],
 
+	colorMode: {
+		preference: 'dark',
+		fallback: 'dark',
+		classSuffix: ''
+	},
+
 	ssr: true,
 
 	css: [
