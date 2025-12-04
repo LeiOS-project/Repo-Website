@@ -13,7 +13,7 @@ export default defineNuxtConfig({
 	nitro: {
 		preset: 'bun',
 
-		devProxy: .env.USE_DEV_PROXY === "true" ? {
+		devProxy: process.env.USE_DEV_PROXY === "true" ? {
 			"/api/proxy": {
 				target: process.env.DEV_PROXY_TARGET || "https://api.nowip.is-on.net",
 				changeOrigin: true
@@ -23,9 +23,7 @@ export default defineNuxtConfig({
 
 	runtimeConfig: {
 		public: {
-			apiUrl: process.env.NOWIP_API_URL || 'http://localhost:3003',
-			isSignupEnabled: process.env.NOWIP_APP_ENABLE_SIGNUP === 'true' ? true : false,
-			baseDNSDomain: process.env.NOWIP_DNS_DOMAIN || 'dyn.is-on.net'
+			apiUrl: process.env.REPO_API_URL || 'http://localhost:3003',
 		}
 	},
 
