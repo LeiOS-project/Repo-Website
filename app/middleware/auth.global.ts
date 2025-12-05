@@ -11,12 +11,15 @@ export default defineNuxtRouteMiddleware(async(to) => {
 
         await UserStore.fetchAndSetIfNeeded();
 
-        return navigateTo('/');
+        return navigateTo('/dashboard');
     }
 
-    if (!token) {
-        return navigateTo('/auth/login?url=' + encodeURIComponent(to.fullPath));
-    }
+    if (to.path.startsWith('/dashboard')) {
 
-    await UserStore.fetchAndSetIfNeeded();
+        if (!token) {
+            return navigateTo('/auth/login?url=' + encodeURIComponent(to.fullPath));
+        }
+
+        await UserStore.fetchAndSetIfNeeded();
+    }
 });
