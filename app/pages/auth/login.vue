@@ -14,7 +14,7 @@ const sessionCookie = useCookie<string | null>('session_token')
 
 async function handleLogin() {
     if (!form.username || !form.password) {
-        toast.add({ title: 'Missing input', description: 'Please fill username and password.', color: 'orange' })
+        toast.add({ title: 'Missing input', description: 'Please fill username and password.', color: 'warning' })
         return
     }
 
@@ -25,11 +25,11 @@ async function handleLogin() {
     if (res.success) {
         sessionCookie.value = res.data.token
         await UserStore.fetchAndSet()
-        toast.add({ title: 'Welcome back', description: res.message, color: 'green' })
+        toast.add({ title: 'Welcome back', description: res.message, color: 'success' })
         const target = (route.query.url as string) || '/dashboard'
         router.push(target)
     } else {
-        toast.add({ title: 'Login failed', description: res.message, color: 'red' })
+        toast.add({ title: 'Login failed', description: res.message, color: 'error' })
     }
 }
 </script>

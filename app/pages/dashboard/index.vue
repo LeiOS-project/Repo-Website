@@ -1,13 +1,35 @@
 <script setup lang="ts">
+import type { TableColumn, TabsItem } from '#ui/types'
+import type {
+    GetAdminPackagesStableRequestsResponses,
+    GetAdminUsersResponses,
+    GetDevPackagesResponses
+} from '@/api-client/types.gen'
 import { UserStore } from '~/utils/stores/userStore'
+
+type DevPackage = GetDevPackagesResponses[200]['data'][number]
+type StableRequest = GetAdminPackagesStableRequestsResponses[200]['data'][number]
+type AdminUser = GetAdminUsersResponses[200]['data'][number]
 
 const toast = useToast()
 const route = useRoute()
 const router = useRouter()
 
-const user = await UserStore.use().catch(() => ({ role: 'developer', username: 'user' }))
+const user = await UserStore.use().catch(() => ({
+    id: 0,
+    username: 'user',
+    display_name: 'User',
+    email: '',
+    role: 'developer'
+}))
 const isAdmin = computed(() => user.role === 'admin')
-const activeTab = ref((route.query.tab as string) || 'developer')
+
+const tabItems: TabsItem[] = [
+    { label: 'Developer', value: 'developer', icon: 'i-lucide-code-2' },
+    { label: 'Admin', value: 'admin', icon: 'i-lucide-shield' }
+]
+
+const activeTab = ref<TabsItem['value']>((route.query.tab as string) || 'developer')
 
 const archOptions = [
     { label: 'amd64', value: 'amd64' },
@@ -20,12 +42,12 @@ const packageForm = reactive({
     homepage_url: ''
 })
 
-const releaseForm = reactive<{ packageName: string; version: string; arch: 'amd64' | 'arm64'; file: File | null }>(
+const releaseForm = reactive<{ packageName: string; version: string; arch: 'amd64' | 'arm64'; file: File | undefined }>(
     {
         packageName: '',
         version: '',
         arch: 'amd64',
-        file: null
+        file: undefined
     }
 )
 
@@ -38,43 +60,78 @@ const stableForm = reactive<{ packageName: string; version: string; arch: 'amd64
     }
 )
 
-const adminUserForm = reactive({
-    username: '',
-    display_name: '',
-    email: '',
-    password: '',
-    role: 'developer'
-})
+const adminUserForm = reactive<{ username: string; display_name: string; email: string; password: string; role: AdminUser['role'] }>(
+    {
+        username: '',
+        display_name: '',
+        email: '',
+        password: '',
+        role: 'developer'
+    }
+)
 
 const decisionNote = reactive<Record<number, string>>({})
 const packageReleases = ref<Record<string, any>>({})
-const packageStable = ref<Record<string, any[]>>({})
+const packageStable = ref<Record<string, StableRequest[]>>({})
 
-const { data: devPackages, pending: loadingPackages, refresh: refreshPackages } = await useAsyncData('dev-packages', async () => {
-    const res = await useAPI((api) => api.getDevPackages({}))
-    if (!res.success) {
-        toast.add({ title: 'Failed to load packages', description: res.message, color: 'red' })
-        return []
-    }
-    return res.data
-})
+const packageColumns: TableColumn<DevPackage>[] = [
+    { accessorKey: 'name', header: 'Name' },
+    { accessorKey: 'description', header: 'Description' },
+    { accessorKey: 'homepage_url', header: 'Homepage' },
+    { id: 'actions', header: 'Actions', enableSorting: false, enableHiding: false }
+]
 
-const { data: adminRequests, pending: loadingAdminRequests, refresh: refreshAdminRequests, execute: loadAdminRequests } =
-    await useAsyncData('admin-stable-requests', async () => {
-        const res = await useAPI((api) => api.getAdminPackagesStableRequests({}))
+const adminRequestColumns: TableColumn<StableRequest>[] = [
+    { accessorKey: 'package_name', header: 'Package' },
+    { accessorKey: 'version', header: 'Version' },
+    { accessorKey: 'architecture', header: 'Arch' },
+    { accessorKey: 'status', header: 'Status' },
+    { id: 'actions', header: 'Actions', enableSorting: false, enableHiding: false }
+]
+
+const adminUserColumns: TableColumn<AdminUser>[] = [
+    { accessorKey: 'username', header: 'Username' },
+    { accessorKey: 'display_name', header: 'Name' },
+    { accessorKey: 'email', header: 'Email' },
+    { accessorKey: 'role', header: 'Role' }
+]
+
+const { data: devPackages, pending: loadingPackages, refresh: refreshPackages } = await useAsyncData<DevPackage[]>(
+    'dev-packages',
+    async () => {
+        const res = await useAPI((api) => api.getDevPackages({}))
         if (!res.success) {
-            toast.add({ title: 'Failed to load requests', description: res.message, color: 'red' })
+            toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
             return []
         }
         return res.data
-    }, { immediate: false })
+    }
+)
 
-const { data: adminUsers, pending: loadingAdminUsers, refresh: refreshAdminUsers, execute: loadAdminUsers } = await useAsyncData(
+const {
+    data: adminRequests,
+    pending: loadingAdminRequests,
+    refresh: refreshAdminRequests,
+    execute: loadAdminRequests
+} = await useAsyncData<StableRequest[]>(
+    'admin-stable-requests',
+    async () => {
+        const res = await useAPI((api) => api.getAdminPackagesStableRequests({}))
+        if (!res.success) {
+            toast.add({ title: 'Failed to load requests', description: res.message, color: 'error' })
+            return []
+        }
+        return res.data
+    },
+    { immediate: false }
+)
+
+const { data: adminUsers, pending: loadingAdminUsers, refresh: refreshAdminUsers, execute: loadAdminUsers } = await useAsyncData<AdminUser[]>(
     'admin-users',
     async () => {
         const res = await useAPI((api) => api.getAdminUsers({}))
         if (!res.success) {
-            toast.add({ title: 'Failed to load users', description: res.message, color: 'red' })
+            toast.add({ title: 'Failed to load users', description: res.message, color: 'error' })
             return []
         }
         return res.data
@@ -93,20 +150,23 @@ watch(activeTab, (val) => {
     router.replace({ query: val ? { tab: val } : {} })
 })
 
-const packageOptions = computed(() => (devPackages.value || []).map((p: any) => ({ label: p.name, value: p.name })))
+const packageOptions = computed(() => (devPackages.value || []).map((p) => ({ label: p.name, value: p.name })))
 
-watch(() => releaseForm.packageName, (val) => {
-    if (val) fetchReleases(val)
-})
+watch(
+    () => releaseForm.packageName,
+    (val) => {
+        if (val) fetchReleases(val)
+    }
+)
 
 async function handleCreatePackage() {
     const res = await useAPI((api) => api.postDevPackages({ body: { ...packageForm } }))
     if (res.success) {
-        toast.add({ title: 'Package created', description: res.message, color: 'green' })
+        toast.add({ title: 'Package created', description: res.message, color: 'success' })
         Object.assign(packageForm, { name: '', description: '', homepage_url: '' })
         await refreshPackages()
     } else {
-        toast.add({ title: 'Create failed', description: res.message, color: 'red' })
+        toast.add({ title: 'Create failed', description: res.message, color: 'error' })
     }
 }
 
@@ -127,7 +187,7 @@ async function fetchReleases(packageName: string) {
 
 async function handleUploadRelease() {
     if (!releaseForm.file) {
-        toast.add({ title: 'File missing', description: 'Please select a release archive.', color: 'orange' })
+        toast.add({ title: 'File missing', description: 'Please select a release archive.', color: 'warning' })
         return
     }
 
@@ -143,11 +203,11 @@ async function handleUploadRelease() {
     )
 
     if (res.success) {
-        toast.add({ title: 'Release uploaded', description: `${releaseForm.version} (${releaseForm.arch}) saved`, color: 'green' })
+        toast.add({ title: 'Release uploaded', description: `${releaseForm.version} (${releaseForm.arch}) saved`, color: 'success' })
         await fetchReleases(releaseForm.packageName)
-        Object.assign(releaseForm, { version: '', arch: 'amd64', file: null })
+        Object.assign(releaseForm, { version: '', arch: 'amd64', file: undefined })
     } else {
-        toast.add({ title: 'Upload failed', description: res.message, color: 'red' })
+        toast.add({ title: 'Upload failed', description: res.message, color: 'error' })
     }
 }
 
@@ -164,11 +224,11 @@ async function handleStableRequest() {
     )
 
     if (res.success) {
-        toast.add({ title: 'Request submitted', description: 'Stable promotion requested.', color: 'green' })
+        toast.add({ title: 'Request submitted', description: 'Stable promotion requested.', color: 'success' })
         await fetchReleases(stableForm.packageName)
         Object.assign(stableForm, { version: '', arch: 'amd64', leios_patch: '' })
     } else {
-        toast.add({ title: 'Request failed', description: res.message, color: 'red' })
+        toast.add({ title: 'Request failed', description: res.message, color: 'error' })
     }
 }
 
@@ -181,21 +241,21 @@ async function handleDecision(id: number, decision: 'approve' | 'deny') {
     )
 
     if (res.success) {
-        toast.add({ title: 'Decision saved', description: res.message, color: 'green' })
+        toast.add({ title: 'Decision saved', description: res.message, color: 'success' })
         await refreshAdminRequests()
     } else {
-        toast.add({ title: 'Action failed', description: res.message, color: 'red' })
+        toast.add({ title: 'Action failed', description: res.message, color: 'error' })
     }
 }
 
 async function handleCreateUser() {
     const res = await useAPI((api) => api.postAdminUsers({ body: { ...adminUserForm } }))
     if (res.success) {
-        toast.add({ title: 'User created', description: res.message, color: 'green' })
+        toast.add({ title: 'User created', description: res.message, color: 'success' })
         Object.assign(adminUserForm, { username: '', display_name: '', email: '', password: '', role: 'developer' })
         await refreshAdminUsers()
     } else {
-        toast.add({ title: 'Failed to create user', description: res.message, color: 'red' })
+        toast.add({ title: 'Failed to create user', description: res.message, color: 'error' })
     }
 }
 
@@ -203,7 +263,7 @@ const totalPackages = computed(() => devPackages.value?.length || 0)
 const pendingStable = computed(() =>
     Object.values(packageStable.value)
         .flat()
-        .filter((req: any) => req.status === 'pending').length
+        .filter((req) => req.status === 'pending').length
 )
 </script>
 
@@ -241,11 +301,8 @@ const pendingStable = computed(() =>
                 </UCard>
             </div>
 
-            <UTabs v-model="activeTab" :items="[
-                { label: 'Developer', value: 'developer', icon: 'i-lucide-code-2' },
-                { label: 'Admin', value: 'admin', icon: 'i-lucide-shield' }
-            ]" :ui="{ list: 'bg-slate-900/60 border border-slate-800' }">
-                <template #item="{ item }">
+            <UTabs v-model="activeTab" :items="tabItems" :ui="{ list: 'bg-slate-900/60 border border-slate-800' }">
+                <template #default="{ item }">
                     <div v-if="item.value === 'developer'" class="space-y-8 py-6">
                         <div class="grid gap-6 lg:grid-cols-3">
                             <UCard class="border-slate-800 bg-slate-900/70">
@@ -260,7 +317,7 @@ const pendingStable = computed(() =>
                                                 <UInput v-model="packageForm.name" placeholder="z. B. leios-updater" />
                                             </UFormGroup>
                                             <UFormGroup label="Description" name="description">
-                                                <UTextarea v-model="packageForm.description" rows="3" />
+                                                <UTextarea v-model="packageForm.description" :rows="3" />
                                             </UFormGroup>
                                             <UFormGroup label="Homepage" name="homepage">
                                                 <UInput v-model="packageForm.homepage_url" placeholder="https://" />
@@ -281,7 +338,10 @@ const pendingStable = computed(() =>
                                         <USelect v-model="releaseForm.packageName" :options="packageOptions" placeholder="Select package" @change="fetchReleases(releaseForm.packageName)" />
                                         <UInput v-model="releaseForm.version" placeholder="Version (e.g. 1.0.0)" />
                                         <USelect v-model="releaseForm.arch" :options="archOptions" />
-                                        <UInput type="file" accept=".deb,.tar.gz,.zip" @change="(e: any) => releaseForm.file = e?.target?.files?.[0] || null" />
+                                        <UInput type="file" accept=".deb,.tar.gz,.zip" @change="(e: Event) => {
+                                            const file = (e.target as HTMLInputElement)?.files?.[0]
+                                            releaseForm.file = file ?? undefined
+                                        }" />
                                         <UButton color="primary" @click="handleUploadRelease">Upload</UButton>
                                     </div>
                                 </div>
@@ -311,17 +371,12 @@ const pendingStable = computed(() =>
                                         <UIcon name="i-lucide-package" class="text-sky-400" />
                                         <h3 class="font-semibold">Packages & releases</h3>
                                     </div>
-                                    <UButton variant="ghost" size="sm" icon="i-lucide-refresh-cw" @click="refreshPackages">Refresh</UButton>
+                                    <UButton variant="ghost" size="sm" icon="i-lucide-refresh-cw" @click="() => refreshPackages()">Refresh</UButton>
                                 </div>
-                                <UTable :rows="devPackages || []" :columns="[
-                                    { key: 'name', label: 'Name' },
-                                    { key: 'description', label: 'Description' },
-                                    { key: 'homepage_url', label: 'Homepage' },
-                                    { key: 'actions', label: 'Actions' }
-                                ]" :loading="loadingPackages">
-                                    <template #actions-data="{ row }">
+                                <UTable :data="devPackages || []" :columns="packageColumns" :loading="loadingPackages">
+                                    <template #actions-cell="{ row }">
                                         <div class="flex gap-2">
-                                            <UButton size="xs" variant="soft" color="primary" @click="fetchReleases(row.name)">Releases</UButton>
+                                            <UButton size="xs" variant="soft" color="primary" @click="() => fetchReleases(row.original.name)">Releases</UButton>
                                         </div>
                                     </template>
                                 </UTable>
@@ -345,7 +400,7 @@ const pendingStable = computed(() =>
                                                         <p class="font-medium">{{ req.version }} · {{ req.architecture }}</p>
                                                         <p class="text-xs text-slate-400">Status: {{ req.status }}</p>
                                                     </div>
-                                                    <UBadge :color="req.status === 'approved' ? 'green' : req.status === 'pending' ? 'primary' : 'red'" variant="soft">
+                                                    <UBadge :color="req.status === 'approved' ? 'success' : req.status === 'pending' ? 'warning' : 'error'" variant="soft">
                                                         {{ req.status }}
                                                     </UBadge>
                                                 </div>
@@ -373,24 +428,18 @@ const pendingStable = computed(() =>
                                             <UIcon name="i-lucide-gavel" class="text-sky-400" />
                                             <h3 class="font-semibold">Stable requests</h3>
                                         </div>
-                                        <UTable :rows="adminRequests || []" :loading="loadingAdminRequests" :columns="[
-                                            { key: 'package_name', label: 'Package' },
-                                            { key: 'version', label: 'Version' },
-                                            { key: 'architecture', label: 'Arch' },
-                                            { key: 'status', label: 'Status' },
-                                            { key: 'actions', label: 'Actions' }
-                                        ]">
-                                            <template #status-data="{ row }">
-                                                <UBadge :color="row.status === 'approved' ? 'green' : row.status === 'pending' ? 'primary' : 'red'" variant="soft">
-                                                    {{ row.status }}
+                                        <UTable :data="adminRequests || []" :loading="loadingAdminRequests" :columns="adminRequestColumns">
+                                            <template #status-cell="{ row }">
+                                                <UBadge :color="row.original.status === 'approved' ? 'success' : row.original.status === 'pending' ? 'warning' : 'error'" variant="soft">
+                                                    {{ row.original.status }}
                                                 </UBadge>
                                             </template>
-                                            <template #actions-data="{ row }">
+                                            <template #actions-cell="{ row }">
                                                 <div class="flex flex-col gap-2">
-                                                    <UTextarea v-model="decisionNote[row.id]" placeholder="Reason (optional)" rows="2" />
+                                                    <UTextarea v-model="decisionNote[row.original.id]" placeholder="Reason (optional)" :rows="2" />
                                                     <div class="flex gap-2">
-                                                        <UButton size="xs" color="primary" variant="soft" @click="handleDecision(row.id, 'approve')" :disabled="row.status !== 'pending'">Approve</UButton>
-                                                        <UButton size="xs" color="red" variant="soft" @click="handleDecision(row.id, 'deny')" :disabled="row.status !== 'pending'">Deny</UButton>
+                                                        <UButton size="xs" color="primary" variant="soft" @click="handleDecision(row.original.id, 'approve')" :disabled="row.original.status !== 'pending'">Approve</UButton>
+                                                        <UButton size="xs" color="error" variant="soft" @click="handleDecision(row.original.id, 'deny')" :disabled="row.original.status !== 'pending'">Deny</UButton>
                                                     </div>
                                                 </div>
                                             </template>
@@ -421,12 +470,7 @@ const pendingStable = computed(() =>
 
                                         <div class="pt-4">
                                             <p class="mb-2 text-sm text-slate-400">Existing users</p>
-                                            <UTable :rows="adminUsers || []" :loading="loadingAdminUsers" :columns="[
-                                                { key: 'username', label: 'Username' },
-                                                { key: 'display_name', label: 'Name' },
-                                                { key: 'email', label: 'Email' },
-                                                { key: 'role', label: 'Role' }
-                                            ]" />
+                                            <UTable :data="adminUsers || []" :loading="loadingAdminUsers" :columns="adminUserColumns" />
                                         </div>
                                     </div>
                                 </UCard>

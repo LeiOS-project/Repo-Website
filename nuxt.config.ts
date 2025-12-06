@@ -21,7 +21,7 @@ export default defineNuxtConfig({
 
 		devProxy: process.env.USE_DEV_PROXY === "true" ? {
 			"/api/proxy": {
-				target: process.env.DEV_PROXY_TARGET || "https://api.nowip.is-on.net",
+				target: process.env.DEV_PROXY_TARGET || "https://api.repo.leios.dev",
 				changeOrigin: true
 			}
 		} : {}
@@ -29,7 +29,7 @@ export default defineNuxtConfig({
 
 	runtimeConfig: {
 		public: {
-			apiUrl: process.env.REPO_API_URL || 'http://localhost:3003',
+			apiUrl: process.env.REPO_API_URL || 'http://localhost:12151',
 		}
 	},
 

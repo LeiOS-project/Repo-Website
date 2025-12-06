@@ -13,11 +13,11 @@ const canReset = computed(() => Boolean(sessionCookie.value))
 
 async function handleReset() {
     if (!canReset.value) {
-        toast.add({ title: 'Not signed in', description: 'Please log in first.', color: 'orange' })
+        toast.add({ title: 'Not signed in', description: 'Please log in first.', color: 'warning' })
         return
     }
     if (!form.new_password || form.new_password !== form.confirm_password) {
-        toast.add({ title: 'Passwords do not match', color: 'red' })
+        toast.add({ title: 'Passwords do not match', color: 'error' })
         return
     }
 
@@ -26,10 +26,10 @@ async function handleReset() {
     loading.value = false
 
     if (res.success) {
-        toast.add({ title: 'Password updated', description: res.message, color: 'green' })
+        toast.add({ title: 'Password updated', description: res.message, color: 'success' })
         Object.assign(form, { current_password: '', new_password: '', confirm_password: '' })
     } else {
-        toast.add({ title: 'Update failed', description: res.message, color: 'red' })
+        toast.add({ title: 'Update failed', description: res.message, color: 'error' })
     }
 }
 </script>

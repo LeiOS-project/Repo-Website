@@ -16,6 +16,10 @@ const links = computed<NavigationMenuItem[]>(() => [
         to: '/'
     },
     {
+        label: 'Explorer',
+        to: '/explorer'
+    },
+    {
         label: 'Dashboard',
         to: '/dashboard'
     }
