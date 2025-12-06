@@ -2,7 +2,7 @@
 
 import { type Client, type Composable, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteAccountData, DeleteAccountError, DeleteAccountResponse, DeleteAdminUsersUserIdData, DeleteAdminUsersUserIdError, DeleteAdminUsersUserIdResponse, GetAccountData, GetAccountError, GetAccountResponse, GetAdminUsersData, GetAdminUsersResponse, GetAdminUsersUserIdData, GetAdminUsersUserIdError, GetAdminUsersUserIdResponse, GetAuthSessionData, GetAuthSessionError, GetAuthSessionResponse, GetDevPackagesData, GetDevPackagesPackageNameData, GetDevPackagesPackageNameError, GetDevPackagesPackageNameReleasesData, GetDevPackagesPackageNameReleasesPackageNameData, GetDevPackagesPackageNameReleasesPackageNameError, GetDevPackagesPackageNameReleasesPackageNameResponse, GetDevPackagesPackageNameReleasesResponse, GetDevPackagesPackageNameResponse, GetDevPackagesResponse, PostAccountLogoutData, PostAccountLogoutError, PostAccountLogoutResponse, PostAdminUsersData, PostAdminUsersError, PostAdminUsersResponse, PostAuthLoginData, PostAuthLoginError, PostAuthLoginResponse, PostAuthLogoutData, PostAuthLogoutError, PostAuthLogoutResponse, PostDevPackagesData, PostDevPackagesError, PostDevPackagesPackageNameReleasesVersionArchData, PostDevPackagesPackageNameReleasesVersionArchError, PostDevPackagesPackageNameReleasesVersionArchResponse, PostDevPackagesResponse, PutAccountData, PutAccountError, PutAccountPasswordData, PutAccountPasswordError, PutAccountPasswordResponse, PutAccountResponse, PutAdminUsersUserIdData, PutAdminUsersUserIdError, PutAdminUsersUserIdPasswordData, PutAdminUsersUserIdPasswordError, PutAdminUsersUserIdPasswordResponse, PutAdminUsersUserIdResponse, PutDevPackagesPackageNameData, PutDevPackagesPackageNameError, PutDevPackagesPackageNameResponse } from './types.gen';
+import type { DeleteAccountData, DeleteAccountError, DeleteAccountResponse, DeleteAdminUsersUserIdData, DeleteAdminUsersUserIdError, DeleteAdminUsersUserIdResponse, GetAccountData, GetAccountError, GetAccountResponse, GetAdminPackagesData, GetAdminPackagesPackageNameData, GetAdminPackagesPackageNameError, GetAdminPackagesPackageNameResponse, GetAdminPackagesPackageNameStableRequestsData, GetAdminPackagesPackageNameStableRequestsError, GetAdminPackagesPackageNameStableRequestsResponse, GetAdminPackagesResponse, GetAdminPackagesStableRequestsData, GetAdminPackagesStableRequestsResponse, GetAdminUsersData, GetAdminUsersResponse, GetAdminUsersUserIdData, GetAdminUsersUserIdError, GetAdminUsersUserIdResponse, GetAuthSessionData, GetAuthSessionError, GetAuthSessionResponse, GetDevPackagesData, GetDevPackagesPackageNameData, GetDevPackagesPackageNameError, GetDevPackagesPackageNameReleasesData, GetDevPackagesPackageNameReleasesPackageNameData, GetDevPackagesPackageNameReleasesPackageNameError, GetDevPackagesPackageNameReleasesPackageNameResponse, GetDevPackagesPackageNameReleasesResponse, GetDevPackagesPackageNameResponse, GetDevPackagesPackageNameStableRequestsData, GetDevPackagesPackageNameStableRequestsError, GetDevPackagesPackageNameStableRequestsResponse, GetDevPackagesResponse, PostAccountLogoutData, PostAccountLogoutError, PostAccountLogoutResponse, PostAdminPackagesPackageNameStableData, PostAdminPackagesPackageNameStableError, PostAdminPackagesPackageNameStableResponse, PostAdminPackagesStableRequestsRequestIdDecisionData, PostAdminPackagesStableRequestsRequestIdDecisionError, PostAdminPackagesStableRequestsRequestIdDecisionResponse, PostAdminUsersData, PostAdminUsersError, PostAdminUsersResponse, PostAuthLoginData, PostAuthLoginError, PostAuthLoginResponse, PostAuthLogoutData, PostAuthLogoutError, PostAuthLogoutResponse, PostDevPackagesData, PostDevPackagesError, PostDevPackagesPackageNameReleasesVersionArchData, PostDevPackagesPackageNameReleasesVersionArchError, PostDevPackagesPackageNameReleasesVersionArchResponse, PostDevPackagesPackageNameStableRequestsData, PostDevPackagesPackageNameStableRequestsError, PostDevPackagesPackageNameStableRequestsResponse, PostDevPackagesResponse, PutAccountData, PutAccountError, PutAccountPasswordData, PutAccountPasswordError, PutAccountPasswordResponse, PutAccountResponse, PutAdminUsersUserIdData, PutAdminUsersUserIdError, PutAdminUsersUserIdPasswordData, PutAdminUsersUserIdPasswordError, PutAdminUsersUserIdPasswordResponse, PutAdminUsersUserIdResponse, PutDevPackagesPackageNameData, PutDevPackagesPackageNameError, PutDevPackagesPackageNameResponse } from './types.gen';
 
 export type Options<TComposable extends Composable = '$fetch', TData extends TDataShape = TDataShape, ResT = unknown, DefaultT = undefined> = Options2<TComposable, TData, ResT, DefaultT> & {
     /**
@@ -170,6 +170,32 @@ export const putDevPackagesPackageName = <TComposable extends Composable = '$fet
 });
 
 /**
+ * List stable inclusion requests
+ *
+ * View stable inclusion requests for the selected package.
+ */
+export const getDevPackagesPackageNameStableRequests = <TComposable extends Composable = '$fetch', DefaultT extends GetDevPackagesPackageNameStableRequestsResponse = GetDevPackagesPackageNameStableRequestsResponse>(options: Options<TComposable, GetDevPackagesPackageNameStableRequestsData, GetDevPackagesPackageNameStableRequestsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetDevPackagesPackageNameStableRequestsResponse | DefaultT, GetDevPackagesPackageNameStableRequestsError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/dev/packages/{packageName}/stable-requests',
+    ...options
+});
+
+/**
+ * Request promotion to stable
+ *
+ * Submit a request for an existing release to be copied into the stable repository.
+ */
+export const postDevPackagesPackageNameStableRequests = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesPackageNameStableRequestsResponse = PostDevPackagesPackageNameStableRequestsResponse>(options: Options<TComposable, PostDevPackagesPackageNameStableRequestsData, PostDevPackagesPackageNameStableRequestsResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesPackageNameStableRequestsResponse | DefaultT, PostDevPackagesPackageNameStableRequestsError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/dev/packages/{packageName}/stable-requests',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * List all package releases
  *
  * Retrieve a list of all releases for the specified package.
@@ -278,6 +304,80 @@ export const putAdminUsersUserId = <TComposable extends Composable = '$fetch', D
 export const putAdminUsersUserIdPassword = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminUsersUserIdPasswordResponse = PutAdminUsersUserIdPasswordResponse>(options: Options<TComposable, PutAdminUsersUserIdPasswordData, PutAdminUsersUserIdPasswordResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminUsersUserIdPasswordResponse | DefaultT, PutAdminUsersUserIdPasswordError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/users/{userId}/password',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List stable inclusion requests
+ *
+ * Retrieve stable inclusion requests with optional status filtering.
+ */
+export const getAdminPackagesStableRequests = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesStableRequestsResponse = GetAdminPackagesStableRequestsResponse>(options: Options<TComposable, GetAdminPackagesStableRequestsData, GetAdminPackagesStableRequestsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesStableRequestsResponse | DefaultT, unknown, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/packages/stable-requests',
+    ...options
+});
+
+/**
+ * Decide on stable inclusion request
+ *
+ * Approve or deny a developer's request to promote a package version into the stable repository.
+ */
+export const postAdminPackagesStableRequestsRequestIdDecision = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesStableRequestsRequestIdDecisionResponse = PostAdminPackagesStableRequestsRequestIdDecisionResponse>(options: Options<TComposable, PostAdminPackagesStableRequestsRequestIdDecisionData, PostAdminPackagesStableRequestsRequestIdDecisionResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesStableRequestsRequestIdDecisionResponse | DefaultT, PostAdminPackagesStableRequestsRequestIdDecisionError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/packages/stable-requests/{requestId}/decision',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List packages
+ *
+ * Retrieve all packages registered across the platform.
+ */
+export const getAdminPackages = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesResponse = GetAdminPackagesResponse>(options: Options<TComposable, GetAdminPackagesData, GetAdminPackagesResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesResponse | DefaultT, unknown, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/packages',
+    ...options
+});
+
+/**
+ * Get package details
+ *
+ * Retrieve package metadata, releases across repositories, and related stable inclusion requests.
+ */
+export const getAdminPackagesPackageName = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesPackageNameResponse = GetAdminPackagesPackageNameResponse>(options: Options<TComposable, GetAdminPackagesPackageNameData, GetAdminPackagesPackageNameResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesPackageNameResponse | DefaultT, GetAdminPackagesPackageNameError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/packages/{packageName}',
+    ...options
+});
+
+/**
+ * List package stable requests
+ *
+ * List stable inclusion requests for a specific package.
+ */
+export const getAdminPackagesPackageNameStableRequests = <TComposable extends Composable = '$fetch', DefaultT extends GetAdminPackagesPackageNameStableRequestsResponse = GetAdminPackagesPackageNameStableRequestsResponse>(options: Options<TComposable, GetAdminPackagesPackageNameStableRequestsData, GetAdminPackagesPackageNameStableRequestsResponse, DefaultT>) => (options.client ?? client).get<TComposable, GetAdminPackagesPackageNameStableRequestsResponse | DefaultT, GetAdminPackagesPackageNameStableRequestsError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/packages/{packageName}/stable-requests',
+    ...options
+});
+
+/**
+ * Promote package version to stable
+ *
+ * Copy a package version from archive into the stable repository without a pending request.
+ */
+export const postAdminPackagesPackageNameStable = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesPackageNameStableResponse = PostAdminPackagesPackageNameStableResponse>(options: Options<TComposable, PostAdminPackagesPackageNameStableData, PostAdminPackagesPackageNameStableResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesPackageNameStableResponse | DefaultT, PostAdminPackagesPackageNameStableError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/packages/{packageName}/stable',
     ...options,
     headers: {
         'Content-Type': 'application/json',

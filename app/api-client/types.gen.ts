@@ -495,6 +495,112 @@ export type PutDevPackagesPackageNameResponses = {
 
 export type PutDevPackagesPackageNameResponse = PutDevPackagesPackageNameResponses[keyof PutDevPackagesPackageNameResponses];
 
+export type GetDevPackagesPackageNameStableRequestsData = {
+    body?: never;
+    path: {
+        packageName: string;
+    };
+    query?: {
+        status?: 'pending' | 'approved' | 'denied';
+    };
+    url: '/dev/packages/{packageName}/stable-requests';
+};
+
+export type GetDevPackagesPackageNameStableRequestsErrors = {
+    /**
+     * Package with specified name not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Package with specified name not found';
+    };
+};
+
+export type GetDevPackagesPackageNameStableRequestsError = GetDevPackagesPackageNameStableRequestsErrors[keyof GetDevPackagesPackageNameStableRequestsErrors];
+
+export type GetDevPackagesPackageNameStableRequestsResponses = {
+    /**
+     * Stable inclusion requests retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable inclusion requests retrieved successfully';
+        data: Array<{
+            id: number;
+            package_name: string;
+            version: string;
+            leios_patch: number | null;
+            architecture: 'amd64' | 'arm64';
+            requested_by: number;
+            status: 'pending' | 'approved' | 'denied';
+            reviewed_by: number | null;
+            decision_reason: string | null;
+        }>;
+    };
+};
+
+export type GetDevPackagesPackageNameStableRequestsResponse = GetDevPackagesPackageNameStableRequestsResponses[keyof GetDevPackagesPackageNameStableRequestsResponses];
+
+export type PostDevPackagesPackageNameStableRequestsData = {
+    body?: {
+        version: string;
+        arch: 'amd64' | 'arm64';
+        leios_patch?: number;
+    };
+    path: {
+        packageName: string;
+    };
+    query?: never;
+    url: '/dev/packages/{packageName}/stable-requests';
+};
+
+export type PostDevPackagesPackageNameStableRequestsErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Release not found in archive repository
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Release not found in archive repository';
+    };
+    /**
+     * A pending request already exists or the release is already stable
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'A pending request already exists or the release is already stable';
+    };
+};
+
+export type PostDevPackagesPackageNameStableRequestsError = PostDevPackagesPackageNameStableRequestsErrors[keyof PostDevPackagesPackageNameStableRequestsErrors];
+
+export type PostDevPackagesPackageNameStableRequestsResponses = {
+    /**
+     * Stable inclusion request submitted
+     */
+    201: {
+        success: true;
+        code: 201;
+        message: 'Stable inclusion request submitted';
+        data: {
+            id: number;
+        };
+    };
+};
+
+export type PostDevPackagesPackageNameStableRequestsResponse = PostDevPackagesPackageNameStableRequestsResponses[keyof PostDevPackagesPackageNameStableRequestsResponses];
+
 export type GetDevPackagesPackageNameReleasesData = {
     body?: never;
     path: {
@@ -969,3 +1075,374 @@ export type PutAdminUsersUserIdPasswordResponses = {
 };
 
 export type PutAdminUsersUserIdPasswordResponse = PutAdminUsersUserIdPasswordResponses[keyof PutAdminUsersUserIdPasswordResponses];
+
+export type GetAdminPackagesStableRequestsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        status?: 'pending' | 'approved' | 'denied';
+    };
+    url: '/admin/packages/stable-requests';
+};
+
+export type GetAdminPackagesStableRequestsResponses = {
+    /**
+     * Stable inclusion requests retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable inclusion requests retrieved successfully';
+        data: Array<{
+            id: number;
+            package_name: string;
+            version: string;
+            leios_patch: number | null;
+            architecture: 'amd64' | 'arm64';
+            requested_by: number;
+            status: 'pending' | 'approved' | 'denied';
+            reviewed_by: number | null;
+            decision_reason: string | null;
+        }>;
+    };
+};
+
+export type GetAdminPackagesStableRequestsResponse = GetAdminPackagesStableRequestsResponses[keyof GetAdminPackagesStableRequestsResponses];
+
+export type PostAdminPackagesStableRequestsRequestIdDecisionData = {
+    body?: {
+        decision: 'approve' | 'deny';
+        reason?: string;
+    };
+    path: {
+        requestId: number;
+    };
+    query?: never;
+    url: '/admin/packages/stable-requests/{requestId}/decision';
+};
+
+export type PostAdminPackagesStableRequestsRequestIdDecisionErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Stable inclusion request not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Stable inclusion request not found';
+    };
+    /**
+     * Stable inclusion request already resolved
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'Stable inclusion request already resolved';
+    };
+    /**
+     * Failed to copy package into stable repository
+     */
+    500: {
+        success: false;
+        code: 500;
+        message: 'Failed to copy package into stable repository';
+    };
+};
+
+export type PostAdminPackagesStableRequestsRequestIdDecisionError = PostAdminPackagesStableRequestsRequestIdDecisionErrors[keyof PostAdminPackagesStableRequestsRequestIdDecisionErrors];
+
+export type PostAdminPackagesStableRequestsRequestIdDecisionResponses = {
+    /**
+     * Stable inclusion request updated
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable inclusion request updated';
+        data: {
+            id: number;
+            package_name: string;
+            version: string;
+            leios_patch: number | null;
+            architecture: 'amd64' | 'arm64';
+            requested_by: number;
+            status: 'pending' | 'approved' | 'denied';
+            reviewed_by: number | null;
+            decision_reason: string | null;
+        };
+    };
+};
+
+export type PostAdminPackagesStableRequestsRequestIdDecisionResponse = PostAdminPackagesStableRequestsRequestIdDecisionResponses[keyof PostAdminPackagesStableRequestsRequestIdDecisionResponses];
+
+export type GetAdminPackagesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/admin/packages';
+};
+
+export type GetAdminPackagesResponses = {
+    /**
+     * Packages retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Packages retrieved successfully';
+        data: Array<{
+            name: string;
+            owner_user_id: number;
+            description: string;
+            homepage_url: string;
+        }>;
+    };
+};
+
+export type GetAdminPackagesResponse = GetAdminPackagesResponses[keyof GetAdminPackagesResponses];
+
+export type GetAdminPackagesPackageNameData = {
+    body?: never;
+    path: {
+        packageName: string;
+    };
+    query?: never;
+    url: '/admin/packages/{packageName}';
+};
+
+export type GetAdminPackagesPackageNameErrors = {
+    /**
+     * Package not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Package not found';
+    };
+};
+
+export type GetAdminPackagesPackageNameError = GetAdminPackagesPackageNameErrors[keyof GetAdminPackagesPackageNameErrors];
+
+export type GetAdminPackagesPackageNameResponses = {
+    /**
+     * Package retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Package retrieved successfully';
+        data: {
+            package: {
+                name: string;
+                owner_user_id: number;
+                description: string;
+                homepage_url: string;
+            };
+            releases: {
+                'leios-archive': {
+                    [key: string]: {
+                        amd64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                        arm64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                    };
+                };
+                'leios-testing': {
+                    [key: string]: {
+                        amd64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                        arm64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                    };
+                };
+                'leios-stable': {
+                    [key: string]: {
+                        amd64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                        arm64?: {
+                            name: string;
+                            key: string;
+                            version: string;
+                            leios_patch?: number;
+                            architecture: 'amd64' | 'arm64';
+                            maintainer: string;
+                            description: string;
+                        };
+                    };
+                };
+            };
+            stableRequests: Array<{
+                id: number;
+                package_name: string;
+                version: string;
+                leios_patch: number | null;
+                architecture: 'amd64' | 'arm64';
+                requested_by: number;
+                status: 'pending' | 'approved' | 'denied';
+                reviewed_by: number | null;
+                decision_reason: string | null;
+            }>;
+        };
+    };
+};
+
+export type GetAdminPackagesPackageNameResponse = GetAdminPackagesPackageNameResponses[keyof GetAdminPackagesPackageNameResponses];
+
+export type GetAdminPackagesPackageNameStableRequestsData = {
+    body?: never;
+    path: {
+        packageName: string;
+    };
+    query?: {
+        status?: 'pending' | 'approved' | 'denied';
+    };
+    url: '/admin/packages/{packageName}/stable-requests';
+};
+
+export type GetAdminPackagesPackageNameStableRequestsErrors = {
+    /**
+     * Package not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Package not found';
+    };
+};
+
+export type GetAdminPackagesPackageNameStableRequestsError = GetAdminPackagesPackageNameStableRequestsErrors[keyof GetAdminPackagesPackageNameStableRequestsErrors];
+
+export type GetAdminPackagesPackageNameStableRequestsResponses = {
+    /**
+     * Stable inclusion requests retrieved successfully
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Stable inclusion requests retrieved successfully';
+        data: Array<{
+            id: number;
+            package_name: string;
+            version: string;
+            leios_patch: number | null;
+            architecture: 'amd64' | 'arm64';
+            requested_by: number;
+            status: 'pending' | 'approved' | 'denied';
+            reviewed_by: number | null;
+            decision_reason: string | null;
+        }>;
+    };
+};
+
+export type GetAdminPackagesPackageNameStableRequestsResponse = GetAdminPackagesPackageNameStableRequestsResponses[keyof GetAdminPackagesPackageNameStableRequestsResponses];
+
+export type PostAdminPackagesPackageNameStableData = {
+    body?: {
+        version: string;
+        arch: 'amd64' | 'arm64';
+        leios_patch?: number;
+    };
+    path: {
+        packageName: string;
+    };
+    query?: never;
+    url: '/admin/packages/{packageName}/stable';
+};
+
+export type PostAdminPackagesPackageNameStableErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Package version not found in archive
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Package version not found in archive';
+    };
+    /**
+     * Package version already exists in stable
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'Package version already exists in stable';
+    };
+    /**
+     * Failed to copy package into stable repository
+     */
+    500: {
+        success: false;
+        code: 500;
+        message: 'Failed to copy package into stable repository';
+    };
+};
+
+export type PostAdminPackagesPackageNameStableError = PostAdminPackagesPackageNameStableErrors[keyof PostAdminPackagesPackageNameStableErrors];
+
+export type PostAdminPackagesPackageNameStableResponses = {
+    /**
+     * Package copied into stable repository
+     */
+    200: {
+        success: true;
+        code: 200;
+        message: 'Package copied into stable repository';
+        data: {
+            version: string;
+            arch: 'amd64' | 'arm64';
+            leios_patch?: number;
+            copied: true;
+        };
+    };
+};
+
+export type PostAdminPackagesPackageNameStableResponse = PostAdminPackagesPackageNameStableResponses[keyof PostAdminPackagesPackageNameStableResponses];

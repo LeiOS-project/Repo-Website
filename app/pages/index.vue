@@ -1,6 +1,86 @@
 <script setup lang="ts">
 
+const features = [
+    {
+        icon: 'i-lucide-shield-check',
+        title: 'Rock-Solid Stability',
+        description: 'Built on Debian\'s legendary stable base, LeiOS ensures your system runs reliably day after day, update after update.'
+    },
+    {
+        icon: 'i-lucide-zap',
+        title: 'Optimized Performance',
+        description: 'Carefully tuned for maximum performance without sacrificing stability. Fast boot times, responsive applications, efficient resource usage.'
+    },
+    {
+        icon: 'i-lucide-package-open',
+        title: 'Great Out-of-Box Experience',
+        description: 'Pre-configured with sensible defaults, essential tools, and a polished desktop. Get productive from the first boot.'
+    },
+    {
+        icon: 'i-lucide-code-2',
+        title: 'Developer Ready',
+        description: 'Comes with development tools pre-installed. Git, build essentials, popular editors, and easy access to programming languages.'
+    },
+    {
+        icon: 'i-lucide-users',
+        title: 'For Everyone',
+        description: 'While optimized for developers, LeiOS is designed to be approachable for anyone looking for a reliable Linux experience.'
+    },
+    {
+        icon: 'i-lucide-git-branch',
+        title: 'Open Source',
+        description: 'Completely open source and community-driven. Contribute, customize, and make it your own.'
+    }
+]
 
+const stats = [
+    { value: '100%', label: 'Open Source' },
+    { value: 'Debian', label: 'Based' },
+    { value: 'Fast', label: 'Performance' },
+    { value: 'Free', label: 'Forever' }
+]
+
+const communityCards = [
+    {
+        to: 'https://discord.gg/8YC5BXjCc5',
+        icon: 'i-lucide-message-circle',
+        title: 'Discord',
+        description: 'Chat with the community, get support, and share your experience.',
+        buttonText: 'Join Server',
+        color: 'indigo'
+    },
+    {
+        to: 'https://blog.leicraftmc.de/tag/leios/',
+        icon: 'i-lucide-newspaper',
+        title: 'Blog',
+        description: 'Stay updated with the latest news, releases, and development updates.',
+        buttonText: 'Read Blog',
+        color: 'orange'
+    },
+    {
+        to: 'https://github.com/LeiOS-project',
+        icon: 'i-lucide-git-pull-request',
+        title: 'Contribute',
+        description: 'Help us improve LeiOS. Every contribution makes a difference.',
+        buttonText: 'Get Started',
+        color: 'green'
+    }
+]
+
+const sourceLinks = [
+    {
+        to: 'https://git.leicraftmc.de/LeiOS/',
+        icon: 'i-lucide-git-branch',
+        title: 'Main Repository',
+        subtitle: 'git.leicraftmc.de/LeiOS'
+    },
+    {
+        to: 'https://github.com/LeiOS-project',
+        icon: 'i-lucide-github',
+        title: 'GitHub Mirror',
+        subtitle: 'github.com/LeiOS-project'
+    }
+]
 </script>
 
 <template>
