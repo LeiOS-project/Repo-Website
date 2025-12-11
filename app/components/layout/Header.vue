@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { UserStore } from '~/utils/stores/userStore'
+import LeiOSLogo from '../img/LeiOSLogo.vue';
 
 const route = useRoute()
 const sessionCookie = useCookie<string | null>('session_token')
@@ -38,10 +39,11 @@ const redirectQuery = computed(() => encodeURIComponent(route.fullPath))
 
 <template>
     <UHeader class="backdrop-blur-xl">
-        <template #title>
-            <NuxtLink to="/" class="flex items-center gap-2">
-                <span class="font-bold text-lg">LeiOS Repository</span>
-            </NuxtLink>
+        <template #left>
+            <div class="flex items-center gap-2">
+                <NuxtLink to="https://www.leios.dev"><LeiOSLogo class="h-8 w-auto" /></NuxtLink>
+                <NuxtLink to="/" class="h-8 flex items-center text-2xl font-bold leading-none">/ Hub</NuxtLink>
+            </div>
         </template>
 
         <UNavigationMenu :items="links" />
