@@ -1,87 +1,130 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
-import LeiOSLogo from '~/components/img/LeiOSLogo.vue'
-import { UserStore } from '~/utils/stores/userStore'
+import type { NavigationMenuItem } from "@nuxt/ui";
+import UserMenu from "~/components/dashboard/UserMenu.vue";
+import LeiOSLogo from "~/components/img/LeiOSLogo.vue";
+import { UserStore } from "~/utils/stores/userStore";
 
-const route = useRoute()
-const sessionCookie = useCookie<string | null>('session_token')
-const user = ref<any | null>(null)
+const route = useRoute();
+const sessionCookie = useCookie<string | null>("session_token");
+const user = ref<any | null>(null);
 
 if (sessionCookie.value) {
-    user.value = await UserStore.use().catch(() => null)
+    user.value = await UserStore.use().catch(() => null);
 }
 
-const isAdmin = computed(() => user.value?.role === 'admin')
+const isAdmin = computed(() => user.value?.role === "admin");
 
 const sidebarItems = computed<NavigationMenuItem[][]>(() => {
     const devItems: NavigationMenuItem[] = [
         {
-            label: 'Overview',
-            icon: 'i-lucide-layout-dashboard',
-            to: '/dashboard'
+            label: "Overview",
+            icon: "i-lucide-layout-dashboard",
+            to: "/dashboard",
         },
         {
-            label: 'Packages',
-            icon: 'i-lucide-package',
-            to: '/dashboard/packages'
+            label: "Packages",
+            icon: "i-lucide-package",
+            to: "/dashboard/packages",
         },
         {
-            label: 'Tasks',
-            icon: 'i-lucide-list-checks',
-            to: '/dashboard/tasks'
-        }
-    ]
+            label: "Tasks",
+            icon: "i-lucide-list-checks",
+            to: "/dashboard/tasks",
+        },
+    ];
+
+    const settings: NavigationMenuItem[] = [
+        {
+            label: "Settings",
+            to: "/dashboard/settings",
+            icon: "i-lucide-settings",
+            class: "mt-4 pt-4 border-t-2 border-default",
+            defaultOpen: true,
+            type: "trigger",
+            children: [
+                {
+                    label: "General",
+                    to: "/dashboard/settings",
+                    exact: true,
+                },
+                {
+                    label: "Security",
+                    to: "/dashboard/settings/security"
+                },
+            ],
+        },
+    ];
 
     const adminItems: NavigationMenuItem[] = isAdmin.value
         ? [
               {
-                  label: 'Admin',
-                  icon: 'i-lucide-shield',
-                  defaultOpen: route.path.startsWith('/dashboard/admin'),
+                  label: "Admin",
+                  icon: "i-lucide-shield",
+                  defaultOpen: route.path.startsWith("/dashboard/admin"),
                   children: [
-                      { label: 'Stable Requests', to: '/dashboard/admin/requests' },
-                      { label: 'Users', to: '/dashboard/admin/users' },
-                      { label: 'All Packages', to: '/dashboard/admin/packages' }
-                  ]
-              }
+                      {
+                          label: "Stable Requests",
+                          to: "/dashboard/admin/requests",
+                      },
+                      { label: "Users", to: "/dashboard/admin/users" },
+                      {
+                          label: "All Packages",
+                          to: "/dashboard/admin/packages",
+                      },
+                  ],
+              },
           ]
-        : []
+        : [];
 
     const footerItems: NavigationMenuItem[] = [
         {
-            label: 'Explorer',
-            icon: 'i-lucide-compass',
-            to: '/explorer'
+            label: "Explorer",
+            icon: "i-lucide-compass",
+            to: "/explorer",
         },
         {
-            label: 'Back to Home',
-            icon: 'i-lucide-home',
-            to: '/'
-        }
-    ]
+            label: "Back to Home",
+            icon: "i-lucide-home",
+            to: "/",
+        },
+    ];
 
-    return [[...devItems, ...adminItems], footerItems]
-})
+    return [[...devItems, ...adminItems, ...settings], footerItems];
+});
 
 const profileLabel = computed(() => {
-    if (user.value?.display_name) return user.value.display_name
-    if (user.value?.username) return user.value.username
-    return 'Profile'
-})
+    if (user.value?.display_name) return user.value.display_name;
+    if (user.value?.username) return user.value.username;
+    return "Profile";
+});
 </script>
 
 <template>
-    <UDashboardGroup>
+    <UDashboardGroup class="app-layout-dashboard">
         <UDashboardSidebar
             collapsible
             resizable
-            :ui="{ footer: 'border-t border-default' }"
+            :ui="{
+                header: 'main-bg-color',
+                body: 'main-bg-color',
+                content: 'main-bg-color',
+                footer: 'border-t border-default main-bg-color'
+            }"
+            :min-size="18"
+            :default-size="20"
+            :max-size="30"
         >
             <template #header="{ collapsed }">
                 <NuxtLink to="/" class="flex items-center gap-2">
                     <LeiOSLogo v-if="!collapsed" class="h-6 w-auto" />
-                    <UIcon v-else name="i-lucide-box" class="size-5 text-primary mx-auto" />
-                    <span v-if="!collapsed" class="text-lg font-semibold">/ Hub</span>
+                    <UIcon
+                        v-else
+                        name="i-lucide-box"
+                        class="size-5 text-primary mx-auto"
+                    />
+                    <span v-if="!collapsed" class="text-lg font-semibold"
+                        >/ Hub</span
+                    >
                 </NuxtLink>
             </template>
 
@@ -98,32 +141,22 @@ const profileLabel = computed(() => {
                     orientation="vertical"
                     class="mt-auto"
                 />
+
+
             </template>
 
             <template #footer="{ collapsed }">
-                <UDropdownMenu
-                    :items="[
-                        [
-                            { label: 'Account Settings', icon: 'i-lucide-settings', to: '/dashboard/settings' },
-                            { label: 'Change Password', icon: 'i-lucide-key', to: '/auth/password-reset' }
-                        ],
-                        [
-                            { label: 'Logout', icon: 'i-lucide-log-out', to: '/auth/logout' }
-                        ]
-                    ]"
-                >
-                    <UButton
-                        :avatar="{ icon: 'i-lucide-user' }"
-                        :label="collapsed ? undefined : profileLabel"
-                        color="neutral"
-                        variant="ghost"
-                        class="w-full"
-                        :block="collapsed"
-                    />
-                </UDropdownMenu>
+                <UserMenu :collapsed="collapsed"></UserMenu>
             </template>
         </UDashboardSidebar>
 
         <slot />
     </UDashboardGroup>
 </template>
+
+<style scoped>
+.app-layout-dashboard {
+    background-color: rgb(2 6 23);
+    color: rgb(241 245 249);
+}
+</style>

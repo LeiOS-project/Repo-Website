@@ -17,3 +17,6 @@ html {
     scroll-behavior: smooth;
 }
 
+.main-bg-color {
+    background-color: rgb(2 6 23);
+}
