@@ -48,7 +48,10 @@ const { data: packages, pending: loading, refresh } = await useAsyncData<AdminPa
 
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+const deleting = ref(false)
 const selectedPackage = ref<AdminPackage | null>(null)
+const packageToDelete = ref<AdminPackage | null>(null)
 
 const createSchema = z.object({
     name: z.string().min(1, 'Name is required').regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
@@ -82,6 +85,11 @@ function openEdit(pkg: AdminPackage) {
     showEditModal.value = true
 }
 
+function openDelete(pkg: AdminPackage) {
+    packageToDelete.value = pkg
+    showDeleteModal.value = true
+}
+
 async function submitEdit() {
     if (!selectedPackage.value) return
 
@@ -102,15 +110,20 @@ async function submitEdit() {
     }
 }
 
-async function deletePackage(pkg: AdminPackage) {
-    if (!confirm(`Are you sure you want to delete package "${pkg.name}"? This will delete all releases as well.`)) return
+async function deletePackage() {
+    if (!packageToDelete.value) return
+    deleting.value = true
 
     const res = await useAPI((api) => api.deleteAdminPackagesPackageName({
-        path: { packageName: pkg.name }
+        path: { packageName: packageToDelete.value!.name }
     }))
+
+    deleting.value = false
 
     if (res.success) {
         toast.add({ title: 'Package deleted', color: 'success' })
+        showDeleteModal.value = false
+        packageToDelete.value = null
         await refresh()
     } else {
         toast.add({ title: 'Delete failed', description: res.message, color: 'error' })
@@ -182,13 +195,16 @@ async function deletePackage(pkg: AdminPackage) {
                     </template>
                     <template #actions-cell="{ row }">
                         <UDropdownMenu
+                            :ui="{
+			                    viewport: 'main-bg-color'
+                            }"
                             :items="[
                                 [
                                     { label: 'Edit', icon: 'i-lucide-pencil', click: () => openEdit(row.original) },
                                     { label: 'View Releases', icon: 'i-lucide-list', to: `/dashboard/admin/packages/${row.original.name}` }
                                 ],
                                 [
-                                    { label: 'Delete', icon: 'i-lucide-trash-2', color: 'error', click: () => deletePackage(row.original) }
+                                    { label: 'Delete', icon: 'i-lucide-trash-2', color: 'error', click: () => openDelete(row.original) }
                                 ]
                             ]"
                         >
@@ -285,6 +301,39 @@ async function deletePackage(pkg: AdminPackage) {
                     label="Save"
                     color="primary"
                     @click="submitEdit"
+                />
+            </div>
+        </div>
+    </DashboardModal>
+
+    <!-- Delete Package Modal -->
+    <DashboardModal
+        v-model:open="showDeleteModal"
+        title="Delete Package"
+        :description="packageToDelete ? `This will delete ${packageToDelete.name} and all releases.` : ''"
+        icon="i-lucide-alert-triangle"
+        icon-color="error"
+    >
+        <div class="space-y-4">
+            <UAlert
+                icon="i-lucide-alert-octagon"
+                color="error"
+                title="This action cannot be undone"
+                description="All releases belonging to this package will be permanently removed."
+            />
+
+            <div class="flex justify-end gap-2 pt-2">
+                <UButton
+                    label="Cancel"
+                    color="neutral"
+                    variant="ghost"
+                    @click="showDeleteModal = false; packageToDelete = null"
+                />
+                <UButton
+                    label="Delete"
+                    color="error"
+                    :loading="deleting"
+                    @click="deletePackage"
                 />
             </div>
         </div>

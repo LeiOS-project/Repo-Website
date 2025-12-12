@@ -204,6 +204,9 @@ function getRoleColor(role: AdminUser['role']) {
                     </template>
                     <template #actions-cell="{ row }">
                         <UDropdownMenu
+                            :ui="{
+			                    viewport: 'main-bg-color'
+                            }"
                             :items="[
                                 [
                                     { label: 'Edit', icon: 'i-lucide-pencil', click: () => openEdit(row.original) },
