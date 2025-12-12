@@ -91,7 +91,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
                 Remembered your password?
                 <NuxtLink
                     to="/auth/login"
-                    class="text-primary-600 hover:underline"
+                    class="text-sky-400 hover:underline"
                 >
                     Login here
                 </NuxtLink>

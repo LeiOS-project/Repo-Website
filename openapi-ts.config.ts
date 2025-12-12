@@ -4,6 +4,9 @@ export default defineConfig({
     input: 'http://localhost:12151/docs/openapi',
     output: 'app/api-client',
     plugins: [
-        '@hey-api/client-nuxt'
+        '@hey-api/client-nuxt',
+        "@hey-api/typescript",
+        "@hey-api/sdk",
+        "zod"
     ]
 });

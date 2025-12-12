@@ -109,7 +109,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
                 Forgot your password?
                 <NuxtLink
                     to="/auth/forgot-password"
-                    class="text-primary-600 hover:underline"
+                    class="text-sky-400 hover:underline"
                 >
                     Reset here
                 </NuxtLink>
@@ -118,7 +118,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
                 Don't have an account?
                 <NuxtLink
                     to="/auth/signup"
-                    class="text-primary-600 hover:underline"
+                    class="text-sky-400 hover:underline"
                 >
                     Sign up
                 </NuxtLink>
