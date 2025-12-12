@@ -29,7 +29,7 @@ export default defineNuxtConfig({
 
 	runtimeConfig: {
 		public: {
-			apiUrl: process.env.REPO_API_URL || 'http://localhost:12151',
+			apiUrl: process.env.LEIOS_API_URL || 'http://localhost:12151',
 		}
 	},
 
