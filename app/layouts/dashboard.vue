@@ -35,10 +35,13 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
 
     const settings: NavigationMenuItem[] = [
         {
+            type: "label",
+            class: "mt-4 pt-3 border-t-2 border-default",
+        },
+        {
             label: "Settings",
             to: "/dashboard/settings",
             icon: "i-lucide-settings",
-            class: "mt-4 pt-4 border-t-2 border-default",
             defaultOpen: true,
             type: "trigger",
             children: [
@@ -49,32 +52,50 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
                 },
                 {
                     label: "Security",
-                    to: "/dashboard/settings/security"
+                    to: "/dashboard/settings/security",
                 },
             ],
         },
     ];
 
-    const adminItems: NavigationMenuItem[] = isAdmin.value
-        ? [
-              {
-                  label: "Admin",
-                  icon: "i-lucide-shield",
-                  defaultOpen: route.path.startsWith("/dashboard/admin"),
-                  children: [
-                      {
-                          label: "Stable Requests",
-                          to: "/dashboard/admin/requests",
-                      },
-                      { label: "Users", to: "/dashboard/admin/users" },
-                      {
-                          label: "All Packages",
-                          to: "/dashboard/admin/packages",
-                      },
-                  ],
-              },
-          ]
-        : [];
+    const adminItems: NavigationMenuItem[] = isAdmin.value ? [
+        {
+            label: "Admin",
+            icon: "i-lucide-shield",
+            type: "label",
+            class: "mt-4 pt-4 border-t-2 border-default",
+            //   defaultOpen: route.path.startsWith("/dashboard/admin"),
+            // children: [
+            //     {
+            //         label: "Stable Requests",
+            //         to: "/dashboard/admin/requests",
+            //     },
+            //     {
+            //         label: "Users",
+            //         to: "/dashboard/admin/users",
+            //     },
+            //     {
+            //         label: "All Packages",
+            //         to: "/dashboard/admin/packages",
+            //     },
+            // ],
+        },
+        {
+            label: "Stable Requests",
+            icon: "i-lucide-git-pull-request",
+            to: "/dashboard/admin/requests",
+        },
+        {
+            label: "Users",
+            icon: "i-lucide-users",
+            to: "/dashboard/admin/users",
+        },
+        {
+            label: "All Packages",
+            icon: "i-lucide-package-search",
+            to: "/dashboard/admin/packages",
+        },
+    ] : [];
 
     const footerItems: NavigationMenuItem[] = [
         {
@@ -108,7 +129,7 @@ const profileLabel = computed(() => {
                 header: 'main-bg-color',
                 body: 'main-bg-color',
                 content: 'main-bg-color',
-                footer: 'border-t border-default main-bg-color'
+                footer: 'border-t border-default main-bg-color',
             }"
             :min-size="18"
             :default-size="20"
@@ -141,8 +162,6 @@ const profileLabel = computed(() => {
                     orientation="vertical"
                     class="mt-auto"
                 />
-
-
             </template>
 
             <template #footer="{ collapsed }">
