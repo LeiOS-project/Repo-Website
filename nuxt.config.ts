@@ -30,6 +30,7 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		public: {
 			apiUrl: process.env.LEIOS_API_URL || 'http://localhost:12151',
+			isSignupEnabled: process.env.LEIOS_HUB_APP_ENABLE_SIGNUP === 'true' ? true : false,
 		}
 	},
 
