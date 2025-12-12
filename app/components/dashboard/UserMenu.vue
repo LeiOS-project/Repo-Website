@@ -10,12 +10,12 @@ const toast = useToast();
 
 const userinfo = await UserStore.use();
 
-const user = ref({
-    name: userinfo.username,
+const user = computed(() => ({
+    name: userinfo.display_name,
     avatar: {
         alt: userinfo.username,
     },
-});
+}));
 
 async function logout() {
     try {
