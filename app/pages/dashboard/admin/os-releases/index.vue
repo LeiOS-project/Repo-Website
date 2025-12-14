@@ -204,7 +204,6 @@ const osReleasesTableColumns: TableColumn<OSRelease>[] = [
                     </template>
                 </UCard>
             </div>
-            
         </template>
     </UDashboardPanel>
 

@@ -80,19 +80,19 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
         <template #header>
             <UDashboardNavbar title="Packages" icon="i-lucide-package">
                 <template #right>
-                    <UButton
+                    <!-- <UButton
                         label="New Package"
                         icon="i-lucide-plus"
                         color="primary"
                         @click="showCreateModal = true"
-                    />
+                    /> -->
                 </template>
             </UDashboardNavbar>
         </template>
 
         <template #body>
             <div class="space-y-6">
-                <div v-if="loading" class="flex items-center justify-center py-12">
+                <!-- <div v-if="loading" class="flex items-center justify-center py-12">
                     <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
                 </div>
 
@@ -181,13 +181,13 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                             @click="showCreateModal = true"
                         />
                     </template>
-                </UEmpty>
+                </UEmpty> -->
             </div>
         </template>
     </UDashboardPanel>
 
     <!-- Create Package Modal -->
-    <DashboardModal
+    <!-- <DashboardModal
         v-model:open="showCreateModal"
         title="Create Package"
         icon="i-lucide-package-plus"
@@ -219,5 +219,5 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                 />
             </div>
         </UForm>
-    </DashboardModal>
+    </DashboardModal> -->
 </template>
