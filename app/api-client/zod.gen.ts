@@ -657,16 +657,15 @@ export const zGetDevPackagesPackageNameReleasesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.enum(['amd64', 'arm64'])
+        architecture: z.array(z.enum(['amd64', 'arm64']))
     }))
 });
 
-export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = z.object({
+export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
     body: z.optional(z.never()),
     path: z.object({
         packageName: z.string(),
-        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
-        arch: z.enum(['amd64', 'arm64'])
+        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
     }),
     query: z.optional(z.never())
 });
@@ -674,7 +673,7 @@ export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = z
 /**
  * Package release retrieved successfully
  */
-export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = z.object({
+export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Package release retrieved successfully'),
@@ -682,13 +681,32 @@ export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.enum(['amd64', 'arm64'])
+        architecture: z.array(z.enum(['amd64', 'arm64']))
     })
+});
+
+export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        packageName: z.string(),
+        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Package release created successfully
+ */
+export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Package release created successfully'),
+    data: z.null()
 });
 
 export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = z.object({
     body: z.optional(z.object({
-        file: z.string()
+        file: z.string().min(1).max(1073741824)
     })),
     path: z.object({
         packageName: z.string(),
@@ -699,12 +717,12 @@ export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = 
 });
 
 /**
- * Package release created successfully
+ * Package release file uploaded successfully
  */
 export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = z.object({
     success: z.literal(true),
     code: z.literal(201),
-    message: z.literal('Package release created successfully'),
+    message: z.literal('Package release file uploaded successfully'),
     data: z.null()
 });
 
@@ -794,6 +812,7 @@ export const zGetDevTasksResponse = z.object({
     message: z.literal('Scheduled tasks retrieved'),
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        tag: z.string(),
         storeLogs: z.boolean(),
         status: z.enum([
             'pending',
@@ -827,10 +846,13 @@ export const zGetDevTasksResponse = z.object({
     }))
 });
 
-export const zGetDevTasksTaskIdData = z.object({
+export const zGetDevTasksTaskIDorTagData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        taskID: z.number()
+        taskIDorTag: z.union([
+            z.int().gt(0).lte(9007199254740991),
+            z.string()
+        ])
     }),
     query: z.optional(z.never())
 });
@@ -838,12 +860,13 @@ export const zGetDevTasksTaskIdData = z.object({
 /**
  * Task retrieved successfully
  */
-export const zGetDevTasksTaskIdResponse = z.object({
+export const zGetDevTasksTaskIDorTagResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Task retrieved successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        tag: z.string(),
         storeLogs: z.boolean(),
         status: z.enum([
             'pending',
@@ -877,10 +900,13 @@ export const zGetDevTasksTaskIdResponse = z.object({
     })
 });
 
-export const zGetDevTasksTaskIdLogsData = z.object({
+export const zGetDevTasksTaskIDorTagLogsData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        taskID: z.number()
+        taskIDorTag: z.union([
+            z.int().gt(0).lte(9007199254740991),
+            z.string()
+        ])
     }),
     query: z.optional(z.never())
 });
@@ -888,7 +914,7 @@ export const zGetDevTasksTaskIdLogsData = z.object({
 /**
  * Task logs retrieved successfully
  */
-export const zGetDevTasksTaskIdLogsResponse = z.object({
+export const zGetDevTasksTaskIDorTagLogsResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Task logs retrieved successfully'),
@@ -1266,16 +1292,15 @@ export const zGetAdminPackagesPackageNameReleasesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.enum(['amd64', 'arm64'])
+        architecture: z.array(z.enum(['amd64', 'arm64']))
     }))
 });
 
-export const zDeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = z.object({
+export const zDeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
     body: z.optional(z.never()),
     path: z.object({
         packageName: z.string(),
-        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
-        arch: z.enum(['amd64', 'arm64'])
+        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
     }),
     query: z.optional(z.never())
 });
@@ -1283,19 +1308,18 @@ export const zDeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchDat
 /**
  * Package release deleted successfully
  */
-export const zDeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = z.object({
+export const zDeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Package release deleted successfully'),
     data: z.null()
 });
 
-export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = z.object({
+export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
     body: z.optional(z.never()),
     path: z.object({
         packageName: z.string(),
-        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
-        arch: z.enum(['amd64', 'arm64'])
+        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
     }),
     query: z.optional(z.never())
 });
@@ -1303,7 +1327,7 @@ export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData =
 /**
  * Package release retrieved successfully
  */
-export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = z.object({
+export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Package release retrieved successfully'),
@@ -1311,13 +1335,32 @@ export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchRespon
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         package_id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
-        architecture: z.enum(['amd64', 'arm64'])
+        architecture: z.array(z.enum(['amd64', 'arm64']))
     })
+});
+
+export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        packageName: z.string(),
+        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Package release created successfully
+ */
+export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Package release created successfully'),
+    data: z.null()
 });
 
 export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = z.object({
     body: z.optional(z.object({
-        file: z.string()
+        file: z.string().min(1).max(1073741824)
     })),
     path: z.object({
         packageName: z.string(),
@@ -1328,12 +1371,12 @@ export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData 
 });
 
 /**
- * Package release created successfully
+ * Package release file uploaded successfully
  */
 export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = z.object({
     success: z.literal(true),
     code: z.literal(201),
-    message: z.literal('Package release created successfully'),
+    message: z.literal('Package release file uploaded successfully'),
     data: z.null()
 });
 
@@ -1443,7 +1486,8 @@ export const zPostAdminOsReleasesResponse = z.object({
     message: z.literal('OS release creation task enqueued'),
     data: z.object({
         version: z.string(),
-        taskID: z.number()
+        taskID: z.number(),
+        taskTag: z.string()
     })
 });
 
@@ -1494,7 +1538,9 @@ export const zGetAdminStablePromotionRequestsResponse = z.object({
         admin_note: z.union([
             z.string(),
             z.null()
-        ])
+        ]),
+        package_name: z.string(),
+        package_release_version: z.string()
     }))
 });
 
@@ -1525,7 +1571,9 @@ export const zGetAdminStablePromotionRequestsRequestIdResponse = z.object({
         admin_note: z.union([
             z.string(),
             z.null()
-        ])
+        ]),
+        package_name: z.string(),
+        package_release_version: z.string()
     })
 });
 
@@ -1565,6 +1613,7 @@ export const zGetAdminTasksResponse = z.object({
     message: z.literal('Scheduled tasks retrieved'),
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        tag: z.string(),
         storeLogs: z.boolean(),
         status: z.enum([
             'pending',
@@ -1598,10 +1647,13 @@ export const zGetAdminTasksResponse = z.object({
     }))
 });
 
-export const zGetAdminTasksTaskIdData = z.object({
+export const zGetAdminTasksTaskIDorTagData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        taskID: z.number()
+        taskIDorTag: z.union([
+            z.int().gt(0).lte(9007199254740991),
+            z.string()
+        ])
     }),
     query: z.optional(z.never())
 });
@@ -1609,12 +1661,13 @@ export const zGetAdminTasksTaskIdData = z.object({
 /**
  * Task retrieved successfully
  */
-export const zGetAdminTasksTaskIdResponse = z.object({
+export const zGetAdminTasksTaskIDorTagResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Task retrieved successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
+        tag: z.string(),
         storeLogs: z.boolean(),
         status: z.enum([
             'pending',
@@ -1648,10 +1701,13 @@ export const zGetAdminTasksTaskIdResponse = z.object({
     })
 });
 
-export const zGetAdminTasksTaskIdLogsData = z.object({
+export const zGetAdminTasksTaskIDorTagLogsData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        taskID: z.number()
+        taskIDorTag: z.union([
+            z.int().gt(0).lte(9007199254740991),
+            z.string()
+        ])
     }),
     query: z.optional(z.never())
 });
@@ -1659,7 +1715,7 @@ export const zGetAdminTasksTaskIdLogsData = z.object({
 /**
  * Task logs retrieved successfully
  */
-export const zGetAdminTasksTaskIdLogsResponse = z.object({
+export const zGetAdminTasksTaskIDorTagLogsResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Task logs retrieved successfully'),

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { GetDevPackagesPackageNameResponses, GetDevPackagesPackageNameReleasesResponses, GetDevPackagesPackageNameStablePromotionRequestsResponses } from '@/api-client/types.gen'
+import type { BreadcrumbItem } from '@nuxt/ui'
 
 type DevPackage = GetDevPackagesPackageNameResponses[200]['data']
 type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number]
@@ -14,7 +15,7 @@ const toast = useToast()
 const packageName = route.params.packageName as string
 
 useSeoMeta({
-    title: `${packageName} | LeiOS Hub`,
+    title: `${packageName} | Packages | LeiOS Hub`,
     description: `Manage package ${packageName}`
 })
 
@@ -136,19 +137,31 @@ function getStatusColor(status: StableRequest['status']) {
         default: return 'warning'
     }
 }
+
+const breadcrumbItems = ref<BreadcrumbItem[]>([
+    {
+        label: 'Packages',
+        to: '/dashboard/packages'
+    },
+    { label: packageName }
+])
+
 </script>
 
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar :title="packageName" icon="i-lucide-package">
-                <template #leading>
-                    <UButton
+            <UDashboardNavbar :title="`${packageName}`" icon="i-lucide-package">
+                <template #title>
+                    <UBreadcrumb :items="breadcrumbItems" :ui='{
+                        link: "text-md"
+                    }' />
+                    <!-- <UButton
                         icon="i-lucide-arrow-left"
                         variant="ghost"
                         color="neutral"
                         to="/dashboard/packages"
-                    />
+                    /> -->
                 </template>
                 <template #right>
                     <div class="flex gap-2">

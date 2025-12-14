@@ -947,25 +947,24 @@ export type GetDevPackagesPackageNameReleasesResponses = {
             id: number;
             package_id: number;
             versionWithLeiosPatch: string;
-            architecture: 'amd64' | 'arm64';
+            architecture: Array<'amd64' | 'arm64'>;
         }>;
     };
 };
 
 export type GetDevPackagesPackageNameReleasesResponse = GetDevPackagesPackageNameReleasesResponses[keyof GetDevPackagesPackageNameReleasesResponses];
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
+export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     body?: never;
     path: {
         packageName: string;
         versionWithLeiosPatch: string;
-        arch: 'amd64' | 'arm64';
     };
     query?: never;
-    url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}';
+    url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors = {
+export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     /**
      * Package release with specified version not found
      */
@@ -976,9 +975,9 @@ export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors = {
     };
 };
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchError = GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors[keyof GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors];
+export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchError = GetDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof GetDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses = {
+export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
     /**
      * Package release retrieved successfully
      */
@@ -990,12 +989,57 @@ export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses 
             id: number;
             package_id: number;
             versionWithLeiosPatch: string;
-            architecture: 'amd64' | 'arm64';
+            architecture: Array<'amd64' | 'arm64'>;
         };
     };
 };
 
-export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses[keyof GetDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses];
+export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+
+export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+    body?: never;
+    path: {
+        packageName: string;
+        versionWithLeiosPatch: string;
+    };
+    query?: never;
+    url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}';
+};
+
+export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Package release with this version already exists
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'Package release with this version already exists';
+    };
+};
+
+export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchError = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof PostDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+
+export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+    /**
+     * Package release created successfully
+     */
+    201: {
+        success: true;
+        code: 201;
+        message: 'Package release created successfully';
+        data: null;
+    };
+};
+
+export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
 
 export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
     body?: {
@@ -1020,12 +1064,20 @@ export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors = 
         message: 'Bad Request: Syntax or validation error in request';
     };
     /**
-     * Conflict: Package release with this version already exists
+     * Package release already contains a release for this architecture
      */
     409: {
         success: false;
         code: 409;
-        message: 'Conflict: Package release with this version already exists';
+        message: 'Package release already contains a release for this architecture';
+    };
+    /**
+     * Failed to upload and verify package release asset
+     */
+    500: {
+        success: false;
+        code: 500;
+        message: 'Failed to upload and verify package release asset';
     };
 };
 
@@ -1033,12 +1085,12 @@ export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchError = P
 
 export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses = {
     /**
-     * Package release created successfully
+     * Package release file uploaded successfully
      */
     201: {
         success: true;
         code: 201;
-        message: 'Package release created successfully';
+        message: 'Package release file uploaded successfully';
         data: null;
     };
 };
@@ -1161,6 +1213,7 @@ export type GetDevTasksResponses = {
         message: 'Scheduled tasks retrieved';
         data: Array<{
             id: number;
+            tag: string;
             storeLogs: boolean;
             status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
             created_at: number;
@@ -1175,16 +1228,29 @@ export type GetDevTasksResponses = {
 
 export type GetDevTasksResponse = GetDevTasksResponses[keyof GetDevTasksResponses];
 
-export type GetDevTasksTaskIdData = {
+export type GetDevTasksTaskIDorTagData = {
     body?: never;
     path: {
-        taskID: number;
+        taskIDorTag: number | string;
     };
     query?: never;
-    url: '/dev/tasks/{taskID}';
+    url: '/dev/tasks/{taskIDorTag}';
 };
 
-export type GetDevTasksTaskIdResponses = {
+export type GetDevTasksTaskIDorTagErrors = {
+    /**
+     * Task with specified ID or Tag not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Task with specified ID or Tag not found';
+    };
+};
+
+export type GetDevTasksTaskIDorTagError = GetDevTasksTaskIDorTagErrors[keyof GetDevTasksTaskIDorTagErrors];
+
+export type GetDevTasksTaskIDorTagResponses = {
     /**
      * Task retrieved successfully
      */
@@ -1194,6 +1260,7 @@ export type GetDevTasksTaskIdResponses = {
         message: 'Task retrieved successfully';
         data: {
             id: number;
+            tag: string;
             storeLogs: boolean;
             status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
             created_at: number;
@@ -1206,18 +1273,18 @@ export type GetDevTasksTaskIdResponses = {
     };
 };
 
-export type GetDevTasksTaskIdResponse = GetDevTasksTaskIdResponses[keyof GetDevTasksTaskIdResponses];
+export type GetDevTasksTaskIDorTagResponse = GetDevTasksTaskIDorTagResponses[keyof GetDevTasksTaskIDorTagResponses];
 
-export type GetDevTasksTaskIdLogsData = {
+export type GetDevTasksTaskIDorTagLogsData = {
     body?: never;
     path: {
-        taskID: number;
+        taskIDorTag: number | string;
     };
     query?: never;
-    url: '/dev/tasks/{taskID}/logs';
+    url: '/dev/tasks/{taskIDorTag}/logs';
 };
 
-export type GetDevTasksTaskIdLogsErrors = {
+export type GetDevTasksTaskIDorTagLogsErrors = {
     /**
      * Logs are not stored for this task
      */
@@ -1227,18 +1294,18 @@ export type GetDevTasksTaskIdLogsErrors = {
         message: 'Logs are not stored for this task';
     };
     /**
-     * Log file not found for this task
+     * Task with specified ID or Tag not found / Log file not found for this task
      */
     404: {
         success: false;
         code: 404;
-        message: 'Log file not found for this task';
+        message: 'Task with specified ID or Tag not found / Log file not found for this task';
     };
 };
 
-export type GetDevTasksTaskIdLogsError = GetDevTasksTaskIdLogsErrors[keyof GetDevTasksTaskIdLogsErrors];
+export type GetDevTasksTaskIDorTagLogsError = GetDevTasksTaskIDorTagLogsErrors[keyof GetDevTasksTaskIDorTagLogsErrors];
 
-export type GetDevTasksTaskIdLogsResponses = {
+export type GetDevTasksTaskIDorTagLogsResponses = {
     /**
      * Task logs retrieved successfully
      */
@@ -1252,7 +1319,7 @@ export type GetDevTasksTaskIdLogsResponses = {
     };
 };
 
-export type GetDevTasksTaskIdLogsResponse = GetDevTasksTaskIdLogsResponses[keyof GetDevTasksTaskIdLogsResponses];
+export type GetDevTasksTaskIDorTagLogsResponse = GetDevTasksTaskIDorTagLogsResponses[keyof GetDevTasksTaskIDorTagLogsResponses];
 
 export type GetAdminUsersData = {
     body?: never;
@@ -1780,25 +1847,24 @@ export type GetAdminPackagesPackageNameReleasesResponses = {
             id: number;
             package_id: number;
             versionWithLeiosPatch: string;
-            architecture: 'amd64' | 'arm64';
+            architecture: Array<'amd64' | 'arm64'>;
         }>;
     };
 };
 
 export type GetAdminPackagesPackageNameReleasesResponse = GetAdminPackagesPackageNameReleasesResponses[keyof GetAdminPackagesPackageNameReleasesResponses];
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
+export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     body?: never;
     path: {
         packageName: string;
         versionWithLeiosPatch: string;
-        arch: 'amd64' | 'arm64';
     };
     query?: never;
-    url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}';
+    url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors = {
+export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     /**
      * Package release with specified ID not found
      */
@@ -1809,9 +1875,9 @@ export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError
     };
 };
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError = DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors[keyof DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors];
+export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchError = DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses = {
+export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
     /**
      * Package release deleted successfully
      */
@@ -1823,20 +1889,19 @@ export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchRespo
     };
 };
 
-export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses[keyof DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses];
+export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
+export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     body?: never;
     path: {
         packageName: string;
         versionWithLeiosPatch: string;
-        arch: 'amd64' | 'arm64';
     };
     query?: never;
-    url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}/{arch}';
+    url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors = {
+export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     /**
      * Package release with specified version not found
      */
@@ -1847,9 +1912,9 @@ export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors =
     };
 };
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError = GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors[keyof GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors];
+export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchError = GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses = {
+export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
     /**
      * Package release retrieved successfully
      */
@@ -1861,12 +1926,57 @@ export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse
             id: number;
             package_id: number;
             versionWithLeiosPatch: string;
-            architecture: 'amd64' | 'arm64';
+            architecture: Array<'amd64' | 'arm64'>;
         };
     };
 };
 
-export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse = GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses[keyof GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses];
+export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+
+export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+    body?: never;
+    path: {
+        packageName: string;
+        versionWithLeiosPatch: string;
+    };
+    query?: never;
+    url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}';
+};
+
+export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Package release with this version already exists
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'Package release with this version already exists';
+    };
+};
+
+export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchError = PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+
+export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+    /**
+     * Package release created successfully
+     */
+    201: {
+        success: true;
+        code: 201;
+        message: 'Package release created successfully';
+        data: null;
+    };
+};
+
+export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
 
 export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
     body?: {
@@ -1891,12 +2001,20 @@ export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchErrors 
         message: 'Bad Request: Syntax or validation error in request';
     };
     /**
-     * Conflict: Package release with this version already exists
+     * Package release already contains a release for this architecture
      */
     409: {
         success: false;
         code: 409;
-        message: 'Conflict: Package release with this version already exists';
+        message: 'Package release already contains a release for this architecture';
+    };
+    /**
+     * Failed to upload and verify package release asset
+     */
+    500: {
+        success: false;
+        code: 500;
+        message: 'Failed to upload and verify package release asset';
     };
 };
 
@@ -1904,12 +2022,12 @@ export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError =
 
 export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponses = {
     /**
-     * Package release created successfully
+     * Package release file uploaded successfully
      */
     201: {
         success: true;
         code: 201;
-        message: 'Package release created successfully';
+        message: 'Package release file uploaded successfully';
         data: null;
     };
 };
@@ -2058,6 +2176,7 @@ export type PostAdminOsReleasesResponses = {
         data: {
             version: string;
             taskID: number;
+            taskTag: string;
         };
     };
 };
@@ -2112,6 +2231,8 @@ export type GetAdminStablePromotionRequestsResponses = {
             package_release_id: number;
             status: 'pending' | 'approved' | 'denied';
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         }>;
     };
 };
@@ -2154,6 +2275,8 @@ export type GetAdminStablePromotionRequestsRequestIdResponses = {
             package_release_id: number;
             status: 'pending' | 'approved' | 'denied';
             admin_note: string | null;
+            package_name: string;
+            package_release_version: string;
         };
     };
 };
@@ -2224,6 +2347,7 @@ export type GetAdminTasksResponses = {
         message: 'Scheduled tasks retrieved';
         data: Array<{
             id: number;
+            tag: string;
             storeLogs: boolean;
             status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
             created_at: number;
@@ -2238,16 +2362,29 @@ export type GetAdminTasksResponses = {
 
 export type GetAdminTasksResponse = GetAdminTasksResponses[keyof GetAdminTasksResponses];
 
-export type GetAdminTasksTaskIdData = {
+export type GetAdminTasksTaskIDorTagData = {
     body?: never;
     path: {
-        taskID: number;
+        taskIDorTag: number | string;
     };
     query?: never;
-    url: '/admin/tasks/{taskID}';
+    url: '/admin/tasks/{taskIDorTag}';
 };
 
-export type GetAdminTasksTaskIdResponses = {
+export type GetAdminTasksTaskIDorTagErrors = {
+    /**
+     * Task with specified ID or Tag not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'Task with specified ID or Tag not found';
+    };
+};
+
+export type GetAdminTasksTaskIDorTagError = GetAdminTasksTaskIDorTagErrors[keyof GetAdminTasksTaskIDorTagErrors];
+
+export type GetAdminTasksTaskIDorTagResponses = {
     /**
      * Task retrieved successfully
      */
@@ -2257,6 +2394,7 @@ export type GetAdminTasksTaskIdResponses = {
         message: 'Task retrieved successfully';
         data: {
             id: number;
+            tag: string;
             storeLogs: boolean;
             status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
             created_at: number;
@@ -2269,18 +2407,18 @@ export type GetAdminTasksTaskIdResponses = {
     };
 };
 
-export type GetAdminTasksTaskIdResponse = GetAdminTasksTaskIdResponses[keyof GetAdminTasksTaskIdResponses];
+export type GetAdminTasksTaskIDorTagResponse = GetAdminTasksTaskIDorTagResponses[keyof GetAdminTasksTaskIDorTagResponses];
 
-export type GetAdminTasksTaskIdLogsData = {
+export type GetAdminTasksTaskIDorTagLogsData = {
     body?: never;
     path: {
-        taskID: number;
+        taskIDorTag: number | string;
     };
     query?: never;
-    url: '/admin/tasks/{taskID}/logs';
+    url: '/admin/tasks/{taskIDorTag}/logs';
 };
 
-export type GetAdminTasksTaskIdLogsErrors = {
+export type GetAdminTasksTaskIDorTagLogsErrors = {
     /**
      * Logs are not stored for this task
      */
@@ -2290,18 +2428,18 @@ export type GetAdminTasksTaskIdLogsErrors = {
         message: 'Logs are not stored for this task';
     };
     /**
-     * Log file not found for this task
+     * Task with specified ID or Tag not found / Log file not found for this task
      */
     404: {
         success: false;
         code: 404;
-        message: 'Log file not found for this task';
+        message: 'Task with specified ID or Tag not found / Log file not found for this task';
     };
 };
 
-export type GetAdminTasksTaskIdLogsError = GetAdminTasksTaskIdLogsErrors[keyof GetAdminTasksTaskIdLogsErrors];
+export type GetAdminTasksTaskIDorTagLogsError = GetAdminTasksTaskIDorTagLogsErrors[keyof GetAdminTasksTaskIDorTagLogsErrors];
 
-export type GetAdminTasksTaskIdLogsResponses = {
+export type GetAdminTasksTaskIDorTagLogsResponses = {
     /**
      * Task logs retrieved successfully
      */
@@ -2315,4 +2453,4 @@ export type GetAdminTasksTaskIdLogsResponses = {
     };
 };
 
-export type GetAdminTasksTaskIdLogsResponse = GetAdminTasksTaskIdLogsResponses[keyof GetAdminTasksTaskIdLogsResponses];
+export type GetAdminTasksTaskIDorTagLogsResponse = GetAdminTasksTaskIDorTagLogsResponses[keyof GetAdminTasksTaskIDorTagLogsResponses];
