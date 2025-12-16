@@ -28,13 +28,15 @@ const { data: osReleases, pending: loading, refresh } = await useAsyncData<OSRel
     }
 )
 
-// for (let i = 0; i < 20; i++) {
-//     osReleases.value?.push({
-//         id: i + 1,
-//         version: `2025.12.${String(i).padStart(2, '0')}`,
-//         published_at: Date.now() - i * 1000 * 60 * 60 * 24
-//     })
-// }
+for (let i = 0; i < 20; i++) {
+    osReleases.value?.push({
+        id: i + 1,
+        version: `2025.12.${String(i).padStart(2, '0')}`,
+        created_at: Date.now() - i * 1000 * 60 * 60 * 24,
+        published_at: Date.now() - i * 1000 * 60 * 60 * 24,
+        publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[i % 5] as OSRelease['publishing_status'],
+    })
+}
 
 const columnFilters = ref([{
     id: 'version',
@@ -59,8 +61,27 @@ const pagination = ref({
 
 const osReleasesTableColumns: TableColumn<OSRelease>[] = [
     { accessorKey: 'version' , header: 'Version' },
+    { accessorKey: 'created_at', header: 'Created At' },
+    { accessorKey: 'publishing_status', header: 'Status' },
     { accessorKey: 'published_at', header: 'Published At' },
 ]
+
+function getPublishingStatusColor(status: OSRelease['publishing_status']) {
+    switch (status) {
+        case 'pending':
+            return 'warning'
+        case 'paused':
+            return 'warning'
+        case 'completed':
+            return 'success'
+        case 'failed':
+            return 'error'
+        case 'running':
+            return 'info'
+        default:
+            return 'neutral'
+    }
+}
 
 </script>
 
@@ -147,10 +168,25 @@ const osReleasesTableColumns: TableColumn<OSRelease>[] = [
                                 {{ row.original.version }}
                             </span>
                         </template>
-                        <template #published_at-cell="{ row }">
-                            <span class="font-mono text-sm">
-                                {{ new Date(row.original.published_at).toLocaleString() }}
+                        <template #created_at-cell="{ row }">
+                            <span class="text-sm">
+                                {{ row.original.created_at }}
                             </span>
+                        </template>
+                        <template #publishing_status-cell="{ row }">
+                            <UBadge
+                                :status="row.original.publishing_status"
+                                :color="getPublishingStatusColor(row.original.publishing_status)"
+                                variant="subtle"
+                                class="capitalize"
+                            />
+                        </template>
+                        <template #published_at-cell="{ row }">
+                            <span class="text-sm">{{
+                                    row.original.published_at
+                                        ? new Date(row.original.published_at).toLocaleString()
+                                        : "N / A"
+                            }}</span>
                         </template>
                     </UTable>
 

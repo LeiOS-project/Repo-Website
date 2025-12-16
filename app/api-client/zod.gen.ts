@@ -797,7 +797,6 @@ export const zGetDevTasksResponse = z.object({
     message: z.literal('Scheduled tasks retrieved'),
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        tag: z.string(),
         storeLogs: z.boolean(),
         status: z.enum([
             'pending',
@@ -831,13 +830,10 @@ export const zGetDevTasksResponse = z.object({
     }))
 });
 
-export const zGetDevTasksTaskIDorTagData = z.object({
+export const zGetDevTasksTaskIdData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        taskIDorTag: z.union([
-            z.int().gt(0).lte(9007199254740991),
-            z.string()
-        ])
+        taskID: z.int().gt(0).lte(9007199254740991)
     }),
     query: z.optional(z.never())
 });
@@ -845,13 +841,12 @@ export const zGetDevTasksTaskIDorTagData = z.object({
 /**
  * Task retrieved successfully
  */
-export const zGetDevTasksTaskIDorTagResponse = z.object({
+export const zGetDevTasksTaskIdResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Task retrieved successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        tag: z.string(),
         storeLogs: z.boolean(),
         status: z.enum([
             'pending',
@@ -885,13 +880,10 @@ export const zGetDevTasksTaskIDorTagResponse = z.object({
     })
 });
 
-export const zGetDevTasksTaskIDorTagLogsData = z.object({
+export const zGetDevTasksTaskIdLogsData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        taskIDorTag: z.union([
-            z.int().gt(0).lte(9007199254740991),
-            z.string()
-        ])
+        taskID: z.int().gt(0).lte(9007199254740991)
     }),
     query: z.optional(z.never())
 });
@@ -899,7 +891,7 @@ export const zGetDevTasksTaskIDorTagLogsData = z.object({
 /**
  * Task logs retrieved successfully
  */
-export const zGetDevTasksTaskIDorTagLogsResponse = z.object({
+export const zGetDevTasksTaskIdLogsResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Task logs retrieved successfully'),
@@ -1417,7 +1409,11 @@ export const zPostAdminPackagesPackageNameStablePromotionRequestsResponse = z.ob
 export const zGetAdminOsReleasesData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
-    query: z.optional(z.never())
+    query: z.optional(z.object({
+        limit: z.optional(z.int().gte(1).lte(100)).default(10),
+        offset: z.optional(z.int().gte(0).lte(9007199254740991)).default(0),
+        order: z.optional(z.enum(['newest', 'oldest']))
+    }))
 });
 
 /**
@@ -1431,7 +1427,17 @@ export const zGetAdminOsReleasesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        published_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        published_at: z.union([
+            z.number(),
+            z.null()
+        ]),
+        publishing_status: z.enum([
+            'pending',
+            'running',
+            'paused',
+            'failed',
+            'completed'
+        ])
     }))
 });
 
@@ -1449,9 +1455,20 @@ export const zPostAdminOsReleasesResponse = z.object({
     code: z.literal(202),
     message: z.literal('OS release creation task enqueued'),
     data: z.object({
+        id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
-        taskID: z.number(),
-        taskTag: z.string()
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        published_at: z.union([
+            z.number(),
+            z.null()
+        ]),
+        publishing_status: z.enum([
+            'pending',
+            'running',
+            'paused',
+            'failed',
+            'completed'
+        ])
     })
 });
 
@@ -1474,7 +1491,17 @@ export const zGetAdminOsReleasesVersionResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         version: z.string(),
         created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
-        published_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        published_at: z.union([
+            z.number(),
+            z.null()
+        ]),
+        publishing_status: z.enum([
+            'pending',
+            'running',
+            'paused',
+            'failed',
+            'completed'
+        ])
     })
 });
 
@@ -1589,7 +1616,6 @@ export const zGetAdminTasksResponse = z.object({
     message: z.literal('Scheduled tasks retrieved'),
     data: z.array(z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        tag: z.string(),
         storeLogs: z.boolean(),
         status: z.enum([
             'pending',
@@ -1623,13 +1649,10 @@ export const zGetAdminTasksResponse = z.object({
     }))
 });
 
-export const zGetAdminTasksTaskIDorTagData = z.object({
+export const zGetAdminTasksTaskIdData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        taskIDorTag: z.union([
-            z.int().gt(0).lte(9007199254740991),
-            z.string()
-        ])
+        taskID: z.int().gt(0).lte(9007199254740991)
     }),
     query: z.optional(z.never())
 });
@@ -1637,13 +1660,12 @@ export const zGetAdminTasksTaskIDorTagData = z.object({
 /**
  * Task retrieved successfully
  */
-export const zGetAdminTasksTaskIDorTagResponse = z.object({
+export const zGetAdminTasksTaskIdResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Task retrieved successfully'),
     data: z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        tag: z.string(),
         storeLogs: z.boolean(),
         status: z.enum([
             'pending',
@@ -1677,13 +1699,10 @@ export const zGetAdminTasksTaskIDorTagResponse = z.object({
     })
 });
 
-export const zGetAdminTasksTaskIDorTagLogsData = z.object({
+export const zGetAdminTasksTaskIdLogsData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        taskIDorTag: z.union([
-            z.int().gt(0).lte(9007199254740991),
-            z.string()
-        ])
+        taskID: z.int().gt(0).lte(9007199254740991)
     }),
     query: z.optional(z.never())
 });
@@ -1691,7 +1710,7 @@ export const zGetAdminTasksTaskIDorTagLogsData = z.object({
 /**
  * Task logs retrieved successfully
  */
-export const zGetAdminTasksTaskIDorTagLogsResponse = z.object({
+export const zGetAdminTasksTaskIdLogsResponse = z.object({
     success: z.literal(true),
     code: z.literal(200),
     message: z.literal('Task logs retrieved successfully'),

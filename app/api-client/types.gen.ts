@@ -1222,7 +1222,6 @@ export type GetDevTasksResponses = {
         message: 'Scheduled tasks retrieved';
         data: Array<{
             id: number;
-            tag: string;
             storeLogs: boolean;
             status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
             created_at: number;
@@ -1237,16 +1236,19 @@ export type GetDevTasksResponses = {
 
 export type GetDevTasksResponse = GetDevTasksResponses[keyof GetDevTasksResponses];
 
-export type GetDevTasksTaskIDorTagData = {
+export type GetDevTasksTaskIdData = {
     body?: never;
     path: {
-        taskIDorTag: number | string;
+        /**
+         * Task ID
+         */
+        taskID: number;
     };
     query?: never;
-    url: '/dev/tasks/{taskIDorTag}';
+    url: '/dev/tasks/{taskID}';
 };
 
-export type GetDevTasksTaskIDorTagErrors = {
+export type GetDevTasksTaskIdErrors = {
     /**
      * Task with specified ID or Tag not found
      */
@@ -1257,9 +1259,9 @@ export type GetDevTasksTaskIDorTagErrors = {
     };
 };
 
-export type GetDevTasksTaskIDorTagError = GetDevTasksTaskIDorTagErrors[keyof GetDevTasksTaskIDorTagErrors];
+export type GetDevTasksTaskIdError = GetDevTasksTaskIdErrors[keyof GetDevTasksTaskIdErrors];
 
-export type GetDevTasksTaskIDorTagResponses = {
+export type GetDevTasksTaskIdResponses = {
     /**
      * Task retrieved successfully
      */
@@ -1269,7 +1271,6 @@ export type GetDevTasksTaskIDorTagResponses = {
         message: 'Task retrieved successfully';
         data: {
             id: number;
-            tag: string;
             storeLogs: boolean;
             status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
             created_at: number;
@@ -1282,18 +1283,21 @@ export type GetDevTasksTaskIDorTagResponses = {
     };
 };
 
-export type GetDevTasksTaskIDorTagResponse = GetDevTasksTaskIDorTagResponses[keyof GetDevTasksTaskIDorTagResponses];
+export type GetDevTasksTaskIdResponse = GetDevTasksTaskIdResponses[keyof GetDevTasksTaskIdResponses];
 
-export type GetDevTasksTaskIDorTagLogsData = {
+export type GetDevTasksTaskIdLogsData = {
     body?: never;
     path: {
-        taskIDorTag: number | string;
+        /**
+         * Task ID
+         */
+        taskID: number;
     };
     query?: never;
-    url: '/dev/tasks/{taskIDorTag}/logs';
+    url: '/dev/tasks/{taskID}/logs';
 };
 
-export type GetDevTasksTaskIDorTagLogsErrors = {
+export type GetDevTasksTaskIdLogsErrors = {
     /**
      * Logs are not stored for this task
      */
@@ -1312,9 +1316,9 @@ export type GetDevTasksTaskIDorTagLogsErrors = {
     };
 };
 
-export type GetDevTasksTaskIDorTagLogsError = GetDevTasksTaskIDorTagLogsErrors[keyof GetDevTasksTaskIDorTagLogsErrors];
+export type GetDevTasksTaskIdLogsError = GetDevTasksTaskIdLogsErrors[keyof GetDevTasksTaskIdLogsErrors];
 
-export type GetDevTasksTaskIDorTagLogsResponses = {
+export type GetDevTasksTaskIdLogsResponses = {
     /**
      * Task logs retrieved successfully
      */
@@ -1328,7 +1332,7 @@ export type GetDevTasksTaskIDorTagLogsResponses = {
     };
 };
 
-export type GetDevTasksTaskIDorTagLogsResponse = GetDevTasksTaskIDorTagLogsResponses[keyof GetDevTasksTaskIDorTagLogsResponses];
+export type GetDevTasksTaskIdLogsResponse = GetDevTasksTaskIdLogsResponses[keyof GetDevTasksTaskIdLogsResponses];
 
 export type GetAdminUsersData = {
     body?: never;
@@ -2147,7 +2151,11 @@ export type PostAdminPackagesPackageNameStablePromotionRequestsResponse = PostAd
 export type GetAdminOsReleasesData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        limit?: number;
+        offset?: number;
+        order?: 'newest' | 'oldest';
+    };
     url: '/admin/os-releases';
 };
 
@@ -2163,7 +2171,8 @@ export type GetAdminOsReleasesResponses = {
             id: number;
             version: string;
             created_at: number;
-            published_at: number;
+            published_at: number | null;
+            publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
         }>;
     };
 };
@@ -2186,9 +2195,11 @@ export type PostAdminOsReleasesResponses = {
         code: 202;
         message: 'OS release creation task enqueued';
         data: {
+            id: number;
             version: string;
-            taskID: number;
-            taskTag: string;
+            created_at: number;
+            published_at: number | null;
+            publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
         };
     };
 };
@@ -2204,6 +2215,19 @@ export type GetAdminOsReleasesVersionData = {
     url: '/admin/os-releases/{version}';
 };
 
+export type GetAdminOsReleasesVersionErrors = {
+    /**
+     * OS release not found
+     */
+    404: {
+        success: false;
+        code: 404;
+        message: 'OS release not found';
+    };
+};
+
+export type GetAdminOsReleasesVersionError = GetAdminOsReleasesVersionErrors[keyof GetAdminOsReleasesVersionErrors];
+
 export type GetAdminOsReleasesVersionResponses = {
     /**
      * OS release retrieved
@@ -2216,7 +2240,8 @@ export type GetAdminOsReleasesVersionResponses = {
             id: number;
             version: string;
             created_at: number;
-            published_at: number;
+            published_at: number | null;
+            publishing_status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
         };
     };
 };
@@ -2371,7 +2396,6 @@ export type GetAdminTasksResponses = {
         message: 'Scheduled tasks retrieved';
         data: Array<{
             id: number;
-            tag: string;
             storeLogs: boolean;
             status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
             created_at: number;
@@ -2386,16 +2410,19 @@ export type GetAdminTasksResponses = {
 
 export type GetAdminTasksResponse = GetAdminTasksResponses[keyof GetAdminTasksResponses];
 
-export type GetAdminTasksTaskIDorTagData = {
+export type GetAdminTasksTaskIdData = {
     body?: never;
     path: {
-        taskIDorTag: number | string;
+        /**
+         * Task ID
+         */
+        taskID: number;
     };
     query?: never;
-    url: '/admin/tasks/{taskIDorTag}';
+    url: '/admin/tasks/{taskID}';
 };
 
-export type GetAdminTasksTaskIDorTagErrors = {
+export type GetAdminTasksTaskIdErrors = {
     /**
      * Task with specified ID or Tag not found
      */
@@ -2406,9 +2433,9 @@ export type GetAdminTasksTaskIDorTagErrors = {
     };
 };
 
-export type GetAdminTasksTaskIDorTagError = GetAdminTasksTaskIDorTagErrors[keyof GetAdminTasksTaskIDorTagErrors];
+export type GetAdminTasksTaskIdError = GetAdminTasksTaskIdErrors[keyof GetAdminTasksTaskIdErrors];
 
-export type GetAdminTasksTaskIDorTagResponses = {
+export type GetAdminTasksTaskIdResponses = {
     /**
      * Task retrieved successfully
      */
@@ -2418,7 +2445,6 @@ export type GetAdminTasksTaskIDorTagResponses = {
         message: 'Task retrieved successfully';
         data: {
             id: number;
-            tag: string;
             storeLogs: boolean;
             status: 'pending' | 'running' | 'paused' | 'failed' | 'completed';
             created_at: number;
@@ -2431,18 +2457,21 @@ export type GetAdminTasksTaskIDorTagResponses = {
     };
 };
 
-export type GetAdminTasksTaskIDorTagResponse = GetAdminTasksTaskIDorTagResponses[keyof GetAdminTasksTaskIDorTagResponses];
+export type GetAdminTasksTaskIdResponse = GetAdminTasksTaskIdResponses[keyof GetAdminTasksTaskIdResponses];
 
-export type GetAdminTasksTaskIDorTagLogsData = {
+export type GetAdminTasksTaskIdLogsData = {
     body?: never;
     path: {
-        taskIDorTag: number | string;
+        /**
+         * Task ID
+         */
+        taskID: number;
     };
     query?: never;
-    url: '/admin/tasks/{taskIDorTag}/logs';
+    url: '/admin/tasks/{taskID}/logs';
 };
 
-export type GetAdminTasksTaskIDorTagLogsErrors = {
+export type GetAdminTasksTaskIdLogsErrors = {
     /**
      * Logs are not stored for this task
      */
@@ -2461,9 +2490,9 @@ export type GetAdminTasksTaskIDorTagLogsErrors = {
     };
 };
 
-export type GetAdminTasksTaskIDorTagLogsError = GetAdminTasksTaskIDorTagLogsErrors[keyof GetAdminTasksTaskIDorTagLogsErrors];
+export type GetAdminTasksTaskIdLogsError = GetAdminTasksTaskIdLogsErrors[keyof GetAdminTasksTaskIdLogsErrors];
 
-export type GetAdminTasksTaskIDorTagLogsResponses = {
+export type GetAdminTasksTaskIdLogsResponses = {
     /**
      * Task logs retrieved successfully
      */
@@ -2477,4 +2506,4 @@ export type GetAdminTasksTaskIDorTagLogsResponses = {
     };
 };
 
-export type GetAdminTasksTaskIDorTagLogsResponse = GetAdminTasksTaskIDorTagLogsResponses[keyof GetAdminTasksTaskIDorTagLogsResponses];
+export type GetAdminTasksTaskIdLogsResponse = GetAdminTasksTaskIdLogsResponses[keyof GetAdminTasksTaskIdLogsResponses];
