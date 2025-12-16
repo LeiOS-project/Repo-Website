@@ -46,23 +46,23 @@ const columnFilters = ref([{
 const table = useTemplateRef('table')
 
 const versionSearch = computed({
-  get: (): string => {
-    return (table.value?.tableApi?.getColumn('version')?.getFilterValue() as string) || ''
-  },
-  set: (value: string) => {
-    table.value?.tableApi?.getColumn('version')?.setFilterValue(value || undefined)
-  }
+    get: (): string => {
+        return (table.value?.tableApi?.getColumn('version')?.getFilterValue() as string) || ''
+    },
+    set: (value: string) => {
+        table.value?.tableApi?.getColumn('version')?.setFilterValue(value || undefined)
+    }
 })
 
 const pagination = ref({
-  pageIndex: 0,
-  pageSize: 10
+    pageIndex: 0,
+    pageSize: 10
 })
 
 const osReleasesTableColumns: TableColumn<OSRelease>[] = [
     { accessorKey: 'version' , header: 'Version' },
     { accessorKey: 'created_at', header: 'Created At' },
-    { accessorKey: 'publishing_status', header: 'Status' },
+    { accessorKey: 'publishing_status', header: 'Publishing Status' },
     { accessorKey: 'published_at', header: 'Published At' },
 ]
 
@@ -110,7 +110,7 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
                         </p>
                     </div>
                 </div>
-
+                
                 <UCard class="border-slate-800 bg-slate-900/60">
                     <template #header>
                         <div class="flex flex-wrap items-center justify-between gap-1.5">
