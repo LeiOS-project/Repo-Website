@@ -34,7 +34,7 @@ for (let i = 0; i < 20; i++) {
         version: `2025.12.${String(i).padStart(2, '0')}`,
         created_at: Date.now() - i * 1000 * 60 * 60 * 24,
         published_at: Date.now() - i * 1000 * 60 * 60 * 24,
-        publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[i % 5] as OSRelease['publishing_status'],
+        publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[Math.floor(Math.random() * 1000) % 5] as OSRelease['publishing_status'],
     })
 }
 
@@ -78,8 +78,6 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
             return 'error'
         case 'running':
             return 'info'
-        default:
-            return 'neutral'
     }
 }
 
@@ -158,11 +156,11 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
                             getPaginationRowModel: getPaginationRowModel()
                         }"
                     >
-                        <template #id-cell="{ row }">
+                        <!-- <template #id-cell="{ row }">
                             <span class="font-mono text-sm"
                                 >#{{ row.original.id }}</span
                             >
-                        </template>
+                        </template> -->
                         <template #name-cell="{ row }">
                             <span class="font-medium text-sky-400">
                                 {{ row.original.version }}
@@ -170,20 +168,21 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
                         </template>
                         <template #created_at-cell="{ row }">
                             <span class="text-sm">
-                                {{ row.original.created_at }}
+                                {{ new Date(row.original.created_at).toLocaleString() }}
                             </span>
                         </template>
                         <template #publishing_status-cell="{ row }">
                             <UBadge
-                                :status="row.original.publishing_status"
-                                :color="getPublishingStatusColor(row.original.publishing_status)"
+                                :color="getPublishingStatusColor(row.original.publishing_status) || 'neutral'"
                                 variant="subtle"
                                 class="capitalize"
-                            />
+                            >
+                                {{ row.original.publishing_status || "Unknown" }}
+                            </UBadge>
                         </template>
                         <template #published_at-cell="{ row }">
                             <span class="text-sm">{{
-                                    row.original.published_at
+                                    (row.original.published_at && row.original.publishing_status === 'completed')
                                         ? new Date(row.original.published_at).toLocaleString()
                                         : "N / A"
                             }}</span>
