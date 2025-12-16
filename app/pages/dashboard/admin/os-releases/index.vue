@@ -59,6 +59,15 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
     }
 }
 
+// Filter options for publishing status
+const publishingStatusOptions = [
+    { label: 'Pending', value: 'pending' },
+    { label: 'Running', value: 'running' },
+    { label: 'Paused', value: 'paused' },
+    { label: 'Completed', value: 'completed' },
+    { label: 'Failed', value: 'failed' },
+]
+
 </script>
 
 <template>
@@ -93,8 +102,21 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
                     :data="osReleases || []"
                     :columns="osReleasesTableColumns"
                     :loading="loading"
-                    filter-column="version"
-                    filter-placeholder="Filter by version..."
+                    :filters="[
+                        { 
+                            column: 'version', 
+                            type: 'text',
+                            placeholder: 'Search version...', 
+                            icon: 'i-lucide-search' 
+                        },
+                        { 
+                            column: 'publishing_status', 
+                            type: 'multi-select',
+                            placeholder: 'All statuses',
+                            icon: 'i-lucide-filter',
+                            options: publishingStatusOptions
+                        }
+                    ]"
                     empty-title="No releases"
                     empty-description="Create the first release to get started."
                     empty-icon="i-lucide-rocket"

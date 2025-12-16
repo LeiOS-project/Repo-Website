@@ -1,11 +1,42 @@
 <script setup lang="ts" generic="T">
-import type { TableColumn, TableRow } from '@nuxt/ui'
-import type { Row } from '@tanstack/vue-table'
+import type { TableColumn } from '@nuxt/ui'
+import type { Row, ColumnFiltersState, FilterFn } from '@tanstack/vue-table'
 import { getPaginationRowModel } from '@tanstack/table-core'
 
 // Cell slot props type (matches UTable's slot props)
 type CellSlotProps = {
     row: Row<T>
+}
+
+// Select option type for select filters
+interface SelectOption {
+    label: string
+    value: string | number | boolean | null
+    icon?: string
+    color?: string
+}
+
+// Filter types
+type FilterType = 'text' | 'select' | 'multi-select' | 'date' | 'number' | 'custom'
+
+// Filter configuration type
+interface FilterConfig {
+    /** Column key to filter */
+    column: string
+    /** Filter type */
+    type?: FilterType
+    /** Input placeholder */
+    placeholder?: string
+    /** Input icon */
+    icon?: string
+    /** Custom CSS class for the input */
+    class?: string
+    /** Options for select/multi-select filters */
+    options?: SelectOption[]
+    /** Custom filter function */
+    filterFn?: FilterFn<T>
+    /** Label for the filter (shown in multi-select badge) */
+    label?: string
 }
 
 // Props
@@ -16,10 +47,8 @@ interface Props {
     columns: TableColumn<T>[]
     /** Loading state */
     loading?: boolean
-    /** Filter column key for search input */
-    filterColumn?: string
-    /** Search input placeholder */
-    filterPlaceholder?: string
+    /** Filter configurations */
+    filters?: FilterConfig[]
     /** Default page size */
     defaultPageSize?: number
     /** Available page size options */
@@ -40,8 +69,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     loading: false,
-    filterColumn: undefined,
-    filterPlaceholder: 'Search...',
+    filters: () => [],
     defaultPageSize: 10,
     pageSizeOptions: () => [10, 25, 50, 100],
     showRefresh: true,
@@ -87,30 +115,99 @@ const slots = useSlots()
 // Table ref
 const table = useTemplateRef('table')
 
-// Column filters state
-const columnFilters = ref<{ id: string; value: string }[]>([])
+// Filter configurations
+const allFilters = computed<FilterConfig[]>(() => props.filters ?? [])
 
-// Initialize filter for the specified column
+// Column filters state
+const columnFilters = ref<ColumnFiltersState>([])
+
+// Initialize filters for all specified columns
 watchEffect(() => {
-    if (props.filterColumn) {
-        const existingFilter = columnFilters.value.find(f => f.id === props.filterColumn)
+    const filterColumns = allFilters.value.map(f => f.column)
+    for (const col of filterColumns) {
+        const existingFilter = columnFilters.value.find(f => f.id === col)
         if (!existingFilter) {
-            columnFilters.value = [{ id: props.filterColumn, value: '' }]
+            const filter = allFilters.value.find(f => f.column === col)
+            const initialValue = filter?.type === 'multi-select' ? [] : ''
+            columnFilters.value.push({ id: col, value: initialValue })
         }
     }
 })
 
-// Search computed property
-const searchValue = computed({
-    get: (): string => {
-        if (!props.filterColumn) return ''
-        return (table.value?.tableApi?.getColumn(props.filterColumn)?.getFilterValue() as string) || ''
-    },
-    set: (value: string) => {
-        if (props.filterColumn) {
-            table.value?.tableApi?.getColumn(props.filterColumn)?.setFilterValue(value || undefined)
-        }
+// Helper to get/set filter value for a specific column
+function getFilterValue(column: string): any {
+    const filter = allFilters.value.find(f => f.column === column)
+    const value = table.value?.tableApi?.getColumn(column)?.getFilterValue()
+    // Return undefined for select types to show placeholder, empty string for text
+    if (filter?.type === 'select' || filter?.type === 'multi-select') {
+        return value ?? undefined
     }
+    return value ?? ''
+}
+
+function setFilterValue(column: string, value: any) {
+    const filter = allFilters.value.find(f => f.column === column)
+    if (filter?.type === 'multi-select') {
+        table.value?.tableApi?.getColumn(column)?.setFilterValue(value?.length ? value : undefined)
+    } else {
+        table.value?.tableApi?.getColumn(column)?.setFilterValue(value || undefined)
+    }
+}
+
+// Get select items for a filter
+function getSelectItems(filter: FilterConfig) {
+    if (!filter.options) return []
+    return filter.options.map(opt => ({
+        label: opt.label,
+        value: opt.value as string | number
+    }))
+}
+
+// Get multi-select items for a filter
+function getMultiSelectItems(filter: FilterConfig) {
+    if (!filter.options) return []
+    return filter.options.map(opt => ({
+        label: opt.label,
+        value: opt.value
+    }))
+}
+
+// Enhanced columns with custom filter functions
+const enhancedColumns = computed<TableColumn<T>[]>(() => {
+    return props.columns.map(col => {
+        const accessorKey = (col as any).accessorKey || (col as any).id
+        const filter = allFilters.value.find(f => f.column === accessorKey)
+        
+        if (!filter) return col
+        
+        // Add custom filter function based on filter type
+        let filterFn: FilterFn<T> | undefined
+        
+        if (filter.filterFn) {
+            filterFn = filter.filterFn
+        } else if (filter.type === 'select') {
+            filterFn = (row, columnId, filterValue) => {
+                if (!filterValue || filterValue === '' || filterValue === null) return true
+                const cellValue = row.getValue(columnId)
+                return cellValue === filterValue
+            }
+        } else if (filter.type === 'multi-select') {
+            filterFn = (row, columnId, filterValue) => {
+                if (!filterValue || !Array.isArray(filterValue) || filterValue.length === 0) return true
+                const cellValue = row.getValue(columnId)
+                return filterValue.includes(cellValue)
+            }
+        }
+        
+        if (filterFn) {
+            return {
+                ...col,
+                filterFn
+            } as TableColumn<T>
+        }
+        
+        return col
+    })
 })
 
 // Pagination state
@@ -151,13 +248,58 @@ defineExpose({
                 <div class="flex flex-wrap items-center gap-3">
                     <slot name="header-left" />
                     
-                    <UInput
-                        v-if="filterColumn"
-                        v-model="searchValue"
-                        class="max-w-sm min-w-48"
-                        icon="i-lucide-search"
-                        :placeholder="filterPlaceholder"
-                    />
+                    <!-- Render all filters based on type -->
+                    <template v-for="filter in allFilters" :key="filter.column">
+                        <!-- Text Input Filter (default) -->
+                        <UInput
+                            v-if="!filter.type || filter.type === 'text'"
+                            :model-value="getFilterValue(filter.column) as string"
+                            :class="filter.class || 'max-w-sm min-w-48'"
+                            :icon="filter.icon || 'i-lucide-search'"
+                            :placeholder="filter.placeholder || 'Search...'"
+                            @update:model-value="(val: string) => setFilterValue(filter.column, val)"
+                        />
+
+                        <!-- Number Input Filter -->
+                        <UInput
+                            v-else-if="filter.type === 'number'"
+                            type="number"
+                            :model-value="getFilterValue(filter.column) as string"
+                            :class="filter.class || 'max-w-32 min-w-24'"
+                            :icon="filter.icon || 'i-lucide-hash'"
+                            :placeholder="filter.placeholder || 'Number...'"
+                            @update:model-value="(val: string) => setFilterValue(filter.column, val)"
+                        />
+
+                        <!-- Select Filter -->
+                        <USelectMenu
+                            v-else-if="filter.type === 'select'"
+                            :model-value="getFilterValue(filter.column)"
+                            :items="getSelectItems(filter)"
+                            :class="filter.class || 'min-w-40'"
+                            :placeholder="filter.placeholder || 'All'"
+                            @update:model-value="(val: any) => setFilterValue(filter.column, val)"
+                        >
+                            <template #leading>
+                                <UIcon v-if="filter.icon" :name="filter.icon" class="size-4 text-muted" />
+                            </template>
+                        </USelectMenu>
+
+                        <!-- Multi-Select Filter -->
+                        <USelectMenu
+                            v-else-if="filter.type === 'multi-select'"
+                            :model-value="(getFilterValue(filter.column) as any[]) || []"
+                            :items="getMultiSelectItems(filter)"
+                            multiple
+                            :class="filter.class || 'min-w-48'"
+                            :placeholder="filter.placeholder || 'Select...'"
+                            @update:model-value="(val: any) => setFilterValue(filter.column, val)"
+                        >
+                            <template #leading>
+                                <UIcon v-if="filter.icon" :name="filter.icon" class="size-4 text-muted" />
+                            </template>
+                        </USelectMenu>
+                    </template>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3">
@@ -185,7 +327,7 @@ defineExpose({
             v-else-if="data?.length"
             ref="table"
             :data="data"
-            :columns="columns"
+            :columns="enhancedColumns"
             v-model:column-filters="columnFilters"
             v-model:pagination="pagination"
             :pagination-options="{
