@@ -88,14 +88,27 @@ const publishingStatusOptions = [
         <template #body>
             <div class="space-y-6">
 
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-2xl font-bold">
-                            LeiOS Releases
-                        </h1>
-                        <p class="text-slate-400 mt-1">
-                            Here's an overview of your all OS Releases on LeiOS Hub.
-                        </p>
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-3">
+                            <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+                                <UIcon name="i-lucide-rocket" class="size-5 text-primary" />
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-semibold sm:text-2xl">
+                                    LeiOS Releases
+                                </h1>
+                                <p class="text-sm text-muted">
+                                    Manage and publish OS releases
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UBadge variant="subtle" color="neutral" class="gap-1.5">
+                            <UIcon name="i-lucide-layers" class="size-3" />
+                            {{ osReleases?.length || 0 }} releases
+                        </UBadge>
                     </div>
                 </div>
                 
