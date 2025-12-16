@@ -23,19 +23,20 @@ const { data: osReleases, pending: loading, refresh } = await useAsyncData<OSRel
             toast.add({ title: 'Failed to load OS Releases', description: res.message, color: 'error' })
             return []
         }
-        return res.data
+        // return res.data;
+        
+        for (let i = 0; i < 50; i++) {
+            res.data.push({
+                id: i + 1,
+                version: `2025.12.${String(i).padStart(2, '0')}`,
+                created_at: Date.now() - i * 1000 * 60 * 60 * 24,
+                published_at: Date.now() - i * 1000 * 60 * 60 * 24,
+                publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[Math.floor(Math.random() * 1000) % 5] as OSRelease['publishing_status'],
+            });
+        }
+        return res.data;
     }
 )
-
-for (let i = 0; i < 50; i++) {
-    osReleases.value?.push({
-        id: i + 1,
-        version: `2025.12.${String(i).padStart(2, '0')}`,
-        created_at: Date.now() - i * 1000 * 60 * 60 * 24,
-        published_at: Date.now() - i * 1000 * 60 * 60 * 24,
-        publishing_status: (['pending', 'running', 'paused', 'completed', 'failed'] satisfies OSRelease['publishing_status'][])[Math.floor(Math.random() * 1000) % 5] as OSRelease['publishing_status'],
-    })
-}
 
 const osReleasesTableColumns: TableColumn<OSRelease>[] = [
     { accessorKey: 'version' , header: 'Version' },

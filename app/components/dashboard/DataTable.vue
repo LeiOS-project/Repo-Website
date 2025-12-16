@@ -244,8 +244,9 @@ defineExpose({
 <template>
     <UCard class="border-slate-800 bg-slate-900/60">
         <template #header>
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+                <!-- Filters Section -->
+                <div class="flex flex-col gap-2 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                     <slot name="header-left" />
                     
                     <!-- Render all filters based on type -->
@@ -254,7 +255,7 @@ defineExpose({
                         <UInput
                             v-if="!filter.type || filter.type === 'text'"
                             :model-value="getFilterValue(filter.column) as string"
-                            :class="filter.class || 'max-w-sm min-w-48'"
+                            :class="filter.class || 'w-full sm:w-auto sm:max-w-sm sm:min-w-48'"
                             :icon="filter.icon || 'i-lucide-search'"
                             :placeholder="filter.placeholder || 'Search...'"
                             @update:model-value="(val: string) => setFilterValue(filter.column, val)"
@@ -265,7 +266,7 @@ defineExpose({
                             v-else-if="filter.type === 'number'"
                             type="number"
                             :model-value="getFilterValue(filter.column) as string"
-                            :class="filter.class || 'max-w-32 min-w-24'"
+                            :class="filter.class || 'w-full sm:w-auto sm:max-w-32 sm:min-w-24'"
                             :icon="filter.icon || 'i-lucide-hash'"
                             :placeholder="filter.placeholder || 'Number...'"
                             @update:model-value="(val: string) => setFilterValue(filter.column, val)"
@@ -277,7 +278,7 @@ defineExpose({
                             :model-value="getFilterValue(filter.column)"
                             :items="getSelectItems(filter)"
                             value-key="value"
-                            :class="filter.class || 'min-w-40'"
+                            :class="filter.class || 'w-full sm:w-auto sm:min-w-40'"
                             :placeholder="filter.placeholder || 'All'"
                             @update:model-value="(val: any) => setFilterValue(filter.column, val)"
                         >
@@ -293,7 +294,7 @@ defineExpose({
                             :items="getMultiSelectItems(filter)"
                             value-key="value"
                             multiple
-                            :class="filter.class || 'min-w-48'"
+                            :class="filter.class || 'w-full sm:w-auto sm:min-w-48'"
                             :placeholder="filter.placeholder || 'Select...'"
                             @update:model-value="(val: any) => setFilterValue(filter.column, val)"
                         >
@@ -304,13 +305,23 @@ defineExpose({
                     </template>
                 </div>
                 
-                <div class="flex flex-wrap items-center gap-3">
+                <!-- Actions Section -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <UButton
+                        v-if="showRefresh"
+                        icon="i-lucide-refresh-cw"
+                        color="neutral"
+                        variant="subtle"
+                        class="sm:hidden"
+                        @click="handleRefresh"
+                    />
                     <UButton
                         v-if="showRefresh"
                         label="Refresh"
                         icon="i-lucide-refresh-cw"
                         color="neutral"
                         variant="subtle"
+                        class="hidden sm:inline-flex"
                         @click="handleRefresh"
                     />
                     
