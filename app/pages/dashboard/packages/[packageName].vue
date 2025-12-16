@@ -153,9 +153,12 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
         <template #header>
             <UDashboardNavbar :title="`${packageName}`" icon="i-lucide-package">
                 <template #title>
-                    <UBreadcrumb :items="breadcrumbItems" :ui='{
-                        link: "text-md"
-                    }' />
+                    <UBreadcrumb
+                        :items="breadcrumbItems"
+                        :ui='{
+                            link: "text-md"
+                        }'
+                    />
                     <!-- <UButton
                         icon="i-lucide-arrow-left"
                         variant="ghost"

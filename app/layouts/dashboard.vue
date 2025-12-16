@@ -124,11 +124,7 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
     return [[...devItems, ...adminItems, ...settings], footerItems];
 });
 
-const profileLabel = computed(() => {
-    if (user.value?.display_name) return user.value.display_name;
-    if (user.value?.username) return user.value.username;
-    return "Profile";
-});
+
 </script>
 
 <template>
@@ -152,12 +148,11 @@ const profileLabel = computed(() => {
             :max-size="30"
         >
             <template #header="{ collapsed }">
-                <NuxtLink to="/" class="flex items-center gap-2">
-                    <LeiOSLogo v-if="!collapsed" class="h-6 w-auto" />
+                <NuxtLink to="/" class="lg:ms-2.5 flex items-center gap-1.5">
+                    <LeiOSLogo v-if="!collapsed" class="h-6 w-auto flex-none" />
+                    <span v-if="!collapsed" class="text-lg font-semibold">/</span>
+                    <span v-if="!collapsed" class="text-lg font-semibold">Hub</span>
                     <LeiOSIcon v-else class="h-8 w-8" />
-                    <span v-if="!collapsed" class="text-lg font-semibold"
-                        >/ Hub</span
-                    >
                 </NuxtLink>
             </template>
 

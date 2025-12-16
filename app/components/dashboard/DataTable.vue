@@ -310,7 +310,7 @@ defineExpose({
                 </div>
                 
                 <!-- Actions Section -->
-                <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 justify-end">
                     <UButton
                         v-if="showRefresh"
                         icon="i-lucide-refresh-cw"
@@ -328,7 +328,15 @@ defineExpose({
                         class="hidden sm:inline-flex"
                         @click="handleRefresh"
                     />
-                    
+                    <!-- <UButton
+                        v-if="showRefresh"
+                        label="Refresh"
+                        icon="i-lucide-refresh-cw"
+                        color="neutral"
+                        variant="subtle"
+                        @click="handleRefresh"
+                    /> -->
+
                     <slot name="header-right" />
                 </div>
             </div>
