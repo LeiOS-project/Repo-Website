@@ -29,7 +29,7 @@ const password = reactive<Partial<PasswordSchema>>({
 	current_password: undefined,
 	new_password: undefined,
 	confirm_password: undefined
-})
+});
 
 const validate = (state: Partial<PasswordSchema>): FormError[] => {
 	const errors: FormError[] = []
