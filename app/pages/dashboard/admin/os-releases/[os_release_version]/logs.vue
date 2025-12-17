@@ -51,7 +51,7 @@ const parsedLogs = computed<LogEntry[]>(() => {
     return lines.map(line => {
         // Try to parse timestamp (common formats: ISO, brackets, etc.)
         const timestampMatch = line.match(/^(\[?\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?\]?)\s*/);
-        const timestamp = timestampMatch ? timestampMatch[1].replace(/[\[\]]/g, '') : '';
+        const timestamp = timestampMatch?.[1]?.replace(/[\[\]]/g, '') || '';
         const restOfLine = timestampMatch ? line.slice(timestampMatch[0].length) : line;
         
         // Detect log level
@@ -79,7 +79,7 @@ const parsedLogs = computed<LogEntry[]>(() => {
 
 // Filter state
 const searchQuery = ref('');
-const selectedLevels = ref<LogEntry['level'][]>([]);
+const selectedLevelObjects = ref<Array<{ label: string; value: string; icon: string; color: string }>>([]);
 const showTimestamps = ref(true);
 const autoScroll = ref(true);
 
@@ -90,6 +90,8 @@ const levelOptions = [
     { label: 'Error', value: 'error', icon: 'i-lucide-x-circle', color: 'error' },
     { label: 'Debug', value: 'debug', icon: 'i-lucide-bug', color: 'neutral' }
 ];
+
+const selectedLevels = computed(() => selectedLevelObjects.value.map(opt => opt.value));
 
 const filteredLogs = computed(() => {
     let logs = parsedLogs.value;
@@ -305,7 +307,7 @@ onMounted(() => {
                         
                         <!-- Level Filter -->
                         <USelectMenu
-                            v-model="selectedLevels"
+                            v-model="selectedLevelObjects"
                             :items="levelOptions"
                             multiple
                             placeholder="Filter by level"
