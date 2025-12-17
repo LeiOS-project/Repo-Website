@@ -23,12 +23,22 @@ useSeoMeta({
 const { data: result, refresh, pending, error } = await useAsyncData(
     `os-release:${os_release_version}`,
     async () => {
-        const res = await useAPI((api) => api.getAdminOsReleasesVersion({
-            path: {
-                version: os_release_version
-            }
-        }));
-        return res;
+        // const res = await useAPI((api) => api.getAdminOsReleasesVersion({
+        //     path: {
+        //         version: os_release_version
+        //     }
+        // }));
+        // return res;
+        return {
+            success: true,
+            data: {
+                id: 1,
+                version: os_release_version,
+                created_at: Date.now() - 1000 * 60 * 60 * 24 * 7,
+                published_at: Date.now() - 1000 * 60 * 60 * 24 * 3,
+                publishing_status: 'completed' as OSRelease['publishing_status'],
+            } satisfies OSRelease
+        };
     }
 )
 
