@@ -37,7 +37,7 @@ const { data: osReleases, pending: loading, refresh } = await useAsyncData<OSRel
         }
         return res.data;
     }
-)
+);
 
 const osReleasesTableColumns: TableColumn<OSRelease>[] = [
     { accessorKey: 'version' , header: 'Version' },
