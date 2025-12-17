@@ -404,7 +404,7 @@ onMounted(() => {
                 <!-- Log Output -->
                 <div 
                     ref="logContainer"
-                    class="h-[500px] overflow-y-auto font-mono text-sm bg-slate-950/50"
+                    class="h-[calc(100vh-235px)] overflow-y-auto font-mono text-sm bg-slate-950/50"
                 >
                     <!-- Empty filter result -->
                     <div v-if="filteredLogs.length === 0" class="flex flex-col items-center justify-center h-full text-slate-400">
