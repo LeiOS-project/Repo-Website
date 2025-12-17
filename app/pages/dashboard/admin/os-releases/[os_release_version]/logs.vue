@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
-import type { GetAdminOsReleasesResponses } from '~/api-client';
+import type { GetAdminOsReleasesResponses, GetAdminOsReleasesVersionPublishingLogsResponses } from '~/api-client';
 
 const toast = useToast();
 const route = useRoute();
@@ -10,6 +10,7 @@ const os_release_version = route.params.os_release_version as string;
 const title = `Logs | Release ${os_release_version} | OS Releases`;
 
 type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
+type OSReleasePublishingLogs = GetAdminOsReleasesVersionPublishingLogsResponses["200"]["data"];
 
 useSeoMeta({
     title: `${title} | LeiOS Hub`,
@@ -24,12 +25,41 @@ const {
     pending: os_release_publishing_logs_loading,
     error: os_release_publishing_logs_error
 } = await useAsyncData(`admin-os-release:${os_release_version}:logs`, async () => {
-    const res = await useAPI((api) => api.getAdminOsReleasesVersionPublishingLogs({
+    /* const res = await useAPI((api) => api.getAdminOsReleasesVersionPublishingLogs({
         path: {
             version: os_release_version
         }
     }));
-    return res.data;
+    return res.data;*/
+    const return_data = {
+        logs: ""
+    };
+    for (let i = 0; i < 500; i++) {
+        const levels = ['info', 'success', 'warn', 'error', 'debug'];
+        const level = levels[Math.floor(Math.random() * levels.length)] || 'info';
+        const timestamp = new Date(Date.now() - Math.floor(Math.random() * 1000000000)).toISOString();
+        let message = "";
+        switch (level) {
+            case 'info':
+                message = `Info: This is an informational message number ${i}.`;
+                break;
+            case 'success':
+                message = `Success: Operation completed successfully for item ${i}.`;
+                break;
+            case 'warn':
+                message = `Warning: Potential issue detected in process ${i}.`;
+                break;
+            case 'error':
+                message = `Error: An error occurred while processing item ${i}.`;
+                break;
+            case 'debug':
+                message = `Debug: Variable x has value ${Math.random()} at step ${i}.`;
+                break;
+        }
+        return_data.logs += `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
+        return return_data;
+    }
+
 });
 
 // Parse logs into structured format
