@@ -41,19 +41,19 @@ const {
         let message = "";
         switch (level) {
             case 'info':
-                message = `Info: This is an informational message number ${i}.`;
+                message = `This is an informational message number ${i}.`;
                 break;
             case 'success':
-                message = `Success: Operation completed successfully for item ${i}.`;
+                message = `Operation completed successfully for item ${i}.`;
                 break;
             case 'warn':
-                message = `Warning: Potential issue detected in process ${i}.`;
+                message = `Potential issue detected in process ${i}.`;
                 break;
             case 'error':
-                message = `Error: An error occurred while processing item ${i}.`;
+                message = `An error occurred while processing item ${i}.`;
                 break;
             case 'debug':
-                message = `Debug: Variable x has value ${Math.random()} at step ${i}.`;
+                message = `Variable x has value ${Math.random()} at step ${i}.`;
                 break;
         }
         return_data.logs += `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
