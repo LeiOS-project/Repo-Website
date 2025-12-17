@@ -20,7 +20,7 @@ useSeoMeta({
     description: 'Manage OS Releases on LeiOS Hub'
 });
 
-const { data, refresh, pending, error } = await useAsyncData(
+const { data: result, refresh, pending, error } = await useAsyncData(
     `os-release:${os_release_version}`,
     async () => {
         const res = await useAPI((api) => api.getAdminOsReleasesVersion({
@@ -28,24 +28,15 @@ const { data, refresh, pending, error } = await useAsyncData(
                 version: os_release_version
             }
         }));
-        if (!res.success) {
-            toast.add({ title: res.message || 'Failed to load OS Release', description: res.message, color: 'error' });
-
-            createError({
-                statusCode: res.code || 500,
-                statusMessage: res.message || 'Failed to load OS Release'
-            });
-
-            return null;
-        }
-        return res.data;
+        return res;
     }
 )
+
+const data = computed(() => result.value?.data);
 
 provide('os_release_data', data);
 provide('os_release_refresh', refresh);
 provide('os_release_pending', pending);
-provide('os_release_error', error);
 
 const pathBreadcrumbItems = [
     { label: 'OS Releases', to: '/dashboard/admin/os-releases' },
@@ -85,7 +76,8 @@ const links = [[
 
         <template #body>
 			<div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full lg:max-w-3xl mx-auto">
-				<NuxtPage />
+				<NuxtPage v-if="result?.success" />
+                <UError v-else-if="error" :error="error" />
 			</div>
 		</template>
 
