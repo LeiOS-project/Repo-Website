@@ -17,8 +17,6 @@ useSeoMeta({
 });
 
 const os_release = inject<Ref<OSRelease>>('os_release_data') as Ref<OSRelease>;
-const os_release_refresh = inject<() => Promise<void>>('os_release_refresh');
-const os_release_pending = inject<Ref<boolean>>('os_release_pending');
 
 const {
     data: os_release_publishing_logs,
