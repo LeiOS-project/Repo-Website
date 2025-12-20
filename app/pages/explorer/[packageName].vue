@@ -23,7 +23,6 @@ const { data: pkgData, pending, refresh } = await useAsyncData(
                     path: { packageName: route.params.packageName as string },
                     ...(repo.value === 'all' ? {} : { query: { repo: repo.value } })
                 }),
-            "normal",
             true
         )
 

@@ -31,16 +31,16 @@ const packageTableColumns: TableColumn<DevPackage>[] = [
     { id: 'actions', header: '', enableSorting: false, enableHiding: false }
 ]
 
-const packages = await useAPI(async (api) => {
-
-    const res = await api.getDevPackages({});
-    if (!res.success) {
-        toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
-        return [];
+const packages = await useAPIAsyncData(
+    "dev-packages", async () => {
+        const res = await useAPI((api) => api.getDevPackages({}));
+        if (!res.success) {
+            toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
+            return [];
+        }
+        return res.data;
     }
-    return res.data;
-
-}, "lazyAsyncData");
+)
 
 const createSchema = z.object({
     name: z.string().min(1, 'Name is required').regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
@@ -96,11 +96,11 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
 
         <template #body>
             <DashboardPageBody>
-                <div v-if="packages.loading" class="flex items-center justify-center py-12">
+                <!-- <div v-if="packages.loading" class="flex items-center justify-center py-12">
                     <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
                 </div>
 
-                <!-- <UTable
+                <UTable
                     :data="package_data || []"
                     :columns="packageTableColumns"
                 >
@@ -184,7 +184,7 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                             @click="showCreateModal = true"
                         />
                     </template>
-                </UEmpty> --> -->
+                </UEmpty> -->
 
                 <DashboardDataTable
                     :data="packages.data"

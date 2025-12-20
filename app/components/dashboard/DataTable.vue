@@ -344,15 +344,15 @@ defineExpose({
         </template>
 
         <!-- Loading State -->
-        <div v-if="loading" class="flex items-center justify-center py-12">
+        <div v-if="isRef(loading) ? loading.value : loading" class="flex items-center justify-center py-12">
             <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
         </div>
 
         <!-- Table -->
         <UTable
-            v-else-if="(data as T[])?.length"
+            v-else-if="(isRef(data) ? data.value : data)?.length"
             ref="table"
-            :data="(data as T[])"
+            :data="isRef(data) ? data.value : data"
             :columns="enhancedColumns"
             v-model:column-filters="columnFilters"
             v-model:pagination="pagination"
@@ -382,7 +382,7 @@ defineExpose({
             </slot>
         </template>
 
-        <template v-if="!loading && (data as T[])?.length && (showPagination || showPageSizeSelector)" #footer>
+        <template v-if="!(isRef(loading) ? loading.value : loading) && ((isRef(data) ? data.value : data))?.length && (showPagination || showPageSizeSelector)" #footer>
             <div class="flex items-center gap-3" :class="showPageSizeSelector && !isMobile ? 'justify-between' : 'justify-center'">
                 <div v-if="showPageSizeSelector && !isMobile" class="flex items-center gap-3 text-sm text-muted">
                     <slot name="footer-left">
