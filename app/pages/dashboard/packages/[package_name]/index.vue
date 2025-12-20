@@ -12,11 +12,11 @@ definePageMeta({
 
 const route = useRoute()
 const toast = useToast()
-const packageName = route.params.packageName as string
+const package_name = route.params.package_name as string
 
 useSeoMeta({
-    title: `${packageName} | Packages | LeiOS Hub`,
-    description: `Manage package ${packageName}`
+    title: `${package_name} | Packages | LeiOS Hub`,
+    description: `Manage package ${package_name}`
 })
 
 const showUploadModal = ref(route.query.action === 'upload')
@@ -39,9 +39,9 @@ const stableForm = reactive({
 
 // Fetch package details
 const { data: pkg, pending: loadingPkg } = await useAsyncData<DevPackage>(
-    `dev-package-${packageName}`,
+    `dev-package-${package_name}`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageName({ path: { packageName } }))
+        const res = await useAPI((api) => api.getDevPackagesPackageName({ path: { packageName: package_name } }))
         if (!res.success) {
             toast.add({ title: 'Failed to load package', description: res.message, color: 'error' })
             return null as unknown as DevPackage
@@ -52,9 +52,9 @@ const { data: pkg, pending: loadingPkg } = await useAsyncData<DevPackage>(
 
 // Fetch releases
 const { data: releases, pending: loadingReleases, refresh: refreshReleases } = await useAsyncData<Release[]>(
-    `dev-package-${packageName}-releases`,
+    `dev-package-${package_name}-releases`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageNameReleases({ path: { packageName } }))
+        const res = await useAPI((api) => api.getDevPackagesPackageNameReleases({ path: { packageName: package_name } }))
         if (!res.success) {
             return []
         }
@@ -64,9 +64,9 @@ const { data: releases, pending: loadingReleases, refresh: refreshReleases } = a
 
 // Fetch stable requests
 const { data: stableRequests, refresh: refreshStableRequests } = await useAsyncData<StableRequest[]>(
-    `dev-package-${packageName}-stable-requests`,
+    `dev-package-${package_name}-stable-requests`,
     async () => {
-        const res = await useAPI((api) => api.getDevPackagesPackageNameStablePromotionRequests({ path: { packageName } }))
+        const res = await useAPI((api) => api.getDevPackagesPackageNameStablePromotionRequests({ path: { packageName: package_name } }))
         if (!res.success) {
             return []
         }
@@ -89,7 +89,7 @@ async function handleUpload() {
     console.log(uploadForm.file instanceof Blob)
     const res = await useAPI((api) => api.postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch({
         path: {
-            packageName,
+            packageName: package_name,
             versionWithLeiosPatch: uploadForm.version,
             arch: uploadForm.arch
         },
@@ -116,7 +116,7 @@ async function requestStable() {
     }
 
     const res = await useAPI((api) => api.postDevPackagesPackageNameStablePromotionRequests({
-        path: { packageName },
+        path: { packageName: package_name },
         body: { package_release_id: stableForm.release_id }
     }))
 
@@ -140,7 +140,7 @@ function getStatusColor(status: StableRequest['status']) {
 
 const breadcrumbItems = ref<BreadcrumbItem[]>([
     { label: 'Packages', to: '/dashboard/packages' },
-    { label: packageName }
+    { label: package_name }
 ]);
 
 </script>

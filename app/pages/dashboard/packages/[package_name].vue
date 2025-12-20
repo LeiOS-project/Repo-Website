@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { NavigationMenuItem } from '@nuxt/ui';
+import type { BreadcrumbItem, NavigationMenuItem } from '@nuxt/ui';
 import type { GetDevPackagesResponses } from '~/api-client';
 
 const toast = useToast();
@@ -20,7 +20,7 @@ useSeoMeta({
     description: `Manage the package ${package_name} on LeiOS Hub`
 });
 
-const { data: result, refresh, pending, error } = await useAsyncData(
+const { data: result, refresh, pending } = await useAsyncData(
     `dev-package:${package_name}`,
     async () => {
         const res = await useAPI((api) => api.getDevPackagesPackageName({
@@ -32,13 +32,22 @@ const { data: result, refresh, pending, error } = await useAsyncData(
     }
 )
 
+let error = null;
+
+if (!result.value?.success) {
+    error = createError({
+        statusCode: result.value?.code || 500,
+        statusMessage: result.value?.message || 'Failed to load package data'
+    });
+}
+
 const data = computed(() => result.value?.data);
 
 provide('package_data', data);
 provide('package_refresh', refresh);
 provide('package_pending', pending);
 
-const pathBreadcrumbItems = [
+const pathBreadcrumbItems: BreadcrumbItem[] = [
     { label: 'Packages', to: '/dashboard/packages' },
     { label: package_name }
 ];
