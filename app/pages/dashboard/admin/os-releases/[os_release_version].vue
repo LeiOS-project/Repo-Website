@@ -17,7 +17,7 @@ definePageMeta({
 
 useSeoMeta({
     title: `${title} | LeiOS Hub`,
-    description: 'Manage OS Releases on LeiOS Hub'
+    description: `Manage OS Release ${os_release_version} on LeiOS Hub`
 });
 
 const { data: result, refresh, pending, error } = await useAsyncData(

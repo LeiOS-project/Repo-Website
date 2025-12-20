@@ -139,12 +139,9 @@ function getStatusColor(status: StableRequest['status']) {
 }
 
 const breadcrumbItems = ref<BreadcrumbItem[]>([
-    {
-        label: 'Packages',
-        to: '/dashboard/packages'
-    },
+    { label: 'Packages', to: '/dashboard/packages' },
     { label: packageName }
-])
+]);
 
 </script>
 
