@@ -27,7 +27,9 @@ const archOptions = [
     { label: 'arm64', value: 'arm64' }
 ]
 
-
+const pkg = inject<Ref<DevPackage>>('package_data') as Ref<DevPackage>;
+const loadingPkg = inject<Ref<boolean>>('package_loading') as Ref<boolean>;
+const package_refresh = inject<() => Promise<void>>('package_refresh');
 
 // Fetch releases
 const { data: releases, pending: loadingReleases, refresh: refreshReleases } = await useAsyncData<Release[]>(
@@ -53,61 +55,9 @@ const { data: stableRequests, refresh: refreshStableRequests } = await useAsyncD
     }
 )
 
-function handleFileChange(event: Event) {
-    const target = event.target as HTMLInputElement
-    if (target.files?.length) {
-        uploadForm.file = target.files[0] ?? null
-    }
-}
 
-async function handleUpload() {
-    if (!uploadForm.file) {
-        toast.add({ title: 'File required', description: 'Please select a file to upload.', color: 'warning' })
-        return
-    }
-    console.log(uploadForm.file instanceof Blob)
-    const res = await useAPI((api) => api.postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch({
-        path: {
-            packageName: package_name,
-            versionWithLeiosPatch: uploadForm.version,
-            arch: uploadForm.arch
-        },
-        body: {
-            file: uploadForm.file as File
-        }
-    }))
 
-    if (res.success) {
-        toast.add({ title: 'Release uploaded', description: 'Your release is being processed.', color: 'success' })
-        showUploadModal.value = false
-        uploadForm.version = ''
-        uploadForm.file = null
-        await refreshReleases()
-    } else {
-        toast.add({ title: 'Upload failed', description: res.message, color: 'error' })
-    }
-}
 
-async function requestStable() {
-    if (!stableForm.release_id) {
-        toast.add({ title: 'Release required', description: 'Please select a release.', color: 'warning' })
-        return
-    }
-
-    const res = await useAPI((api) => api.postDevPackagesPackageNameStablePromotionRequests({
-        path: { packageName: package_name },
-        body: { package_release_id: stableForm.release_id }
-    }))
-
-    if (res.success) {
-        toast.add({ title: 'Request submitted', description: 'Your stable promotion request has been submitted.', color: 'success' })
-        showStableModal.value = false
-        stableForm.release_id = 0
-        await refreshStableRequests()
-    } else {
-        toast.add({ title: 'Request failed', description: res.message, color: 'error' })
-    }
-}
 
 function getStatusColor(status: StableRequest['status']) {
     switch (status) {
@@ -329,84 +279,4 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
         </template>
     </UDashboardPanel> -->
 
-    <!-- Upload Modal -->
-    <DashboardModal
-        v-model:open="showUploadModal"
-        title="Upload Release"
-        icon="i-lucide-upload"
-    >
-        <div class="space-y-4">
-            <UFormField label="Version" required>
-                <UInput v-model="uploadForm.version" placeholder="1.0.0-leios1" />
-                <template #hint>
-                    Format: version-leiosN (e.g., 1.0.0-leios1)
-                </template>
-            </UFormField>
-
-            <UFormField label="Architecture" required>
-                <USelect v-model="uploadForm.arch" :items="archOptions" />
-            </UFormField>
-
-            <UFormField label="Release File" required>
-                <UFileUpload
-                    v-model="uploadForm.file"
-                    accept=".deb"
-                    label="Select release file"
-                />
-            </UFormField>
-
-            <div class="flex justify-end gap-2 pt-4">
-                <UButton
-                    label="Cancel"
-                    color="neutral"
-                    variant="ghost"
-                    @click="showUploadModal = false"
-                />
-                <UButton
-                    label="Upload"
-                    color="primary"
-                    @click="handleUpload"
-                />
-            </div>
-        </div>
-    </DashboardModal>
-
-    <!-- Stable Request Modal -->
-    <DashboardModal
-        v-model:open="showStableModal"
-        title="Request Stable Promotion"
-        icon="i-lucide-git-pull-request"
-        icon-color="amber"
-    >
-        <div class="space-y-4">
-            <UFormField label="Release" required>
-                <USelect
-                    v-model="stableForm.release_id"
-                    :items="(releases || []).map(r => ({ label: `${r.versionWithLeiosPatch} (${r.architecture})`, value: r.id }))"
-                    placeholder="Select a release"
-                />
-            </UFormField>
-
-            <UAlert
-                icon="i-lucide-info"
-                color="info"
-                title="Note"
-                description="Once submitted, an admin will review your request. You'll be notified of the decision."
-            />
-
-            <div class="flex justify-end gap-2 pt-4">
-                <UButton
-                    label="Cancel"
-                    color="neutral"
-                    variant="ghost"
-                    @click="showStableModal = false"
-                />
-                <UButton
-                    label="Submit Request"
-                    color="primary"
-                    @click="requestStable"
-                />
-            </div>
-        </div>
-    </DashboardModal>
 </template>

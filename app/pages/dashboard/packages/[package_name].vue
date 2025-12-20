@@ -47,10 +47,29 @@ provide('package_data', data);
 provide('package_refresh', refresh);
 provide('package_loading', loading);
 
-const pathBreadcrumbItems: BreadcrumbItem[] = [
-    { label: 'Packages', to: '/dashboard/packages' },
-    { label: package_name }
-];
+const pathBreadcrumbItems = computed<BreadcrumbItem[]>(() => {
+    const items: BreadcrumbItem[] = [
+        { label: 'Packages', to: '/dashboard/packages' },
+    ];
+
+    const normalizedPath = route.path.replace(/\/$/, '');
+
+    if (normalizedPath.endsWith('/releases')) {
+        items.push(
+            { label: package_name, to: `/dashboard/packages/${package_name}` },
+            { label: 'Releases' }
+        );
+    } else if (normalizedPath.endsWith('/stable-promotion-requests')) {
+        items.push(
+            { label: package_name, to: `/dashboard/packages/${package_name}` },
+            { label: 'Stable Promotion Requests' }
+        );
+    } else {
+        items.push({ label: package_name });
+    }
+
+    return items;
+});
 
 const links = [[
     {
@@ -77,7 +96,7 @@ const links = [[
     <UDashboardPanel>
         <template #header>
             <DashboardPageHeader
-                icon="i-lucide-rocket"
+                icon="i-lucide-package"
                 :breadcrumb-items="pathBreadcrumbItems"
             />
 
