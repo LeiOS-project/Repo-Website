@@ -2,6 +2,7 @@
 import type { GetAdminOsReleasesResponses } from '~/api-client'
 import type { TableColumn } from '@nuxt/ui'
 import type DashboardPageHeaderVue from '~/components/dashboard/DashboardPageHeader.vue';
+import DashboardPageBody from '~/components/dashboard/DashboardPageBody.vue';
 
 const toast = useToast()
 
@@ -88,7 +89,7 @@ const publishingStatusOptions = [
         </template>
 
         <template #body>
-            <div class="space-y-6">
+            <DashboardPageBody>
                 <DashboardDataTable
                     :data="osReleases || []"
                     :columns="osReleasesTableColumns"
@@ -155,7 +156,7 @@ const publishingStatusOptions = [
                         <UButton label="Create Release" color="primary" />
                     </template>
                 </DashboardDataTable>
-            </div>
+            </DashboardPageBody>
         </template>
     </UDashboardPanel>
 </template>

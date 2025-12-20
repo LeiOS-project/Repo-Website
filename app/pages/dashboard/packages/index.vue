@@ -4,6 +4,7 @@ import type { GetDevPackagesResponses } from '@/api-client/types.gen'
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { useAPI } from '@/composables/useAPI'
+import DashboardPageBody from '~/components/dashboard/DashboardPageBody.vue'
 
 type DevPackage = GetDevPackagesResponses[200]['data'][number]
 
@@ -21,7 +22,7 @@ const toast = useToast()
 
 const showCreateModal = ref(route.query.action === 'create')
 
-const packageColumns: TableColumn<DevPackage>[] = [
+const packageTableColumns: TableColumn<DevPackage>[] = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'description', header: 'Description' },
     { accessorKey: 'homepage_url', header: 'Homepage' },
@@ -78,20 +79,25 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar title="Packages" icon="i-lucide-package">
+            <!-- <UDashboardNavbar title="Packages" icon="i-lucide-package">
                 <template #right>
-                    <!-- <UButton
+                    <UButton
                         label="New Package"
                         icon="i-lucide-plus"
                         color="primary"
                         @click="showCreateModal = true"
-                    /> -->
+                    />
                 </template>
-            </UDashboardNavbar>
+            </UDashboardNavbar> -->
+            <DashboardPageHeader
+                title="Packages"
+                icon="i-lucide-package"
+                description="Manage your packages"
+            />
         </template>
 
         <template #body>
-            <div class="space-y-6">
+            <DashboardPageBody>
                 <!-- <div v-if="loading" class="flex items-center justify-center py-12">
                     <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
                 </div>
@@ -182,7 +188,26 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                         />
                     </template>
                 </UEmpty> -->
-            </div>
+
+                <DashboardDataTable
+                    :data="packages || []"
+                    :columns="packageTableColumns"
+                    :loading="loading"
+                    :filters="[
+                        { 
+                            column: 'name', 
+                            type: 'text',
+                            placeholder: 'Search version...', 
+                            icon: 'i-lucide-search' 
+                        }
+                    ]"
+                    empty-title="No releases"
+                    empty-description="Create the first release to get started."
+                    empty-icon="i-lucide-rocket"
+                    @refresh="refresh()"
+                ></DashboardDataTable>
+
+            </DashboardPageBody>
         </template>
     </UDashboardPanel>
 

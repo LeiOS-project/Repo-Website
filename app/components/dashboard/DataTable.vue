@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends Record<string, any>">
 import type { TableColumn } from '@nuxt/ui'
 import type { Row, ColumnFiltersState, FilterFn } from '@tanstack/vue-table'
 import { getPaginationRowModel } from '@tanstack/table-core'
@@ -23,7 +23,7 @@ type FilterType = 'text' | 'select' | 'multi-select' | 'date' | 'number' | 'cust
 // Filter configuration type
 interface FilterConfig {
     /** Column key to filter */
-    column: string
+    column: keyof T;
     /** Filter type */
     type?: FilterType
     /** Input placeholder */
@@ -130,7 +130,7 @@ watchEffect(() => {
         if (!existingFilter) {
             const filter = allFilters.value.find(f => f.column === col)
             const initialValue = filter?.type === 'multi-select' ? [] : ''
-            columnFilters.value.push({ id: col, value: initialValue })
+            columnFilters.value.push({ id: col as string, value: initialValue })
         }
     }
 })
@@ -258,33 +258,33 @@ defineExpose({
                         <!-- Text Input Filter (default) -->
                         <UInput
                             v-if="!filter.type || filter.type === 'text'"
-                            :model-value="getFilterValue(filter.column) as string"
+                            :model-value="getFilterValue(filter.column as string) as string"
                             :class="filter.class || 'w-full sm:w-auto sm:max-w-sm sm:min-w-48'"
                             :icon="filter.icon || 'i-lucide-search'"
                             :placeholder="filter.placeholder || 'Search...'"
-                            @update:model-value="(val: string) => setFilterValue(filter.column, val)"
+                            @update:model-value="(val: string) => setFilterValue(filter.column as string, val)"
                         />
 
                         <!-- Number Input Filter -->
                         <UInput
                             v-else-if="filter.type === 'number'"
                             type="number"
-                            :model-value="getFilterValue(filter.column) as string"
+                            :model-value="getFilterValue(filter.column as string) as string"
                             :class="filter.class || 'w-full sm:w-auto sm:max-w-32 sm:min-w-24'"
                             :icon="filter.icon || 'i-lucide-hash'"
                             :placeholder="filter.placeholder || 'Number...'"
-                            @update:model-value="(val: string) => setFilterValue(filter.column, val)"
+                            @update:model-value="(val: string) => setFilterValue(filter.column as string, val)"
                         />
 
                         <!-- Select Filter -->
                         <USelectMenu
                             v-else-if="filter.type === 'select'"
-                            :model-value="getFilterValue(filter.column)"
+                            :model-value="getFilterValue(filter.column as string)"
                             :items="getSelectItems(filter)"
                             value-key="value"
                             :class="filter.class || 'w-full sm:w-auto sm:min-w-40'"
                             :placeholder="filter.placeholder || 'All'"
-                            @update:model-value="(val: any) => setFilterValue(filter.column, val)"
+                            @update:model-value="(val: any) => setFilterValue(filter.column as string, val)"
                         >
                             <template #leading>
                                 <UIcon v-if="filter.icon" :name="filter.icon" class="size-4 text-muted" />
@@ -294,13 +294,13 @@ defineExpose({
                         <!-- Multi-Select Filter -->
                         <USelectMenu
                             v-else-if="filter.type === 'multi-select'"
-                            :model-value="(getFilterValue(filter.column) as any[]) || []"
+                            :model-value="(getFilterValue(filter.column as string) as any[]) || []"
                             :items="getMultiSelectItems(filter)"
                             value-key="value"
                             multiple
                             :class="filter.class || 'w-full sm:w-auto sm:min-w-48'"
                             :placeholder="filter.placeholder || 'Select...'"
-                            @update:model-value="(val: any) => setFilterValue(filter.column, val)"
+                            @update:model-value="(val: any) => setFilterValue(filter.column as string, val)"
                         >
                             <template #leading>
                                 <UIcon v-if="filter.icon" :name="filter.icon" class="size-4 text-muted" />
