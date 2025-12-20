@@ -18,7 +18,7 @@ const links = computed<NavigationMenuItem[]>(() => [
     },
     {
         label: 'Explorer',
-        to: '/explorer'
+        to: '/explore'
     },
     {
         label: 'Dashboard',

@@ -112,7 +112,7 @@ const sidebarItems = computed<NavigationMenuItem[][]>(() => {
         {
             label: "Explorer",
             icon: "i-lucide-compass",
-            to: "/explorer",
+            to: "/explore",
         },
         {
             label: "Back to Home",

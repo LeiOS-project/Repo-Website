@@ -27,7 +27,28 @@ const archOptions = [
     { label: 'arm64', value: 'arm64' }
 ]
 
+const uploadForm = reactive({
+    version: '',
+    arch: 'amd64' as 'amd64' | 'arm64',
+    file: null as File | null
+})
 
+const stableForm = reactive({
+    release_id: 0
+})
+
+// Fetch package details
+const { data: pkg, pending: loadingPkg } = await useAsyncData<DevPackage>(
+    `dev-package-${package_name}`,
+    async () => {
+        const res = await useAPI((api) => api.getDevPackagesPackageName({ path: { packageName: package_name } }))
+        if (!res.success) {
+            toast.add({ title: 'Failed to load package', description: res.message, color: 'error' })
+            return null as unknown as DevPackage
+        }
+        return res.data
+    }
+)
 
 // Fetch releases
 const { data: releases, pending: loadingReleases, refresh: refreshReleases } = await useAsyncData<Release[]>(

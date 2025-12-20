@@ -20,7 +20,7 @@ useSeoMeta({
     description: `Manage the package ${package_name} on LeiOS Hub`
 });
 
-const { data: result, refresh, pending } = await useAsyncData(
+const { data: result, refresh, loading } = await useAPIAsyncData(
     `dev-package:${package_name}`,
     async () => {
         const res = await useAPI((api) => api.getDevPackagesPackageName({
@@ -45,7 +45,7 @@ const data = computed(() => result.value?.data);
 
 provide('package_data', data);
 provide('package_refresh', refresh);
-provide('package_pending', pending);
+provide('package_loading', loading);
 
 const pathBreadcrumbItems: BreadcrumbItem[] = [
     { label: 'Packages', to: '/dashboard/packages' },
