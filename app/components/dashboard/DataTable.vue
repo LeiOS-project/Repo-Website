@@ -43,11 +43,11 @@ interface FilterConfig {
 // Props
 interface Props {
     /** Table data */
-    data: T[]
+    data: T[] | Ref<T[]>
     /** Table columns configuration */
     columns: TableColumn<T>[]
     /** Loading state */
-    loading?: boolean
+    loading?: boolean | Ref<boolean>
     /** Filter configurations */
     filters?: FilterConfig[]
     /** Default page size */
@@ -89,9 +89,9 @@ const emit = defineEmits<{
     'row-click': [row: T]
 }>()
 
-type DynamicHeaderSlots<T, K = keyof T> = Record<`${K extends string ? K : never}-header`, (props: HeaderContext<T, unknown>) => any>;
-type DynamicFooterSlots<T, K = keyof T> = Record<`${K extends string ? K : never}-footer`, (props: HeaderContext<T, unknown>) => any>;
-type DynamicCellSlots<T, K = keyof T> = Record<`${K extends string ? K : never}-cell`, (props: CellContext<T, unknown>) => any>;
+type DynamicHeaderSlots<T, K = keyof T> = Record<string, (props: HeaderContext<T, unknown>) => any> & Record<`${K extends string ? K : never}-header`, (props: HeaderContext<T, unknown>) => any>;
+type DynamicFooterSlots<T, K = keyof T> = Record<string, (props: HeaderContext<T, unknown>) => any> & Record<`${K extends string ? K : never}-footer`, (props: HeaderContext<T, unknown>) => any>;
+type DynamicCellSlots<T, K = keyof T> = Record<string, (props: CellContext<T, unknown>) => any> & Record<`${K extends string ? K : never}-cell`, (props: CellContext<T, unknown>) => any>;
 
 type TableSlots = {
     /** Header left side content (before search) */
@@ -350,9 +350,9 @@ defineExpose({
 
         <!-- Table -->
         <UTable
-            v-else-if="data?.length"
+            v-else-if="(data as T[])?.length"
             ref="table"
-            :data="data"
+            :data="(data as T[])"
             :columns="enhancedColumns"
             v-model:column-filters="columnFilters"
             v-model:pagination="pagination"
@@ -382,7 +382,7 @@ defineExpose({
             </slot>
         </template>
 
-        <template v-if="!loading && data?.length && (showPagination || showPageSizeSelector)" #footer>
+        <template v-if="!loading && (data as T[])?.length && (showPagination || showPageSizeSelector)" #footer>
             <div class="flex items-center gap-3" :class="showPageSizeSelector && !isMobile ? 'justify-between' : 'justify-center'">
                 <div v-if="showPageSizeSelector && !isMobile" class="flex items-center gap-3 text-sm text-muted">
                     <slot name="footer-left">
