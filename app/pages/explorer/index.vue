@@ -3,7 +3,7 @@ const toast = useToast()
 const search = ref('')
 
 const { data: packages, pending, refresh } = await useAsyncData('public-packages', async () => {
-    const res = await useAPI((api) => api.getPublicPackages({}), false, true)
+    const res = await useAPI((api) => api.getPublicPackages({}), "normal", true)
     if (!res.success) {
         toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })
         return []
