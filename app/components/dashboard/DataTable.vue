@@ -181,7 +181,7 @@ const enhancedColumns = computed<TableColumn<T>[]>(() => {
         const accessorKey = (col as any).accessorKey || (col as any).id
         const filter = allFilters.value.find(f => f.column === accessorKey)
         
-        if (!filter) return col
+        if (!filter) return col;
         
         // Add custom filter function based on filter type
         let filterFn: FilterFn<T> | undefined
@@ -200,6 +200,19 @@ const enhancedColumns = computed<TableColumn<T>[]>(() => {
                 const cellValue = row.getValue(columnId)
                 return filterValue.includes(cellValue)
             }
+        } else if (filter.type === 'date') {
+            filterFn = (row, columnId, filterValue) => {
+                if (!filterValue || !filterValue.start || !filterValue.end) return true
+                const cellValue = row.getValue(columnId) as string | number
+                const cellDate = new Date(cellValue)
+                const startDate = new Date(filterValue.start)
+                const endDate = new Date(filterValue.end)
+                // Normalize time for comparison
+                cellDate.setHours(0,0,0,0)
+                startDate.setHours(0,0,0,0)
+                endDate.setHours(0,0,0,0)
+                return cellDate >= startDate && cellDate <= endDate
+            }
         }
         
         if (filterFn) {
@@ -209,7 +222,7 @@ const enhancedColumns = computed<TableColumn<T>[]>(() => {
             } as TableColumn<T>
         }
         
-        return col
+        return col;
     })
 })
 
@@ -279,13 +292,13 @@ defineExpose({
                         />
 
                         <!-- Date Picker Filter -->
-                        <!-- <DateRangePicker
+                        <DateRangePicker
                             v-else-if="filter.type === 'date'"
                             :model-value="getFilterValue(filter.column as string) as any"
                             :class="filter.class || 'w-full sm:w-auto sm:min-w-40'"
                             :icon="filter.icon || 'i-lucide-calendar'"
-                            
-                        /> -->
+                            @update:model-value="(val: any) => setFilterValue(filter.column as string, val)"
+                        />
 
                         <!-- Select Filter -->
                         <USelectMenu
