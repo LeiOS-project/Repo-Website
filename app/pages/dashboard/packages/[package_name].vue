@@ -7,17 +7,10 @@ const route = useRoute();
 
 const package_name = route.params.package_name as string;
 
-const title = `${package_name} | Packages`;
-
 type Package = GetDevPackagesResponses["200"]["data"][number];
 
 definePageMeta({
     layout: 'dashboard'
-});
-
-useSeoMeta({
-    title: `${title} | LeiOS Hub`,
-    description: `Manage the package ${package_name} on LeiOS Hub`
 });
 
 const { data: result, refresh, loading } = await useAPIAsyncData(
@@ -47,48 +40,138 @@ provide('package_data', data);
 provide('package_refresh', refresh);
 provide('package_loading', loading);
 
-const pathBreadcrumbItems = computed<BreadcrumbItem[]>(() => {
-    const items: BreadcrumbItem[] = [
+// const pathDynamicValues = computed(() => {
+//     const breadcrumbItems: BreadcrumbItem[] = [
+//         { label: 'Packages', to: '/dashboard/packages' },
+//     ];
+
+//     let seoSettings: Parameters<typeof useSeoMeta>[0] = {};
+
+//     const normalizedPath = route.path.replace(/\/$/, '');
+
+//     if (normalizedPath.endsWith('/releases')) {
+
+//         seoSettings = {
+//             title: `Releases | ${package_name} | Packages | LeiOS Hub`,
+//             description: `Manage releases for the package ${package_name} on LeiOS Hub`
+//         };
+
+//         breadcrumbItems.push(
+//             { label: package_name, to: `/dashboard/packages/${package_name}` },
+//             { label: 'Releases' }
+//         );
+
+//     } else if (normalizedPath.endsWith('/stable-promotion-requests')) {
+
+//         seoSettings = {
+//             title: `Stable Promotion Requests | ${package_name} | Packages | LeiOS Hub`,
+//             description: `Manage stable promotion requests for the package ${package_name} on LeiOS Hub`
+//         };
+
+//         breadcrumbItems.push(
+//             { label: package_name, to: `/dashboard/packages/${package_name}` },
+//             { label: 'Stable Promotion Requests' }
+//         );
+
+//     } else {
+
+//         seoSettings = {
+//             title: `${package_name} | Packages | LeiOS Hub`,
+//             description: `Manage the package ${package_name} on LeiOS Hub`
+//         };
+
+//         breadcrumbItems.push({ label: package_name });
+//     }
+
+//     useSeoMeta(seoSettings);
+
+//     return { breadcrumbItems };
+// });
+
+// const links = [[
+//     {
+//         label: 'General',
+//         icon: 'i-lucide-info',
+//         to: `/dashboard/packages/${package_name}`,
+//         exact: true
+//     },
+//     {
+//         label: 'Releases',
+//         icon: 'i-lucide-file-text',
+//         to: `/dashboard/packages/${package_name}/releases`,
+//     },
+//     {
+//         label: 'Stable Promotion Requests',
+//         icon: 'i-lucide-git-pull-request',
+//         to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
+//     }
+// ]] satisfies NavigationMenuItem[][];
+
+const subrouterPathDynamics = useSubrouterPathDynamics({
+    baseTitle: `${package_name} | Packages | LeiOS Hub`,
+    basebreadcrumbItems: [
         { label: 'Packages', to: '/dashboard/packages' },
-    ];
-
-    const normalizedPath = route.path.replace(/\/$/, '');
-
-    if (normalizedPath.endsWith('/releases')) {
-        items.push(
-            { label: package_name, to: `/dashboard/packages/${package_name}` },
-            { label: 'Releases' }
-        );
-    } else if (normalizedPath.endsWith('/stable-promotion-requests')) {
-        items.push(
-            { label: package_name, to: `/dashboard/packages/${package_name}` },
-            { label: 'Stable Promotion Requests' }
-        );
-    } else {
-        items.push({ label: package_name });
+    ],
+    routes: {
+        [`/dashboard/packages/${package_name}`]: {
+            isNavLink: true,
+            label: 'General',
+            icon: 'i-lucide-info',
+            exact: true,
+            getDynamicValues() {
+                return {
+                    breadcrumbItems: [
+                        { label: package_name }
+                    ],
+                    seoSettings: {
+                        description: `Manage the package ${package_name} on LeiOS Hub`
+                    }
+                };
+            }
+        },
+        [`/dashboard/packages/${package_name}/releases`]: {
+            isNavLink: true,
+            label: 'Releases',
+            icon: 'i-lucide-file-text',
+            getDynamicValues() {
+                return {
+                    breadcrumbItems: [
+                        { label: package_name, to: `/dashboard/packages/${package_name}` },
+                        { label: 'Releases' }
+                    ],
+                    seoSettings: {
+                        title: `Releases`,
+                        description: `Manage releases for the package ${package_name} on LeiOS Hub`
+                    }
+                };
+            }
+        },
+        [`/dashboard/packages/${package_name}/stable-promotion-requests`]: {
+            isNavLink: true,
+            label: 'Stable Promotion Requests',
+            icon: 'i-lucide-git-pull-request',
+            to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
+            getDynamicValues() {
+                return {
+                    breadcrumbItems: [
+                        { label: package_name, to: `/dashboard/packages/${package_name}` },
+                        { label: 'Stable Promotion Requests' }
+                    ],
+                    seoSettings: {
+                        title: `Stable Promotion Requests`,
+                        description: `Manage stable promotion requests for the package ${package_name} on LeiOS Hub`
+                    }
+                };
+            }
+        }
     }
-
-    return items;
 });
 
-const links = [[
-    {
-        label: 'General',
-        icon: 'i-lucide-info',
-        to: `/dashboard/packages/${package_name}`,
-        exact: true
-    },
-    {
-        label: 'Releases',
-        icon: 'i-lucide-file-text',
-        to: `/dashboard/packages/${package_name}/releases`,
-    },
-    {
-        label: 'Stable Promotion Requests',
-        icon: 'i-lucide-git-pull-request',
-        to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
-    }
-]] satisfies NavigationMenuItem[][];
+const routePathDynamicValues = await useAwaitedComputed(async () => {
+    const values = await subrouterPathDynamics.getPathDynamicValues(route.path);
+    useSeoMeta(values.seoSettings);
+    return values;
+});
 
 </script>
 
@@ -97,12 +180,12 @@ const links = [[
         <template #header>
             <DashboardPageHeader
                 icon="i-lucide-package"
-                :breadcrumb-items="pathBreadcrumbItems"
+                :breadcrumb-items="routePathDynamicValues.breadcrumbItems"
             />
 
             <UDashboardToolbar>
 				<!-- NOTE: The `-mx-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
-				<UNavigationMenu :items="links" highlight class="-mx-1 flex-1" />
+				<UNavigationMenu :items="subrouterPathDynamics.links" highlight class="-mx-1 flex-1" />
 			</UDashboardToolbar>
 
         </template>
