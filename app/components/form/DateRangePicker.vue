@@ -6,6 +6,15 @@ interface Range {
     end: Date | null
 }
 
+interface Props {
+    icon?: string
+    class?: string
+}
+
+withDefaults(defineProps<Props>(), {
+    icon: 'i-lucide-calendar'
+})
+
 const df = new DateFormatter('en-US', {
     dateStyle: 'medium'
 })
@@ -53,8 +62,8 @@ const resetRange = () => {
 </script>
 
 <template>
-    <UPopover :content="{ align: 'start' }" :modal="true">
-        <UInput color="neutral" variant="outline" icon="i-lucide-calendar" :model-value="inputValue" class="data-[state=open]:bg-elevated group">
+    <UPopover :content="{ align: 'start' }" :modal="true" :class="$props.class">
+        <UInput color="neutral" variant="outline" :icon="$props.icon" :model-value="inputValue" class="data-[state=open]:bg-elevated group">
             <template #trailing>
                 <UIcon name="i-lucide-chevron-down" class="shrink-0 text-dimmed size-5 group-data-[state=open]:rotate-180 transition-transform duration-200" />
             </template>
