@@ -29,7 +29,7 @@ const archOptions = [
 
 const pkg = inject<Ref<DevPackage>>('package_data') as Ref<DevPackage>;
 const loadingPkg = inject<Ref<boolean>>('package_loading') as Ref<boolean>;
-const package_refresh = inject<() => Promise<void>>('package_refresh');
+const is_new_pkg = inject<boolean>('package_is_new') as boolean;
 
 // Fetch releases
 const { data: releases, pending: loadingReleases, refresh: refreshReleases } = await useAsyncData<Release[]>(
@@ -92,7 +92,7 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                         to="/dashboard/packages"
                     />
                 </template>
-                <template #right>
+<template #right>
                     <div class="flex gap-2">
                         <UButton
                             label="Request Stable"
@@ -109,173 +109,136 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                         />
                     </div>
                 </template>
-            </UDashboardNavbar>
-        </template>
+</UDashboardNavbar>
+</template>
 
-        <template #body>
+<template #body>
             <div class="space-y-6"> -->
-                <div v-if="loadingPkg" class="flex items-center justify-center py-12">
-                    <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
+    <div v-if="loadingPkg" class="flex items-center justify-center py-12">
+        <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
+    </div>
+
+    <template v-else-if="pkg">
+        <!-- Package Info -->
+        <UCard class="border-slate-800 bg-slate-900/60">
+            <template #header>
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <UIcon name="i-lucide-info" class="text-sky-400" />
+                    Package Information
+                </h2>
+            </template>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <p class="text-sm text-slate-400">Description</p>
+                    <p class="mt-1">{{ pkg.description || '—' }}</p>
                 </div>
+                <div>
+                    <p class="text-sm text-slate-400">Homepage</p>
+                    <UButton v-if="pkg.homepage_url" :to="pkg.homepage_url" target="_blank" :label="pkg.homepage_url"
+                        variant="link" color="primary" class="mt-1 p-0" />
+                    <p v-else class="mt-1">—</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400">Stable Release (amd64)</p>
+                    <p class="mt-1 font-mono">{{ pkg.latest_stable_release_amd64 || '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400">Stable Release (arm64)</p>
+                    <p class="mt-1 font-mono">{{ pkg.latest_stable_release_arm64 || '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400">Testing Release (amd64)</p>
+                    <p class="mt-1 font-mono">{{ pkg.latest_testing_release_amd64 || '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400">Testing Release (arm64)</p>
+                    <p class="mt-1 font-mono">{{ pkg.latest_testing_release_arm64 || '—' }}</p>
+                </div>
+            </div>
+        </UCard>
 
-                <template v-else-if="pkg">
-                    <!-- Package Info -->
-                    <UCard class="border-slate-800 bg-slate-900/60">
-                        <template #header>
-                            <h2 class="text-lg font-semibold flex items-center gap-2">
-                                <UIcon name="i-lucide-info" class="text-sky-400" />
-                                Package Information
-                            </h2>
-                        </template>
+        <!-- Releases -->
+        <UCard class="border-slate-800 bg-slate-900/60">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold flex items-center gap-2">
+                        <UIcon name="i-lucide-archive" class="text-emerald-400" />
+                        Releases
+                    </h2>
+                    <UButton label="Refresh" icon="i-lucide-refresh-cw" variant="ghost" color="neutral" size="sm"
+                        @click="refreshReleases()" />
+                </div>
+            </template>
 
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <div>
-                                <p class="text-sm text-slate-400">Description</p>
-                                <p class="mt-1">{{ pkg.description || '—' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-slate-400">Homepage</p>
-                                <UButton
-                                    v-if="pkg.homepage_url"
-                                    :to="pkg.homepage_url"
-                                    target="_blank"
-                                    :label="pkg.homepage_url"
-                                    variant="link"
-                                    color="primary"
-                                    class="mt-1 p-0"
-                                />
-                                <p v-else class="mt-1">—</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-slate-400">Stable Release (amd64)</p>
-                                <p class="mt-1 font-mono">{{ pkg.latest_stable_release_amd64 || '—' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-slate-400">Stable Release (arm64)</p>
-                                <p class="mt-1 font-mono">{{ pkg.latest_stable_release_arm64 || '—' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-slate-400">Testing Release (amd64)</p>
-                                <p class="mt-1 font-mono">{{ pkg.latest_testing_release_amd64 || '—' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-slate-400">Testing Release (arm64)</p>
-                                <p class="mt-1 font-mono">{{ pkg.latest_testing_release_arm64 || '—' }}</p>
-                            </div>
+            <div v-if="loadingReleases" class="flex items-center justify-center py-8">
+                <UIcon name="i-lucide-loader-2" class="animate-spin text-2xl text-slate-400" />
+            </div>
+
+            <div v-else-if="releases?.length" class="space-y-3">
+                <div v-for="release in releases" :key="release.id"
+                    class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950/50 p-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800">
+                            <UIcon name="i-lucide-file-archive" class="text-slate-400" />
                         </div>
-                    </UCard>
-
-                    <!-- Releases -->
-                    <UCard class="border-slate-800 bg-slate-900/60">
-                        <template #header>
-                            <div class="flex items-center justify-between">
-                                <h2 class="text-lg font-semibold flex items-center gap-2">
-                                    <UIcon name="i-lucide-archive" class="text-emerald-400" />
-                                    Releases
-                                </h2>
-                                <UButton
-                                    label="Refresh"
-                                    icon="i-lucide-refresh-cw"
-                                    variant="ghost"
-                                    color="neutral"
-                                    size="sm"
-                                    @click="refreshReleases()"
-                                />
-                            </div>
-                        </template>
-
-                        <div v-if="loadingReleases" class="flex items-center justify-center py-8">
-                            <UIcon name="i-lucide-loader-2" class="animate-spin text-2xl text-slate-400" />
+                        <div>
+                            <p class="font-medium font-mono">{{ release.versionWithLeiosPatch }}</p>
+                            <p class="text-sm text-slate-400">{{ release.architectures }}</p>
                         </div>
+                    </div>
+                    <UBadge color="info" variant="soft">
+                        {{ release.architectures }}
+                    </UBadge>
+                </div>
+            </div>
 
-                        <div v-else-if="releases?.length" class="space-y-3">
-                            <div
-                                v-for="release in releases"
-                                :key="release.id"
-                                class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950/50 p-4"
-                            >
-                                <div class="flex items-center gap-4">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800">
-                                        <UIcon name="i-lucide-file-archive" class="text-slate-400" />
-                                    </div>
-                                    <div>
-                                        <p class="font-medium font-mono">{{ release.versionWithLeiosPatch }}</p>
-                                        <p class="text-sm text-slate-400">{{ release.architectures }}</p>
-                                    </div>
-                                </div>
-                                <UBadge color="info" variant="soft">
-                                    {{ release.architectures }}
-                                </UBadge>
-                            </div>
-                        </div>
-
-                        <UEmpty
-                            v-else
-                            icon="i-lucide-archive-x"
-                            title="No releases"
-                            description="Upload your first release to get started."
-                        >
-                            <template #actions>
-                                <UButton
-                                    label="Upload Release"
-                                    color="primary"
-                                    @click="showUploadModal = true"
-                                />
-                            </template>
-                        </UEmpty>
-                    </UCard>
-
-                    <!-- Stable Requests -->
-                    <UCard class="border-slate-800 bg-slate-900/60">
-                        <template #header>
-                            <div class="flex items-center justify-between">
-                                <h2 class="text-lg font-semibold flex items-center gap-2">
-                                    <UIcon name="i-lucide-git-pull-request" class="text-amber-400" />
-                                    Stable Promotion Requests
-                                </h2>
-                                <UButton
-                                    label="Refresh"
-                                    icon="i-lucide-refresh-cw"
-                                    variant="ghost"
-                                    color="neutral"
-                                    size="sm"
-                                    @click="refreshStableRequests()"
-                                />
-                            </div>
-                        </template>
-
-                        <div v-if="stableRequests?.length" class="space-y-3">
-                            <div
-                                v-for="request in stableRequests"
-                                :key="request.id"
-                                class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950/50 p-4"
-                            >
-                                <div class="flex items-center gap-4">
-                                    <div>
-                                        <p class="font-medium">Request #{{ request.id }}</p>
-                                        <p class="text-sm text-slate-400">Release ID: {{ request.package_release_id }}</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <UBadge :color="getStatusColor(request.status)" variant="soft">
-                                        {{ request.status }}
-                                    </UBadge>
-                                    <UTooltip v-if="request.admin_note" :text="request.admin_note">
-                                        <UIcon name="i-lucide-message-circle" class="text-slate-400" />
-                                    </UTooltip>
-                                </div>
-                            </div>
-                        </div>
-
-                        <UEmpty
-                            v-else
-                            icon="i-lucide-git-pull-request"
-                            title="No requests"
-                            description="Submit a stable promotion request when your release is ready."
-                        />
-                    </UCard>
+            <UEmpty v-else icon="i-lucide-archive-x" title="No releases"
+                description="Upload your first release to get started.">
+                <template #actions>
+                    <UButton label="Upload Release" color="primary" @click="showUploadModal = true" />
                 </template>
-            <!-- </div>
+            </UEmpty>
+        </UCard>
+
+        <!-- Stable Requests -->
+        <UCard class="border-slate-800 bg-slate-900/60">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold flex items-center gap-2">
+                        <UIcon name="i-lucide-git-pull-request" class="text-amber-400" />
+                        Stable Promotion Requests
+                    </h2>
+                    <UButton label="Refresh" icon="i-lucide-refresh-cw" variant="ghost" color="neutral" size="sm"
+                        @click="refreshStableRequests()" />
+                </div>
+            </template>
+
+            <div v-if="stableRequests?.length" class="space-y-3">
+                <div v-for="request in stableRequests" :key="request.id"
+                    class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950/50 p-4">
+                    <div class="flex items-center gap-4">
+                        <div>
+                            <p class="font-medium">Request #{{ request.id }}</p>
+                            <p class="text-sm text-slate-400">Release ID: {{ request.package_release_id }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UBadge :color="getStatusColor(request.status)" variant="soft">
+                            {{ request.status }}
+                        </UBadge>
+                        <UTooltip v-if="request.admin_note" :text="request.admin_note">
+                            <UIcon name="i-lucide-message-circle" class="text-slate-400" />
+                        </UTooltip>
+                    </div>
+                </div>
+            </div>
+
+            <UEmpty v-else icon="i-lucide-git-pull-request" title="No requests"
+                description="Submit a stable promotion request when your release is ready." />
+        </UCard>
+    </template>
+    <!-- </div>
         </template>
     </UDashboardPanel> -->
 
