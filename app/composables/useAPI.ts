@@ -34,8 +34,7 @@ class LazyRequestWrapper<TReturn> {
     readonly loading = ref(false);
 
     constructor(
-        protected readonly handler: () => Promise<TReturn>,
-        protected readonly disableAuthRedirect: boolean
+        protected readonly handler: () => Promise<TReturn>
     ) { }
 
     async execute(): Promise<TReturn> {
@@ -58,8 +57,7 @@ class LazyAsyncDataRequestWrapper<TReturn> {
 
     constructor(
         name: string,
-        handler: () => Promise<TReturn>,
-        disableAuthRedirect: boolean
+        handler: () => Promise<TReturn>
     ) {
         const { data, refresh, pending } = useLazyAsyncData<TReturn>(name, handler, {
             immediate: false
@@ -284,9 +282,9 @@ export async function useAPILazyAsyncData<TReturn>(name: string, handler: () => 
 }
 
 export function useAPILazyRequest<TReturn>(handler: () => Promise<TReturn>) {
-    return new LazyRequestWrapper<TReturn>(handler, false);
+    return new LazyRequestWrapper<TReturn>(handler);
 }
 
 export function useAPILazyAsyncRequest<TReturn>(name: string, handler: () => Promise<TReturn>) {
-    return new LazyAsyncDataRequestWrapper<TReturn>(name, handler, false);
+    return new LazyAsyncDataRequestWrapper<TReturn>(name, handler);
 }
