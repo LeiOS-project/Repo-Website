@@ -92,7 +92,7 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                         to="/dashboard/packages"
                     />
                 </template>
-<template #right>
+                <template #right>
                     <div class="flex gap-2">
                         <UButton
                             label="Request Stable"
@@ -109,10 +109,10 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
                         />
                     </div>
                 </template>
-</UDashboardNavbar>
-</template>
+            </UDashboardNavbar>
+        </template>
 
-<template #body>
+        <template #body>
             <div class="space-y-6"> -->
     <div v-if="loadingPkg" class="flex items-center justify-center py-12">
         <UIcon name="i-lucide-loader-2" class="animate-spin text-3xl text-slate-400" />
