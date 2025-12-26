@@ -133,26 +133,23 @@ const subrouterPathDynamics = useSubrouterPathDynamics({
         { label: 'Packages', to: '/dashboard/packages' },
     ],
     routes: {
-        "/dashboard/packages/new": {
-            isNavLink: false,
-            getDynamicValues() {
-                return {
-                    breadcrumbItems: [
-                        { label: 'New Package' }
-                    ],
-                    seoSettings: {
-                        title: `New Package`,
-                        description: `Create a new package on LeiOS Hub`
-                    }
-                };
-            }
-        },
         [`/dashboard/packages/${package_name}`]: {
             isNavLink: true,
             label: 'General',
             icon: 'i-lucide-info',
             exact: true,
             getDynamicValues() {
+                if (package_name === "new") {
+                    return {
+                        breadcrumbItems: [
+                            { label: 'New Package' }
+                        ],
+                        seoSettings: {
+                            title: `New Package | Packages | LeiOS Hub`,
+                            description: `Create a new package on LeiOS Hub`
+                        }
+                    };
+                }
                 return {
                     breadcrumbItems: [
                         { label: package_name }
