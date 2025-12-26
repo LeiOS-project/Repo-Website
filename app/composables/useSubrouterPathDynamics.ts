@@ -1,6 +1,6 @@
 import type { BreadcrumbItem, NavigationMenuItem } from "@nuxt/ui"
 import type { RouteLocationNormalizedLoadedGeneric } from "vue-router";
-import { RouteMatcher } from "~/utils/routeMatcher";
+import { SimpleRouteMatcher } from "~/utils/routeMatcher";
 
 export namespace UseSubrouterPathDynamics {
 
@@ -65,7 +65,7 @@ class SubrouterPathDynamics {
     async getPathDynamicValues(path: string): Promise<Promise<UseSubrouterPathDynamics.RichPathDynamicValues>> {
         const breadcrumbItems: BreadcrumbItem[] = [...(this.options.basebreadcrumbItems ?? [])];
 
-        const routeSettings = RouteMatcher.match(path, Object.keys(this.options.routes));
+        const routeSettings = await SimpleRouteMatcher.match(path, Object.keys(this.options.routes));
         const routeDynamics = routeSettings ? this.options.routes[routeSettings.route] : undefined;
         if (!routeSettings || !routeDynamics) {
             return { breadcrumbItems, seoSettings: { title: this.options.baseTitle, description: "" } };

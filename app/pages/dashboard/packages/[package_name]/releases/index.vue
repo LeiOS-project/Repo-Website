@@ -4,8 +4,8 @@ import type { GetDevPackagesPackageNameReleasesResponses, GetDevPackagesPackageN
 
 const toast = useToast();
 
-type DevPackage = GetDevPackagesPackageNameResponses[200]['data']
-type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number]
+type DevPackage = GetDevPackagesPackageNameResponses[200]['data'];
+type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number];
 
 const pkg = inject<Ref<DevPackage>>('package_data') as Ref<DevPackage>;
 

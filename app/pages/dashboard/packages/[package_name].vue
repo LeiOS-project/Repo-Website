@@ -7,7 +7,7 @@ const route = useRoute();
 const package_name = route.params.package_name as string;
 
 type Package = GetDevPackagesResponses["200"]["data"][number];
-type NewPackage = PostDevPackagesData["body"];
+type NewPackage = NonNullable<PostDevPackagesData["body"]>;
 
 definePageMeta({
     layout: 'dashboard'
@@ -133,6 +133,20 @@ const subrouterPathDynamics = useSubrouterPathDynamics({
         { label: 'Packages', to: '/dashboard/packages' },
     ],
     routes: {
+        "/dashboard/packages/new": {
+            isNavLink: false,
+            getDynamicValues() {
+                return {
+                    breadcrumbItems: [
+                        { label: 'New Package' }
+                    ],
+                    seoSettings: {
+                        title: `New Package`,
+                        description: `Create a new package on LeiOS Hub`
+                    }
+                };
+            }
+        },
         [`/dashboard/packages/${package_name}`]: {
             isNavLink: true,
             label: 'General',

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { GetDevPackagesPackageNameResponses, GetDevPackagesPackageNameReleasesResponses, GetDevPackagesPackageNameStablePromotionRequestsResponses } from '@/api-client/types.gen'
+import type { GetDevPackagesPackageNameResponses, GetDevPackagesPackageNameReleasesResponses, GetDevPackagesPackageNameStablePromotionRequestsResponses, PostDevPackagesData } from '@/api-client/types.gen'
 import type { BreadcrumbItem } from '@nuxt/ui'
 
-type DevPackage = GetDevPackagesPackageNameResponses[200]['data']
-type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number]
-type StableRequest = GetDevPackagesPackageNameStablePromotionRequestsResponses[200]['data'][number]
+type DevPackage = GetDevPackagesPackageNameResponses[200]['data'];
+type NewDevPackage = NonNullable<PostDevPackagesData['body']>;
+type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number];
+type StableRequest = GetDevPackagesPackageNameStablePromotionRequestsResponses[200]['data'][number];
 
 definePageMeta({
     layout: 'dashboard'
@@ -27,9 +28,9 @@ const archOptions = [
     { label: 'arm64', value: 'arm64' }
 ]
 
-const pkg = inject<Ref<DevPackage>>('package_data') as Ref<DevPackage>;
-const loadingPkg = inject<Ref<boolean>>('package_loading') as Ref<boolean>;
-const is_new_pkg = inject<boolean>('package_is_new') as boolean;
+const pkg = inject('package_data') as Ref<DevPackage | NewDevPackage>;
+const loadingPkg = inject('package_loading') as Ref<boolean>;
+const is_new_pkg = inject('package_is_new') as boolean;
 
 // Fetch releases
 const { data: releases, pending: loadingReleases, refresh: refreshReleases } = await useAsyncData<Release[]>(

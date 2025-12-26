@@ -20,8 +20,6 @@ useSeoMeta({
 const route = useRoute()
 const toast = useToast()
 
-const showCreateModal = ref(route.query.action === 'create')
-
 const packageTableColumns: TableColumn<DevPackage>[] = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'description', header: 'Description' },
@@ -66,7 +64,7 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
     
     if (res.success) {
         toast.add({ title: 'Package created', color: 'success' })
-        showCreateModal.value = false
+        // showCreateModal.value = false
         await packages.refresh()
     } else {
         toast.add({ title: 'Create failed', description: res.message, color: 'error' })
@@ -208,7 +206,7 @@ async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
                             label="New Package"
                             icon="i-lucide-plus"
                             color="primary"
-                            @click="showCreateModal = true"
+                            to="/dashboard/packages/new"
                         />
                     </template>
 
