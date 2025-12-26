@@ -10,7 +10,7 @@ type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number]
 const pkg = inject<Ref<DevPackage>>('package_data') as Ref<DevPackage>;
 
 const package_releases = await useAPIAsyncData(
-    `dev/package/${pkg.value.name}/releases`,
+    `/dev/packages/${pkg.value.name}/releases`,
     async () => {
         const res = await useAPI((api) => api.getDevPackagesPackageNameReleases({
             path: {
