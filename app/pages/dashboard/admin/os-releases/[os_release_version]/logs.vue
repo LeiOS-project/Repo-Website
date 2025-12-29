@@ -352,7 +352,7 @@ onMounted(() => {
                     <div class="flex items-center gap-2">
                         <UTooltip text="Show timestamps">
                             <UButton
-                                :icon="showTimestamps ? 'i-lucide-clock' : 'i-lucide-clock-off'"
+                                :icon="'i-lucide-clock'"
                                 color="neutral"
                                 variant="ghost"
                                 size="sm"
@@ -434,7 +434,7 @@ onMounted(() => {
                             <!-- Timestamp -->
                             <span 
                                 v-if="showTimestamps && log.timestamp" 
-                                class="text-slate-500 flex-shrink-0 w-44"
+                                class="text-slate-500 flex-shrink-0"
                             >
                                 {{ log.timestamp }}
                             </span>
