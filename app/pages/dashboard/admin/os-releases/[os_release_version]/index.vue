@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import type { NavigationMenuItem } from '@nuxt/ui';
+import type { FormError, NavigationMenuItem } from '@nuxt/ui';
+import z from 'zod';
 import type { GetAdminOsReleasesResponses, PostAdminOsReleasesData } from '~/api-client';
 
 const toast = useToast();
@@ -33,6 +34,17 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
     }
 }
 
+const os_release_schema = z.object({
+	changelog: z.string().min(1, 'Changelog is required'),
+});
+const os_release_data_state = computed({
+	get: () => ({
+		changelog: os_release_data.value.changelog || '',
+	}),
+	set: (newState) => {
+		os_release_data.value.changelog = newState.changelog;
+	}
+})
 
 async function onCreateOSReleaseSubmit() {
 
@@ -185,7 +197,7 @@ const headerTexts = computed(() => {
 			</div>
 			
 			<div class="p-6">
-				<UForm id="settings" class="divide-y divide-slate-800">
+				<UForm id="settings" class="divide-y divide-slate-800" :schema="os_release_schema" :state="os_release_data_state" @submit="os_release.isNew ? onCreateOSReleaseSubmit() : null">
 					<UFormField 
 						name="version" 
 						label="Version"
@@ -222,7 +234,7 @@ const headerTexts = computed(() => {
 					</UFormField>
 
                     <UFormField
-                        name="chnagelog"
+                        name="changelog"
                         label="Changelog"
                         description="The changelog for this OS Release."
                         class="flex justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
@@ -239,7 +251,7 @@ const headerTexts = computed(() => {
                             class="w-full"
                         /> -->
 						<UTextarea 
-                            :model-value="os_release_data.changelog"
+                            v-model="os_release_data.changelog"
                             placeholder="No changelog provided."
                             :rows="5"
                             autoresize
@@ -262,7 +274,6 @@ const headerTexts = computed(() => {
 							type="submit" 
 							:loading="os_release_loading"
 							icon="i-lucide-plus-circle"
-							@click="onCreateOSReleaseSubmit"
 						/>
 					</div>
 
