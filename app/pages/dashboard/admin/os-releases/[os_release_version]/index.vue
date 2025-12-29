@@ -14,6 +14,7 @@ type NewOSRelease = NonNullable<PostAdminOsReleasesData["body"]>;
 // const os_release_is_new = inject<boolean>('os_release_is_new');
 
 const os_release = useSubrouterInjectedData<OSRelease, NewOSRelease>('os_release', true).inject();
+console.log('os_release:', os_release);
 const os_release_data = os_release.data;
 const os_release_loading = os_release.loading;
 
@@ -31,6 +32,50 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
             return 'info'
     }
 }
+
+
+async function onCreateOSReleaseSubmit() {
+
+	os_release_loading.value = true;
+
+	try {
+		const result = await useAPI((api) => api.postAdminOsReleases({
+			body: {
+				changelog: os_release_data.value.changelog,
+			}
+		}))
+
+		if (result.success) {
+			toast.add({
+				title: 'OS Release created',
+				description: 'The OS Release has been successfully created.',
+				icon: 'i-lucide-check',
+				color: 'success'
+			})
+
+			// Redirect to the newly created OS Release page
+			navigateTo(`/dashboard/admin/os-releases/${result.data?.version}`);
+		} else {
+			toast.add({
+				title: 'Error',
+				description: result.message || 'An error occurred while creating the OS Release.',
+				icon: 'i-lucide-alert-circle',
+				color: 'error'
+			})
+		}
+	} catch (error) {
+		toast.add({
+			title: 'Error',
+			description: 'An unexpected error occurred.',
+			icon: 'i-lucide-alert-circle',
+			color: 'error'
+		})
+	} finally {
+		os_release_loading.value = false
+	}
+	
+}
+
 
 const deleteLoading = ref(false);
 const deleteConfirmOpen = ref(false);
@@ -98,14 +143,31 @@ async function onDeleteOSRelease() {
 	// }
 }
 
+const headerTexts = computed(() => {
+	if (os_release.isNew) {
+		return {
+			title: 'New OS Release',
+			description: 'Create a new OS Release for LeiOS Hub.'
+		}
+	}
+	return {
+		title: `OS Release ${(os_release_data as Ref<OSRelease>).value.version}`,
+		description: 'View and manage the details of this OS Release.'
+	}
+});
+
 </script>
 
 <template>
     <div class="space-y-6 lg:max-w-3xl mx-auto">
 		<!-- Header -->
 		<div>
-			<h2 class="text-xl font-semibold text-white">OS Release {{ os_release_data?.version }}</h2>
-			<p class="text-sm text-slate-400 mt-1">View and manage the details of this OS Release.</p>
+			<h2 class="text-xl font-semibold text-white">
+				{{ headerTexts.title }}
+			</h2>
+			<p class="text-sm text-slate-400 mt-1">
+				{{ headerTexts.description }}
+			</p>
 		</div>
 
 		<!-- Profile Card -->
@@ -131,7 +193,7 @@ async function onDeleteOSRelease() {
 						required
 						class="flex justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
 					>
-						<UInput :model-value="os_release_data?.version" disabled variant="none" placeholder="Enter version" :ui="{
+						<UInput :model-value="(os_release_data as OSRelease).version ?? 'Auto Generated'" disabled variant="none" placeholder="Enter version" :ui="{
                             base: 'w-full text-end sm:text-center sm:w-96 font-bold text-xl px-0 text-info'
                         }" />
 					</UFormField>
@@ -144,12 +206,18 @@ async function onDeleteOSRelease() {
                         class="flex justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
 					>
                         <div class="w-full sm:w-96 rounded-md border-0 appearance-none placeholder:text-dimmed focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 transition-colors py-1.5 text-sm gap-1.5 text-highlighted bg-transparent sm:flex sm:justify-center">
-                            <UBadge 
-                                :label="os_release_data.publishing_status.toUpperCase()" 
-                                :color="getPublishingStatusColor(os_release_data.publishing_status)"
+                            <UBadge v-if="!os_release.isNew"
+                                :label="(os_release_data as OSRelease).publishing_status.toUpperCase()" 
+                                :color="getPublishingStatusColor((os_release_data as OSRelease).publishing_status)"
                                 size="md"
                                 class="sm:w-96 max-w-max" 
                             />
+							<UBadge v-else
+								label="NOT PUBLISHED"
+								color="neutral"
+								size="md"
+								class="sm:w-96 max-w-max"
+							/>
                         </div>
 					</UFormField>
 
@@ -162,24 +230,39 @@ async function onDeleteOSRelease() {
                             container: "w-full"
                         }'
                     >
-                        <UTextarea 
+                        <!-- <UTextarea 
                             :model-value="'Currently not implemented.'"  
                             placeholder="No changelog provided."
                             :rows="5"
                             disabled
                             autoresize
                             class="w-full"
+                        /> -->
+						<UTextarea 
+                            :model-value="os_release_data.changelog"
+                            placeholder="No changelog provided."
+                            :rows="5"
+                            autoresize
+                            class="w-full"
                         />
                     </UFormField>
 
                     <div class="pt-4">
-						<UButton 
+						<UButton v-if="!os_release.isNew"
 							label="Save Changes" 
 							color="primary"
                             disabled
 							type="submit" 
 							:loading="os_release_loading"
 							icon="i-lucide-save"
+						/>
+						<UButton v-else
+							label="Create OS Release" 
+							color="primary"
+							type="submit" 
+							:loading="os_release_loading"
+							icon="i-lucide-plus-circle"
+							@click="onCreateOSReleaseSubmit"
 						/>
 					</div>
 
@@ -188,7 +271,7 @@ async function onDeleteOSRelease() {
 		</div>
 
         <!-- Danger Zone Card -->
-		<div class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden">
+		<div v-if="!os_release.isNew" class="rounded-xl border border-red-900/50 bg-red-950/20 backdrop-blur-sm overflow-hidden">
 			<div class="px-6 py-4 border-b border-red-900/50">
 				<div class="flex items-center gap-3">
 					<div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
@@ -222,6 +305,7 @@ async function onDeleteOSRelease() {
 
 		<!-- Delete Confirmation Modal -->
 		<DashboardModal
+			v-if="!os_release.isNew"
 			v-model:open="deleteConfirmOpen"
 			title="Delete OS Release"
 			description="This action is permanent"

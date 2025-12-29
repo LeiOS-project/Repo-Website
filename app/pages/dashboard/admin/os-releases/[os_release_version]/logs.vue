@@ -8,48 +8,58 @@ const route = useRoute();
 type OSRelease = GetAdminOsReleasesResponses["200"]["data"][number];
 type OSReleasePublishingLogs = GetAdminOsReleasesVersionPublishingLogsResponses["200"]["data"];
 
-const os_release = inject<Ref<OSRelease>>('os_release_data') as Ref<OSRelease>;
+const os_release = useSubrouterInjectedData<OSRelease>('os_release').inject();
+const os_release_data = os_release.data;
+
+let os_release_publishing_logs_error: {
+    readonly success: false;
+    readonly code: 500;
+    readonly message: string;
+    readonly data: null;
+} | undefined;
 
 const {
     data: os_release_publishing_logs,
     refresh: os_release_publishing_logs_refresh,
-    pending: os_release_publishing_logs_loading,
-    error: os_release_publishing_logs_error
-} = await useAsyncData(`admin-os-release:${os_release.value.version}:logs`, async () => {
-    /* const res = await useAPI((api) => api.getAdminOsReleasesVersionPublishingLogs({
+    loading: os_release_publishing_logs_loading,
+} = await useAPIAsyncData(`admin-os-release:${os_release.data.value.version}:logs`, async () => {
+    const res = await useAPI((api) => api.getAdminOsReleasesVersionPublishingLogs({
         path: {
-            version: os_release_version
+            version: os_release.data.value.version
         }
     }));
-    return res.data;*/
-    const return_data = {
-        logs: ""
-    };
-    for (let i = 0; i < 500; i++) {
-        const levels = ['info', 'success', 'warn', 'error', 'debug'];
-        const level = levels[Math.floor(Math.random() * levels.length)] || 'info';
-        const timestamp = new Date(Date.now() - Math.floor(Math.random() * 1000000000)).toISOString();
-        let message = "";
-        switch (level) {
-            case 'info':
-                message = `This is an informational message number ${i}.`;
-                break;
-            case 'success':
-                message = `Operation completed successfully for item ${i}.`;
-                break;
-            case 'warn':
-                message = `Potential issue detected in process ${i}.`;
-                break;
-            case 'error':
-                message = `An error occurred while processing item ${i}.`;
-                break;
-            case 'debug':
-                message = `Variable x has value ${Math.random()} at step ${i}.`;
-                break;
-        }
-        return_data.logs += `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
+    if (!res.success || !res.data) {
+        os_release_publishing_logs_error = res;
     }
-    return return_data;
+    return res.data;
+    // const return_data = {
+    //     logs: ""
+    // };
+    // for (let i = 0; i < 500; i++) {
+    //     const levels = ['info', 'success', 'warn', 'error', 'debug'];
+    //     const level = levels[Math.floor(Math.random() * levels.length)] || 'info';
+    //     const timestamp = new Date(Date.now() - Math.floor(Math.random() * 1000000000)).toISOString();
+    //     let message = "";
+    //     switch (level) {
+    //         case 'info':
+    //             message = `This is an informational message number ${i}.`;
+    //             break;
+    //         case 'success':
+    //             message = `Operation completed successfully for item ${i}.`;
+    //             break;
+    //         case 'warn':
+    //             message = `Potential issue detected in process ${i}.`;
+    //             break;
+    //         case 'error':
+    //             message = `An error occurred while processing item ${i}.`;
+    //             break;
+    //         case 'debug':
+    //             message = `Variable x has value ${Math.random()} at step ${i}.`;
+    //             break;
+    //     }
+    //     return_data.logs += `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
+    // }
+    // return return_data;
 
 });
 
@@ -197,7 +207,7 @@ function downloadLogs() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `os-release-${os_release.value.version}-logs.txt`;
+    a.download = `os-release-${os_release.data.value.version}-logs.txt`;
     a.click();
     URL.revokeObjectURL(url);
 }
@@ -218,7 +228,7 @@ onMounted(() => {
         <!-- Header -->
         <div>
             <h2 class="text-xl font-semibold text-white">Publishing Logs</h2>
-            <p class="text-sm text-slate-400 mt-1">View the publishing logs for OS Release {{ os_release.version }}.</p>
+            <p class="text-sm text-slate-400 mt-1">View the publishing logs for OS Release {{ os_release_data.version }}.</p>
         </div>
 
         <!-- Loading State -->
@@ -237,7 +247,7 @@ onMounted(() => {
                 </div>
                 <div>
                     <h3 class="font-medium text-red-400">Failed to load logs</h3>
-                    <p class="text-sm text-slate-400 mt-1">{{ os_release_publishing_logs_error.message || 'An error occurred while fetching the logs.' }}</p>
+                    <p class="text-sm text-slate-400 mt-1">{{ os_release_publishing_logs_error?.message || 'An error occurred while fetching the logs.' }}</p>
                 </div>
             </div>
             <UButton 
@@ -443,7 +453,7 @@ onMounted(() => {
                 <!-- Footer -->
                 <div class="px-4 py-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
                     <span>Showing {{ filteredLogs.length }} of {{ parsedLogs.length }} log entries</span>
-                    <span v-if="os_release?.publishing_status === 'running'" class="flex items-center gap-1.5">
+                    <span v-if="os_release_data?.publishing_status === 'running'" class="flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         Live
                     </span>

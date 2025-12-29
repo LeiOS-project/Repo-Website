@@ -24,7 +24,9 @@ let error = null;
 if (os_release_version === "new") {
 
     useSubrouterInjectedData<number, NewOSRelease>('os_release', true).provide({
-        data: ref() as Ref<NewOSRelease>,
+        data: ref({
+            changelog: '',
+        }),
         refresh: async () => void 0,
         loading: ref(false),
         isNew: true
