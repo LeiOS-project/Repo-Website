@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import type { TableColumn } from '#ui/types'
+import type { TableColumn } from '#ui/types';
 import type {
     GetDevPackagesResponses,
     GetDevTasksResponses
-} from '@/api-client/types.gen'
-import { UserStore } from '~/utils/stores/userStore'
+} from '@/api-client/types.gen';
+import { UserStore } from '~/utils/stores/userStore';
 
-type DevPackage = GetDevPackagesResponses[200]['data'][number]
-type DevTask = GetDevTasksResponses[200]['data'][number]
+type DevPackage = GetDevPackagesResponses[200]['data'][number];
+type DevTask = GetDevTasksResponses[200]['data'][number];
 
 definePageMeta({
     layout: 'dashboard',
-})
+});
 
 useSeoMeta({
     title: 'Dashboard | LeiOS Hub',
     description: 'Manage your packages and releases'
-})
+});
 
-const toast = useToast()
+const toast = useToast();
 
 const user = await UserStore.use().catch(() => ({
     id: 0,
@@ -53,16 +53,16 @@ const { data: devTasks, pending: loadingTasks } = await useAsyncData<DevTask[]>(
         }
         return res.data
     }
-)
+);
 
 const packageColumns: TableColumn<DevPackage>[] = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'description', header: 'Description' },
     { id: 'actions', header: '', enableSorting: false, enableHiding: false }
-]
+];
 
-const recentPackages = computed(() => (devPackages.value || []).slice(0, 5))
-const recentTasks = computed(() => (devTasks.value || []).slice(0, 5))
+const recentPackages = computed(() => (devPackages.value || []).slice(0, 5));
+const recentTasks = computed(() => (devTasks.value || []).slice(0, 5));
 
 const stats = computed(() => [
     {
@@ -83,7 +83,7 @@ const stats = computed(() => [
         icon: 'i-lucide-loader',
         color: 'text-emerald-400'
     }
-])
+]);
 </script>
 
 <template>
@@ -95,7 +95,7 @@ const stats = computed(() => [
                         label="New Package"
                         icon="i-lucide-plus"
                         color="primary"
-                        to="/dashboard/packages?action=create"
+                        to="/dashboard/packages/new"
                     />
                 </template>
             </UDashboardNavbar>
@@ -200,7 +200,7 @@ const stats = computed(() => [
                             <UButton
                                 label="Create Package"
                                 color="primary"
-                                to="/dashboard/packages?action=create"
+                                to="/dashboard/packages/new"
                             />
                         </template>
                     </UEmpty>
@@ -293,7 +293,7 @@ const stats = computed(() => [
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <UCard
                         class="border-slate-800 bg-slate-900/60 transition hover:border-sky-500/50 cursor-pointer"
-                        @click="navigateTo('/dashboard/packages?action=create')"
+                        @click="navigateTo('/dashboard/packages/new')"
                     >
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-500/10">
