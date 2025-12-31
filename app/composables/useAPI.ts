@@ -205,6 +205,7 @@ export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => T
     try {
         if (import.meta.server) {
 
+            /*
             const { data } = await useAsyncData(async (nuxtApp) => {
 
                 const sessionToken = useCookie("session_token");
@@ -220,6 +221,21 @@ export async function useAPI<TReturn>(handler: (api: UseAPITypes.APIClient) => T
                 message: "Failed to process API request on server.",
                 data: null
             } as const
+            */
+
+            const event = useRequestEvent();
+            if (!event) {
+                return {
+                    success: false,
+                    code: 500,
+                    message: "Failed to retrieve request event on server.",
+                    data: null
+                } as const;
+            }
+            const sessionToken = getCookie(event, "session_token");
+            updateAPIClient(sessionToken ?? null);
+            
+            return await handler(baseAPIClient);
 
         } else if (import.meta.client) {
 
