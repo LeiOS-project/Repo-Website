@@ -10,7 +10,10 @@ export class UserStore {
             return null;
         }
         const response = await useAPI((api) => api.getAccount({}));
-        return response.data as UserInfo | null;
+        if (!response.success) {
+            return null;
+        }
+        return response.data satisfies UserInfo;
     });
 
     static async use() {
