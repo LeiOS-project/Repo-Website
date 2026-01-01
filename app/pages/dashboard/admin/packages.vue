@@ -40,9 +40,9 @@ const packageColumns: TableColumn<AdminPackage>[] = [
 
 const {
     data: packages,
-    pending: loading,
+    loading,
     refresh,
-} = await useAsyncData<AdminPackage[]>("admin-packages-list", async () => {
+} = await useAPIAsyncData<AdminPackage[]>("admin-packages-list", async () => {
     const res = await useAPI((api) => api.getAdminPackages({}));
     if (!res.success) {
         toast.add({

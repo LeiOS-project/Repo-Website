@@ -28,7 +28,7 @@ if (!UserStore.isValid(user)) {
 const isAdmin = computed(() => user.value.role === 'admin')
 
 // Fetch packages
-const { data: devPackages, pending: loadingPackages } = await useAsyncData<DevPackage[]>(
+const { data: devPackages, loading: loadingPackages } = await useAPIAsyncData<DevPackage[]>(
     'dev-packages',
     async () => {
         const res = await useAPI((api) => api.getDevPackages({}))
@@ -41,7 +41,7 @@ const { data: devPackages, pending: loadingPackages } = await useAsyncData<DevPa
 )
 
 // Fetch tasks
-const { data: devTasks, pending: loadingTasks } = await useAsyncData<DevTask[]>(
+const { data: devTasks, loading: loadingTasks } = await useAPIAsyncData<DevTask[]>(
     'dev-tasks',
     async () => {
         const res = await useAPI((api) => api.getDevTasks({}))

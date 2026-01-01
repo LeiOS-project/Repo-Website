@@ -46,9 +46,9 @@ const roleOptions = [
 
 const {
     data: users,
-    pending: loading,
+    loading,
     refresh,
-} = await useAsyncData<AdminUser[]>("admin-users-list", async () => {
+} = await useAPIAsyncData<AdminUser[]>("admin-users-list", async () => {
     const res = await useAPI((api) => api.getAdminUsers({}));
     if (!res.success) {
         toast.add({
