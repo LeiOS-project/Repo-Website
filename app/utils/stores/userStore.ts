@@ -23,7 +23,7 @@ export class UserStore {
 
     static async fetchAndSetIfNeeded() {
         if (!this.userInfo.data.value?.id) {
-            await this.userInfo.fetchData();
+            await this.refresh();
         }
     }
 

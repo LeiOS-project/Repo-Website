@@ -56,25 +56,48 @@ class LazyRequestWrapper<TReturn> {
 
 class LazyAsyncDataRequestWrapper<TReturn> {
 
-    readonly data: Ref<TReturn>;
-    readonly loading: Ref<boolean>;
+    readonly data: Ref<TReturn | null> = ref(null);
+    readonly loading: Ref<boolean> = ref(false);
 
-    protected readonly refreshFunction: () => Promise<void>;
+    protected refreshFunction?: () => Promise<void>;
 
     constructor(
-        name: string,
-        handler: () => Promise<TReturn>
+        protected readonly name: string,
+        protected readonly handler: () => Promise<TReturn>,
+        immediateFNInit: boolean
     ) {
-        const { data, refresh, pending } = useLazyAsyncData<TReturn>(name, handler, {
+        if (immediateFNInit) {
+            this.init();
+        }
+    }
+
+    public init() {
+
+        const { data, refresh, pending } = useLazyAsyncData<TReturn>(this.name, this.handler, {
             immediate: false
         });
-        this.data = data as Ref<TReturn>;
-        this.loading = pending;
+
+        watch(data, (newData) => {
+            this.data.value = newData as TReturn | undefined || null;
+        }, { immediate: true });
+        
+        watch(pending, (newPending) => {
+            this.loading.value = newPending;
+        }, { immediate: true });
+
         this.refreshFunction = refresh;
     }
 
     async fetchData() {
+
+        if (!this.refreshFunction) {
+            this.init();
+        }
+        if (!this.refreshFunction) {
+            throw new Error("Failed to initialize refresh function.");
+        }
         await this.refreshFunction();
+        
         return this.data;
     }
 }
@@ -301,6 +324,6 @@ export function useAPILazyRequest<TReturn>(handler: () => Promise<TReturn>) {
     return new LazyRequestWrapper<TReturn>(handler) satisfies UseAPITypes.LazyRequestReturn<TReturn>;
 }
 
-export function useAPILazyAsyncRequest<TReturn>(name: string, handler: () => Promise<TReturn>) {
-    return new LazyAsyncDataRequestWrapper<TReturn>(name, handler) satisfies UseAPITypes.LazyAsyncDataRequestReturn<TReturn>;
+export function useAPILazyAsyncRequest<TReturn>(name: string, handler: () => Promise<TReturn>, immediateFNInit = false) {
+    return new LazyAsyncDataRequestWrapper<TReturn>(name, handler, immediateFNInit) satisfies UseAPITypes.LazyAsyncDataRequestReturn<TReturn>;
 }
