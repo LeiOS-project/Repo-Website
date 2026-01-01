@@ -46,34 +46,44 @@ const os_release_data_state = computed({
 	}
 })
 
-async function onCreateOSReleaseSubmit() {
+async function onFormSubmit() {
 
 	os_release_loading.value = true;
 
 	try {
-		const result = await useAPI((api) => api.postAdminOsReleases({
-			body: {
-				changelog: os_release_data.value.changelog,
+
+		if (os_release.isNew) {
+			const result = await useAPI((api) => api.postAdminOsReleases({
+				body: {
+					changelog: os_release_data.value.changelog,
+				}
+			}))
+
+			if (result.success) {
+				toast.add({
+					title: 'OS Release created',
+					description: 'The OS Release has been successfully created.',
+					icon: 'i-lucide-check',
+					color: 'success'
+				})
+
+				// Redirect to the newly created OS Release page
+				navigateTo(`/dashboard/admin/os-releases/${result.data?.version}`);
+			} else {
+				toast.add({
+					title: 'Error',
+					description: result.message || 'An error occurred while creating the OS Release.',
+					icon: 'i-lucide-alert-circle',
+					color: 'error'
+				})
 			}
-		}))
-
-		if (result.success) {
-			toast.add({
-				title: 'OS Release created',
-				description: 'The OS Release has been successfully created.',
-				icon: 'i-lucide-check',
-				color: 'success'
-			})
-
-			// Redirect to the newly created OS Release page
-			navigateTo(`/dashboard/admin/os-releases/${result.data?.version}`);
 		} else {
 			toast.add({
-				title: 'Error',
-				description: result.message || 'An error occurred while creating the OS Release.',
-				icon: 'i-lucide-alert-circle',
-				color: 'error'
-			})
+				title: 'OS Release update not implemented',
+				description: 'The update of OS Releases is not yet implemented.',
+				icon: 'i-lucide-alert-triangle',
+				color: 'warning'
+			});
 		}
 	} catch (error) {
 		toast.add({
@@ -197,7 +207,7 @@ const headerTexts = computed(() => {
 			</div>
 			
 			<div class="p-6">
-				<UForm id="settings" class="divide-y divide-slate-800" :schema="os_release_schema" :state="os_release_data_state" @submit="os_release.isNew ? onCreateOSReleaseSubmit() : null">
+				<UForm id="settings" class="divide-y divide-slate-800" :schema="os_release_schema" :state="os_release_data_state" @submit="os_release.isNew ? onFormSubmit() : null">
 					<UFormField 
 						name="version" 
 						label="Version"
@@ -205,9 +215,14 @@ const headerTexts = computed(() => {
 						required
 						class="flex justify-between items-start gap-4 py-4 first:pt-0 last:pb-0"
 					>
-						<UInput :model-value="(os_release_data as OSRelease).version ?? 'Auto Generated'" disabled variant="none" placeholder="Enter version" :ui="{
-                            base: 'w-full text-end sm:text-center sm:w-96 font-bold text-xl px-0 text-info'
-                        }" />
+						<UInput
+							:model-value="(os_release_data as OSRelease).version ?? 'Auto Generated'"
+							disabled variant="none"
+							placeholder="Enter version"
+							:ui="{
+                            	base: 'w-full text-end sm:text-center sm:w-96 font-bold text-xl px-0 text-info'
+                        	}"
+						/>
 					</UFormField>
 
                     <UFormField 
