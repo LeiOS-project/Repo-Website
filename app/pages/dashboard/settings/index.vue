@@ -51,7 +51,11 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
 				color: 'success'
 			});
 
-			await UserStore.refresh();
+			UserStore.update({
+				username: event.data.username,
+				display_name: event.data.display_name || undefined,
+				email: event.data.email
+			});
 
 		} else {
 			toast.add({

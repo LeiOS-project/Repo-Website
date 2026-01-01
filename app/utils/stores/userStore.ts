@@ -31,6 +31,18 @@ export class UserStore {
         await this.userInfo.fetchData();
     }
 
+    static async update(updates: Partial<UserInfo>) {
+        await this.fetchAndSetIfNeeded();
+        const current = await this.use();
+        if (!current) {
+            console.error("Cannot update user info: no user is logged in.");
+            return;
+        }
+        for (const [key, value] of Object.entries(updates)) {
+            (current.value as any)[key] = value;
+        }
+    }
+
     static clear() {
         this.userInfo.data.value = {} as UserInfo;
     }

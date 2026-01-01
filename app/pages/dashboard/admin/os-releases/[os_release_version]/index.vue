@@ -159,7 +159,7 @@ const headerTexts = computed(() => {
 	if (os_release.isNew) {
 		return {
 			title: 'New OS Release',
-			description: 'Create a new OS Release for LeiOS Hub.'
+			description: 'Create a new OS Release for LeiOS.'
 		}
 	}
 	return {
