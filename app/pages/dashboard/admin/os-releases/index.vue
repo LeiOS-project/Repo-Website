@@ -107,11 +107,6 @@ const publishingStatusOptions = [
                             placeholder: 'All statuses',
                             icon: 'i-lucide-filter',
                             options: publishingStatusOptions
-                        },
-                        { 
-                            column: 'created_at', 
-                            type: 'date', 
-                            placeholder: 'Filter by created date' 
                         }
                     ]"
                     empty-title="No releases"
