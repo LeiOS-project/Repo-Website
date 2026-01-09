@@ -15,10 +15,7 @@ type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
 const route = useRoute();
 const toast = useToast();
 
-const pkg = useSubrouterInjectedData<DevPackage, NewDevPackage>(
-    "package",
-    true
-).inject();
+const pkg = useSubrouterInjectedData<DevPackage, NewDevPackage>("package", true).inject();
 const pkg_data = pkg.data;
 const pkg_loading = pkg.loading;
 

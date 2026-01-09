@@ -30,7 +30,8 @@ const packageTableColumns: TableColumn<DevPackage>[] = [
 ]
 
 const packages = await useAPIAsyncData(
-    "dev-packages", async () => {
+    `/dev/packages`,
+    async () => {
         const res = await useAPI((api) => api.getDevPackages({}));
         if (!res.success) {
             toast.add({ title: 'Failed to load packages', description: res.message, color: 'error' })

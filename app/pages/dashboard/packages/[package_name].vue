@@ -151,6 +151,7 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
         }
     } else {
         return {
+
             [`/dashboard/packages/${package_name}`]: {
                 isNavLink: true,
                 label: 'General',
@@ -167,6 +168,7 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
                     };
                 }
             },
+
             [`/dashboard/packages/${package_name}/releases`]: {
                 isNavLink: true,
                 label: 'Releases',
@@ -184,6 +186,38 @@ function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
                     };
                 }
             },
+
+            [`/dashboard/packages/${package_name}/releases/[version_with_leios_patch]`]: {
+                isNavLink: false,
+                getDynamicValues(params) {
+                    if (params.version_with_leios_patch === "new") {
+                        return {
+                            breadcrumbItems: [
+                                { label: package_name, to: `/dashboard/packages/${package_name}` },
+                                { label: 'Releases', to: `/dashboard/packages/${package_name}/releases` },
+                                { label: 'New Release' }
+                            ],
+                            seoSettings: {
+                                title: `New Release | Releases`,
+                                description: `Create a new release for the package ${package_name} on LeiOS Hub`
+                            }
+                        };
+                    }
+                    return {
+                        breadcrumbItems: [
+                            { label: package_name, to: `/dashboard/packages/${package_name}` },
+                            { label: 'Releases', to: `/dashboard/packages/${package_name}/releases` },
+                            { label: params.version_with_leios_patch }
+                        ],
+                        seoSettings: {
+                            title: `Release ${params.version_with_leios_patch} | Releases`,
+                            description: `Manage the release ${params.version_with_leios_patch} for the package ${package_name} on LeiOS Hub`
+                        }
+                    };
+                }
+            },
+
+
             [`/dashboard/packages/${package_name}/stable-promotion-requests`]: {
                 isNavLink: true,
                 label: 'Stable Promotion Requests',

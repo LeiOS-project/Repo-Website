@@ -4,7 +4,7 @@ import type { PostDevPackagesData } from '@/api-client/types.gen';
 type NewDevPackage = NonNullable<PostDevPackagesData['body']>;
 
 
-const pkg = inject('package_data') as Ref<NewDevPackage>;
+const pkg = inject('package') as Ref<NewDevPackage>;
 const loadingPkg = inject('package_loading') as Ref<boolean>;
 const is_new_pkg = inject('package_is_new') as boolean;
 

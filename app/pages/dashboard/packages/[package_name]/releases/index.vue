@@ -7,35 +7,35 @@ const toast = useToast();
 type DevPackage = GetDevPackagesPackageNameResponses[200]['data'];
 type Release = GetDevPackagesPackageNameReleasesResponses[200]['data'][number];
 
-const pkg = inject<Ref<DevPackage>>('package_data') as Ref<DevPackage>;
+const pkgData = useSubrouterInjectedData<DevPackage>("package").inject().data;
 
 const package_releases = await useAPIAsyncData(
-    `/dev/packages/${pkg.value.name}/releases`,
+    `/dev/packages/${pkgData.value.name}/releases`,
     async () => {
         const res = await useAPI((api) => api.getDevPackagesPackageNameReleases({
             path: {
-                packageName: pkg.value.name
+                packageName: pkgData.value.name
             }
         }));
 
         if (!res.success) {
             toast.add({
                 title: 'Error',
-                description: `Failed to load releases for package ${pkg.value.name}: ${res.message}`,
+                description: `Failed to load releases for package ${pkgData.value.name}: ${res.message}`,
                 color: 'error'
             });
             return [];
         }
 
-        // mock data
-        for (let i = 0; i < 50; i++) {
-            res.data.push({
-                id: i,
-                versionWithLeiosPatch: `1.0.${i}`,
-                created_at: Date.now() - i * 1000 * 60 * 60 * 24,
-                architectures: ['amd64', 'arm64']
-            });
-        }
+        // // mock data
+        // for (let i = 0; i < 50; i++) {
+        //     res.data.push({
+        //         id: i,
+        //         versionWithLeiosPatch: `1.0.${i}`,
+        //         created_at: Date.now() - i * 1000 * 60 * 60 * 24,
+        //         architectures: ['amd64', 'arm64']
+        //     });
+        // }
 
         return res.data.reverse();
     }
@@ -76,7 +76,7 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
 
             <template #header-right>
                 <UButton
-                    :to="`/dashboard/packages/${pkg.name}/releases/new`"
+                    :to="`/dashboard/packages/${pkgData.name}/releases/new`"
                     label="New Release"
                     icon="i-lucide-plus"
                     color="primary"
@@ -85,7 +85,7 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
 
             <template #versionWithLeiosPatch-cell="{ row }">
                 <NuxtLink
-                    :to="`/dashboard/packages/${pkg.name}/releases/${row.original.versionWithLeiosPatch}`"
+                    :to="`/dashboard/packages/${pkgData.name}/releases/${row.original.versionWithLeiosPatch}`"
                     class="font-medium text-primary-400 hover:underline"
                 >
                     {{ row.original.versionWithLeiosPatch }}
@@ -104,7 +104,7 @@ const packageReleasesTableColumns: TableColumn<Release>[] = [
 
             <template #empty-actions>
                 <UButton
-                    :to="`/dashboard/packages/${pkg.name}/releases/new`"
+                    :to="`/dashboard/packages/${pkgData.name}/releases/new`"
                     label="New Release"
                     icon="i-lucide-plus"
                     color="primary"
