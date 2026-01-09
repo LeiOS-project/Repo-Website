@@ -406,9 +406,8 @@ function formatFileSize(bytes: number): string {
                                 :name="arch.icon"
                                 class="w-5 h-5 text-slate-400"
                             />
-                            <span class="font-medium text-white">{{
-                                arch.label
-                            }}</span>
+                            <span class="font-medium text-white">
+                                {{ arch.label }}</span>
                         </div>
                         <div>
                             <span
