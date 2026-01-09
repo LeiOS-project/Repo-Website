@@ -37,7 +37,7 @@ function getPublishingStatusColor(status: OSRelease['publishing_status']) {
 
 const os_release_form_schema = os_release.isNew ? zPostAdminOsReleasesData.shape.body : zPutAdminOsReleasesVersionData.shape.body;
 type OSReleaseFormState = NonNullable<z.infer<typeof os_release_form_schema>>;
-const os_release_form_state = ref<OSReleaseFormState>({
+const os_release_form_state = ref<NewOSRelease>({
 	changelog: os_release_data.value.changelog,
 });
 
@@ -50,7 +50,7 @@ async function onFormSubmit() {
 		if (os_release.isNew) {
 			const result = await useAPI((api) => api.postAdminOsReleases({
 				body: {
-					changelog: os_release_data.value.changelog,
+					changelog: os_release_form_state.value.changelog,
 				}
 			}));
 
