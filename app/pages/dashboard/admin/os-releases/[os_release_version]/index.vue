@@ -215,7 +215,7 @@ const headerTexts = computed(() => {
 			</div>
 			
 			<div class="p-6">
-				<UForm id="settings" class="divide-y divide-slate-800" :schema="os_release_form_schema" :state="os_release_form_state" @submit="os_release.isNew ? onFormSubmit() : null">
+				<UForm id="settings" class="divide-y divide-slate-800" :schema="os_release_form_schema" :state="os_release_form_state" @submit="onFormSubmit()">
 					<UFormField 
 						name="version" 
 						label="Version"
