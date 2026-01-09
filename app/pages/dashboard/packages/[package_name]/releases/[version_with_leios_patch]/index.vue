@@ -34,102 +34,6 @@ const package_release_form_state = ref<NewDevPackageRelease>({
     changelog: pkg_release_data.value.changelog
 });
 
-// Architecture types
-type Architecture = 'amd64' | 'arm64';
-
-const architectures: { key: Architecture; label: string; icon: string }[] = [
-    { key: 'amd64', label: 'AMD64 (x86_64)', icon: 'i-lucide-cpu' },
-    { key: 'arm64', label: 'ARM64 (aarch64)', icon: 'i-lucide-circuit-board' },
-];
-
-// Computed to check which architectures already have uploads
-const uploadedArchitectures = computed<Architecture[]>(() => {
-    if (pkg_release.isNew) return [];
-    return (pkg_release_data.value as DevPackageRelease).architectures || [];
-});
-
-// File upload state per architecture
-const debFiles = reactive<Record<Architecture, File | null>>({
-    amd64: null,
-    arm64: null,
-});
-
-const uploadingStates = reactive<Record<Architecture, boolean>>({
-    amd64: false,
-    arm64: false,
-});
-
-async function uploadDebFile(arch: Architecture) {
-    const file = debFiles[arch];
-    if (!file) return;
-
-    uploadingStates[arch] = true;
-
-    try {
-        const result = await useAPI((api) =>
-            api.postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch({
-                path: {
-                    packageName: pkg_data.value.name,
-                    versionWithLeiosPatch: pkg_release_data.value.versionWithLeiosPatch,
-                    arch: arch,
-                },
-                body: {
-                    file: file,
-                },
-            })
-        );
-
-        if (result.success) {
-            // Update the architectures list
-            if (!uploadedArchitectures.value.includes(arch)) {
-                (pkg_release_data.value as DevPackageRelease).architectures.push(arch);
-            }
-            
-            debFiles[arch] = null;
-
-            toast.add({
-                title: "Upload successful",
-                description: `The .deb file for ${arch} has been uploaded successfully.`,
-                icon: "i-lucide-check-circle",
-                color: "success",
-            });
-        } else {
-            throw new Error(result.message || "Failed to upload file");
-        }
-    } catch (error: any) {
-        toast.add({
-            title: "Upload failed",
-            description: error.message || "An unexpected error occurred during upload.",
-            icon: "i-lucide-x-circle",
-            color: "error",
-        });
-    } finally {
-        uploadingStates[arch] = false;
-    }
-}
-
-function onFileChange(arch: Architecture, files: File | File[] | null | undefined) {
-    if (!files) {
-        debFiles[arch] = null;
-        return;
-    }
-    
-    const file = Array.isArray(files) ? files[0] : files;
-    
-    if (file && !file.name.endsWith('.deb')) {
-        toast.add({
-            title: "Invalid file type",
-            description: "Please select a .deb file.",
-            icon: "i-lucide-alert-circle",
-            color: "warning",
-        });
-        debFiles[arch] = null;
-        return;
-    }
-    
-    debFiles[arch] = file || null;
-}
-
 async function onFormSubmit() {
     try {
         if (pkg_release.isNew) {
@@ -210,6 +114,106 @@ async function onDeletePackage() {
     deleteLoading.value = false;
 	deleteConfirmOpen.value = false;
 }
+
+
+// Architecture types
+type Architecture = 'amd64' | 'arm64';
+
+const architecturesLists: { key: Architecture; label: string; icon: string }[] = [
+    { key: 'amd64', label: 'AMD64 (x86_64)', icon: 'i-lucide-cpu' },
+    { key: 'arm64', label: 'ARM64 (aarch64)', icon: 'i-lucide-circuit-board' },
+];
+
+// Computed to check which architectures already have uploads
+const uploadedArchitectures = computed<Architecture[]>(() => {
+    if (pkg_release.isNew) return [];
+    return (pkg_release_data.value as DevPackageRelease).architectures || [];
+});
+
+type UploadState = {
+    file: File | null;
+    uploading: boolean;
+    dragOver: boolean;
+};
+
+// File upload state per architecture
+const uploadStates = reactive<Record<Architecture, UploadState>>({
+    amd64: { file: null, uploading: false, dragOver: false },
+    arm64: { file: null, uploading: false, dragOver: false },
+});
+
+async function uploadDebFile(arch: Architecture) {
+    const file = uploadStates[arch].file;
+    if (!file) return;
+
+    uploadStates[arch].uploading = true;
+
+    try {
+        const result = await useAPI((api) =>
+            api.postDevPackagesPackageNameReleasesVersionWithLeiosPatchArch({
+                path: {
+                    packageName: pkg_data.value.name,
+                    versionWithLeiosPatch: pkg_release_data.value.versionWithLeiosPatch,
+                    arch: arch,
+                },
+                body: {
+                    file: file,
+                },
+            })
+        );
+
+        if (result.success) {
+            // Update the architectures list
+            if (!uploadedArchitectures.value.includes(arch)) {
+                (pkg_release_data.value as DevPackageRelease).architectures.push(arch);
+            }
+            
+            uploadStates[arch].file = null;
+
+            toast.add({
+                title: "Upload successful",
+                description: `The .deb file for ${arch} has been uploaded successfully.`,
+                icon: "i-lucide-check-circle",
+                color: "success",
+            });
+        } else {
+            throw new Error(result.message || "Failed to upload file");
+        }
+    } catch (error: any) {
+        toast.add({
+            title: "Upload failed",
+            description: error.message || "An unexpected error occurred during upload.",
+            icon: "i-lucide-x-circle",
+            color: "error",
+        });
+    } finally {
+        uploadStates[arch].uploading = false;
+    }
+}
+
+function onFileChange(arch: Architecture, files: File | File[] | null | undefined) {
+    if (!files) {
+        uploadStates[arch].file = null;
+        return;
+    }
+    
+    const file = Array.isArray(files) ? files[0] : files;
+    
+    if (file && !file.name.endsWith('.deb')) {
+        toast.add({
+            title: "Invalid file type",
+            description: "Please select a .deb file.",
+            icon: "i-lucide-alert-circle",
+            color: "warning",
+        });
+        uploadStates[arch].file = null;
+        return;
+    }
+    
+    uploadStates[arch].file = file || null;
+}
+
+
 </script>
 
 <template>
@@ -363,7 +367,7 @@ async function onDeletePackage() {
             <div class="p-6 space-y-6">
                 <!-- Architecture Upload Sections -->
                 <div 
-                    v-for="arch in architectures" 
+                    v-for="arch in architecturesLists" 
                     :key="arch.key"
                     class="rounded-lg border border-slate-700 bg-slate-800/40 overflow-hidden"
                 >
@@ -374,17 +378,11 @@ async function onDeletePackage() {
                             <span class="font-medium text-white">{{ arch.label }}</span>
                         </div>
                         <div>
-                            <span 
-                                v-if="uploadedArchitectures.includes(arch.key)"
-                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                            >
+                            <span v-if="uploadedArchitectures.includes(arch.key)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                 <UIcon name="i-lucide-check-circle" class="w-3.5 h-3.5" />
                                 Uploaded
                             </span>
-                            <span 
-                                v-else
-                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                            >
+                            <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                 <UIcon name="i-lucide-alert-circle" class="w-3.5 h-3.5" />
                                 Missing
                             </span>
@@ -416,48 +414,74 @@ async function onDeletePackage() {
 
                         <!-- File Upload with UFileUpload -->
                         <div v-else class="space-y-3">
-                            <UFormField 
-                                :name="`deb_file_${arch.key}`"
-                                :description="`Upload a .deb package file for ${arch.label}`"
-                            >
-                                <UFileUpload
-                                    :model-value="debFiles[arch.key]"
-                                    @update:model-value="onFileChange(arch.key, $event)"
-                                    accept=".deb,application/vnd.debian.binary-package"
-                                    icon="i-lucide-upload-cloud"
-                                    :label="`Drop your ${arch.label} .deb file here`"
-                                    description="Only .deb files are accepted"
-                                    color="neutral"
-                                    :disabled="uploadingStates[arch.key]"
-                                    :preview="true"
-                                    layout="list"
-                                    file-icon="i-lucide-file-archive"
-                                    class="w-full min-h-32"
-                                    :ui="{
-                                        base: 'bg-slate-800/50 border-slate-700 hover:bg-slate-800/80',
-                                        label: 'text-slate-300',
-                                        description: 'text-slate-500',
-                                    }"
-                                />
-                            </UFormField>
+                            <UFileUpload
+                                :model-value="uploadStates[arch.key].file"
+                                @update:model-value="onFileChange(arch.key, $event)"
+                                accept=".deb"
+                                color="neutral"
+                                :disabled="uploadStates[arch.key].uploading"
+                                :preview="true"
+                                layout="list"
+                                file-icon="i-lucide-file-archive"
+                                class="w-full min-h-32"
 
-                            <!-- Upload Button -->
+                                @dragover.prevent="uploadStates[arch.key].dragOver = true"
+                                @dragleave.prevent="uploadStates[arch.key].dragOver = false"
+
+                                :ui="{
+                                    base: 'relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ' + (uploadStates[arch.key].dragOver ? 'border-sky-500 bg-sky-500/10' : 'border-slate-700 hover:border-slate-600 hover:bg-slate-800/50'),
+                                    label: 'text-slate-300',
+                                    description: 'text-slate-500',
+                                }"
+                            >
+
+                                <template #leading>
+                                    <div 
+                                        class="w-12 h-12 rounded-full flex items-center justify-center transition-colors mb-4"
+                                        :class="uploadStates[arch.key].dragOver 
+                                            ? 'bg-sky-500/20' 
+                                            : 'bg-slate-700'"
+                                    >
+                                        <UIcon 
+                                            name="i-lucide-upload-cloud" 
+                                            class="w-6 h-6 transition-colors"
+                                            :class="uploadStates[arch.key].dragOver 
+                                                ? 'text-sky-400' 
+                                                : 'text-slate-400'"
+                                        />
+                                    </div>
+                                </template>
+
+                                <template #label>
+                                    <span class="text-sm text-white">
+                                        <span class="text-sky-400 font-medium">Click to upload</span>
+                                        or drag and drop
+                                    </span>
+                                </template>
+
+                                <template #description>
+                                    <span class="text-xs text-slate-500 mt-1">
+                                        Select the .deb file for {{ arch.label }}.
+                                    </span>
+                                </template>
+                            </UFileUpload>
+                            <!-- Upload Button -->  
                             <div 
-                                v-if="debFiles[arch.key]"
+                                v-if="uploadStates[arch.key].file"
                                 class="flex justify-end gap-2 pt-2"
                             >
                                 <UButton
-                                    label="Clear"
+                                    label="Cancel"
                                     color="neutral"
                                     variant="ghost"
-                                    :disabled="uploadingStates[arch.key]"
-                                    @click="debFiles[arch.key] = null"
+                                    :disabled="uploadStates[arch.key].uploading"
+                                    @click="uploadStates[arch.key].file = null"
                                 />
                                 <UButton
                                     label="Upload"
                                     color="primary"
                                     icon="i-lucide-upload"
-                                    :loading="uploadingStates[arch.key]"
+                                    :loading="uploadStates[arch.key].uploading"
                                     @click="uploadDebFile(arch.key)"
                                 />
                             </div>
