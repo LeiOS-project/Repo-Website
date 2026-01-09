@@ -278,7 +278,7 @@ export const postDevPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposa
 });
 
 /**
- * Upload package release file for architecture
+ * Upload package release file for architecture and release into testing repository
  *
  * Upload a release file for the specified package and architecture.
  */
@@ -538,7 +538,7 @@ export const postAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TCompo
 });
 
 /**
- * Upload package release file for architecture
+ * Upload package release file for architecture and release into testing repository
  *
  * Upload a release file for the specified package and architecture.
  */
