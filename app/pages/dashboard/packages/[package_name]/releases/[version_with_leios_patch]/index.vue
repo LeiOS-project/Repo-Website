@@ -213,6 +213,14 @@ function onFileChange(arch: Architecture, files: File | File[] | null | undefine
     uploadStates[arch].file = file || null;
 }
 
+function formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
 
 </script>
 
@@ -425,11 +433,12 @@ function onFileChange(arch: Architecture, files: File | File[] | null | undefine
                                 file-icon="i-lucide-file-archive"
                                 class="w-full min-h-32"
 
-                                @dragover.prevent="uploadStates[arch.key].dragOver = true"
-                                @dragleave.prevent="uploadStates[arch.key].dragOver = false"
+                                @dragover.prevent="uploadStates[arch.key].dragOver = true; console.log('dragover', uploadStates[arch.key].dragOver)"
+                                @dragleave.prevent="uploadStates[arch.key].dragOver = false; console.log('dragover', uploadStates[arch.key].dragOver)"
 
                                 :ui="{
-                                    base: 'relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ' + (uploadStates[arch.key].dragOver ? 'border-sky-500 bg-sky-500/10' : 'border-slate-700 hover:border-slate-600 hover:bg-slate-800/50'),
+                                    base: 'relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer data-[dragging=true]:border-sky-500 data-[dragging=true]:bg-sky-500/10 data-[dragging=false]:border-slate-700 data-[dragging=false]:hover:border-slate-600 data-[dragging=false]:bg-slate-800/30 data-[dragging=false]:hover:bg-slate-800/50',
+                                    wrapper: 'py-0',
                                     label: 'text-slate-300',
                                     description: 'text-slate-500',
                                 }"
@@ -437,7 +446,7 @@ function onFileChange(arch: Architecture, files: File | File[] | null | undefine
 
                                 <template #leading>
                                     <div 
-                                        class="w-12 h-12 rounded-full flex items-center justify-center transition-colors mb-4"
+                                        class="w-12 h-12 rounded-full flex items-center justify-center transition-colors"
                                         :class="uploadStates[arch.key].dragOver 
                                             ? 'bg-sky-500/20' 
                                             : 'bg-slate-700'"
@@ -464,6 +473,35 @@ function onFileChange(arch: Architecture, files: File | File[] | null | undefine
                                         Select the .deb file for {{ arch.label }}.
                                     </span>
                                 </template>
+
+                                <template #files>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center justify-between p-4 rounded-lg bg-sky-950/30 border border-sky-900/30">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center">
+                                                    <UIcon name="i-lucide-file-archive" class="w-5 h-5 text-sky-400" />
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-medium text-white">
+                                                        {{ uploadStates[arch.key].file!.name }}
+                                                    </p>
+                                                    <p class="text-xs text-slate-400">
+                                                        {{ formatFileSize(uploadStates[arch.key].file!.size) }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <UButton
+                                                icon="i-lucide-x"
+                                                color="neutral"
+                                                variant="ghost"
+                                                size="sm"
+                                                :disabled="uploadStates[arch.key].uploading"
+                                                @click="uploadStates[arch.key].file = null"
+                                            />
+                                        </div>
+                                    </div>
+                                </template>
+
                             </UFileUpload>
                             <!-- Upload Button -->  
                             <div 
