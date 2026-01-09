@@ -40,36 +40,7 @@ const packages = await useAPIAsyncData(
     }
 )
 
-const createSchema = z.object({
-    name: z.string().min(1, 'Name is required').regex(/^[a-z0-9-]+$/, 'Only lowercase letters, numbers and hyphens'),
-    description: z.string().min(1, 'Description is required'),
-    homepage_url: z.url('Must be a valid URL')
-})
 
-type CreateSchema = z.output<typeof createSchema>;
-    
-const createState = reactive<Partial<CreateSchema>>({
-    name: undefined,
-    description: undefined,
-    homepage_url: undefined
-});
-
-async function handleCreate(event: FormSubmitEvent<CreateSchema>) {
-
-    toast.add({ title: 'Creating package...', icon: 'i-lucide-loader-2', color: 'neutral' })
-
-    const res = await useAPI((api) => api.postDevPackages({
-        body: event.data
-    }));
-    
-    if (res.success) {
-        toast.add({ title: 'Package created', color: 'success' })
-        // showCreateModal.value = false
-        await packages.refresh()
-    } else {
-        toast.add({ title: 'Create failed', description: res.message, color: 'error' })
-    }
-}
 </script>
 
 <template>

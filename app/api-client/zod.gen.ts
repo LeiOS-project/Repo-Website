@@ -530,8 +530,8 @@ export const zGetDevPackagesResponse = z.object({
 export const zPostDevPackagesData = z.object({
     body: z.optional(z.object({
         name: z.string().min(2).max(63).regex(/^[a-z0-9][a-z0-9+.-]*[a-z0-9]$/),
-        description: z.string(),
-        homepage_url: z.string(),
+        description: z.string().min(1).max(500),
+        homepage_url: z.url(),
         requires_patching: z.optional(z.boolean())
     })),
     path: z.optional(z.never()),
@@ -592,8 +592,8 @@ export const zGetDevPackagesPackageNameResponse = z.object({
 
 export const zPutDevPackagesPackageNameData = z.object({
     body: z.optional(z.object({
-        description: z.optional(z.string()),
-        homepage_url: z.optional(z.string()),
+        description: z.optional(z.string().min(1).max(500)),
+        homepage_url: z.optional(z.url()),
         requires_patching: z.optional(z.boolean())
     })),
     path: z.object({
@@ -1119,8 +1119,8 @@ export const zPostAdminPackagesData = z.object({
     body: z.optional(z.object({
         name: z.string().min(2).max(63).regex(/^[a-z0-9][a-z0-9+.-]*[a-z0-9]$/),
         owner_user_id: z.int().gte(-9007199254740991).lte(9007199254740991),
-        description: z.string(),
-        homepage_url: z.string(),
+        description: z.string().min(1).max(500),
+        homepage_url: z.url(),
         requires_patching: z.optional(z.boolean())
     })),
     path: z.optional(z.never()),
@@ -1199,8 +1199,8 @@ export const zGetAdminPackagesPackageNameResponse = z.object({
 
 export const zPutAdminPackagesPackageNameData = z.object({
     body: z.optional(z.object({
-        description: z.optional(z.string()),
-        homepage_url: z.optional(z.string()),
+        description: z.optional(z.string().min(1).max(500)),
+        homepage_url: z.optional(z.url()),
         requires_patching: z.optional(z.boolean())
     })),
     path: z.object({
@@ -1438,7 +1438,7 @@ export const zGetAdminOsReleasesResponse = z.object({
 
 export const zPostAdminOsReleasesData = z.object({
     body: z.optional(z.object({
-        changelog: z.string()
+        changelog: z.string().min(1).max(10000)
     })),
     path: z.optional(z.never()),
     query: z.optional(z.never())
@@ -1506,7 +1506,7 @@ export const zGetAdminOsReleasesVersionResponse = z.object({
 
 export const zPutAdminOsReleasesVersionData = z.object({
     body: z.optional(z.object({
-        changelog: z.optional(z.string())
+        changelog: z.optional(z.string().min(1).max(10000))
     })),
     path: z.object({
         version: z.string().regex(/^\d{4}\.\d{2}\.\d{1,3}$/)
