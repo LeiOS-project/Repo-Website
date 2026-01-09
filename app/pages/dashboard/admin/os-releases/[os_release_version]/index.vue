@@ -110,9 +110,10 @@ async function onFormSubmit() {
 
 const deleteLoading = ref(false);
 const deleteConfirmOpen = ref(false);
-const deleteConfirmText = ref('');
 
 async function onDeleteOSRelease() {
+
+	deleteLoading.value = true;
 
     toast.add({
         title: 'OS Release deletion not implemented',
@@ -123,21 +124,6 @@ async function onDeleteOSRelease() {
 
     deleteLoading.value = false;
 	deleteConfirmOpen.value = false;
-
-    return;
-
-	if (deleteConfirmText.value !== 'DELETE') {
-
-		toast.add({
-			title: 'Confirmation required',
-			description: 'Please type DELETE to confirm OS Release deletion.',
-			icon: 'i-lucide-alert-triangle',
-			color: 'warning'
-		})
-		return;
-	}
-
-	deleteLoading.value = true;
 
 	// try {
 	// 	// const result = await useAPI((api) => api.deleteOSRelease({}))

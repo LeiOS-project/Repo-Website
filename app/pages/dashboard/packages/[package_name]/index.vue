@@ -108,15 +108,20 @@ async function onFormSubmit() {
 
 const deleteLoading = ref(false);
 const deleteConfirmOpen = ref(false);
-const deleteConfirmText = ref("");
 
 async function onDeletePackage() {
+
+    deleteLoading.value = true;
+
     toast.add({
         title: "Package deletion is not yet implemented.",
         description: "This feature is coming soon.",
         icon: "i-lucide-info",
         color: "info",
     });
+
+    deleteLoading.value = false;
+	deleteConfirmOpen.value = false;
 }
 </script>
 
