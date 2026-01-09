@@ -128,117 +128,119 @@ if (package_name === "new") {
 //     }
 // ]] satisfies NavigationMenuItem[][];
 
-function getRoutesConfig(): UseSubrouterPathDynamics.RoutesConfig {
-    if (package_name === "new") {
-        return {
-            [`/dashboard/packages/new`]: {
-                isNavLink: true,
-                label: 'General',
-                icon: 'i-lucide-info',
-                exact: true,
-                getDynamicValues() {
-                    return {
-                        breadcrumbItems: [
-                            { label: 'New Package' }
-                        ],
-                        seoSettings: {
-                            title: `New Package | Packages | LeiOS Hub`,
-                            description: `Create a new package on LeiOS Hub`
-                        }
-                    };
+function getRoutesConfig(): Ref<UseSubrouterPathDynamics.RoutesConfig> {
+    return computed(() => {
+        if (package_name === "new") {
+            return {
+                [`/dashboard/packages/new`]: {
+                    isNavLink: true,
+                    label: 'General',
+                    icon: 'i-lucide-info',
+                    exact: true,
+                    getDynamicValues() {
+                        return {
+                            breadcrumbItems: [
+                                { label: 'New Package' }
+                            ],
+                            seoSettings: {
+                                title: `New Package | Packages | LeiOS Hub`,
+                                description: `Create a new package on LeiOS Hub`
+                            }
+                        };
+                    }
                 }
             }
-        }
-    } else {
-        return {
+        } else {
+            return {
 
-            [`/dashboard/packages/${package_name}`]: {
-                isNavLink: true,
-                label: 'General',
-                icon: 'i-lucide-info',
-                exact: true,
-                getDynamicValues() {
-                    return {
-                        breadcrumbItems: [
-                            { label: package_name }
-                        ],
-                        seoSettings: {
-                            description: `Manage the package ${package_name} on LeiOS Hub`
+                [`/dashboard/packages/${package_name}`]: {
+                    isNavLink: true,
+                    label: 'General',
+                    icon: 'i-lucide-info',
+                    exact: true,
+                    getDynamicValues() {
+                        return {
+                            breadcrumbItems: [
+                                { label: package_name }
+                            ],
+                            seoSettings: {
+                                description: `Manage the package ${package_name} on LeiOS Hub`
+                            }
+                        };
+                    }
+                },
+
+                [`/dashboard/packages/${package_name}/releases`]: {
+                    isNavLink: true,
+                    label: 'Releases',
+                    icon: 'i-lucide-file-text',
+                    active: useRoute().path.startsWith(`/dashboard/packages/${package_name}/releases`),
+                    getDynamicValues() {
+                        return {
+                            breadcrumbItems: [
+                                { label: package_name, to: `/dashboard/packages/${package_name}` },
+                                { label: 'Releases' }
+                            ],
+                            seoSettings: {
+                                title: `Releases`,
+                                description: `Manage releases for the package ${package_name} on LeiOS Hub`
+                            }
+                        };
+                    }
+                },
+
+                [`/dashboard/packages/${package_name}/releases/[version_with_leios_patch]`]: {
+                    isNavLink: false,
+                    getDynamicValues(params) {
+                        if (params.version_with_leios_patch === "new") {
+                            return {
+                                breadcrumbItems: [
+                                    { label: package_name, to: `/dashboard/packages/${package_name}` },
+                                    { label: 'Releases', to: `/dashboard/packages/${package_name}/releases` },
+                                    { label: 'New Release' }
+                                ],
+                                seoSettings: {
+                                    title: `New Release | Releases`,
+                                    description: `Create a new release for the package ${package_name} on LeiOS Hub`
+                                }
+                            };
                         }
-                    };
-                }
-            },
-
-            [`/dashboard/packages/${package_name}/releases`]: {
-                isNavLink: true,
-                label: 'Releases',
-                icon: 'i-lucide-file-text',
-                getDynamicValues() {
-                    return {
-                        breadcrumbItems: [
-                            { label: package_name, to: `/dashboard/packages/${package_name}` },
-                            { label: 'Releases' }
-                        ],
-                        seoSettings: {
-                            title: `Releases`,
-                            description: `Manage releases for the package ${package_name} on LeiOS Hub`
-                        }
-                    };
-                }
-            },
-
-            [`/dashboard/packages/${package_name}/releases/[version_with_leios_patch]`]: {
-                isNavLink: false,
-                getDynamicValues(params) {
-                    if (params.version_with_leios_patch === "new") {
                         return {
                             breadcrumbItems: [
                                 { label: package_name, to: `/dashboard/packages/${package_name}` },
                                 { label: 'Releases', to: `/dashboard/packages/${package_name}/releases` },
-                                { label: 'New Release' }
+                                { label: params.version_with_leios_patch }
                             ],
                             seoSettings: {
-                                title: `New Release | Releases`,
-                                description: `Create a new release for the package ${package_name} on LeiOS Hub`
+                                title: `Release ${params.version_with_leios_patch} | Releases`,
+                                description: `Manage the release ${params.version_with_leios_patch} for the package ${package_name} on LeiOS Hub`
                             }
                         };
                     }
-                    return {
-                        breadcrumbItems: [
-                            { label: package_name, to: `/dashboard/packages/${package_name}` },
-                            { label: 'Releases', to: `/dashboard/packages/${package_name}/releases` },
-                            { label: params.version_with_leios_patch }
-                        ],
-                        seoSettings: {
-                            title: `Release ${params.version_with_leios_patch} | Releases`,
-                            description: `Manage the release ${params.version_with_leios_patch} for the package ${package_name} on LeiOS Hub`
-                        }
-                    };
-                }
-            },
+                },
 
 
-            [`/dashboard/packages/${package_name}/stable-promotion-requests`]: {
-                isNavLink: true,
-                label: 'Stable Promotion Requests',
-                icon: 'i-lucide-git-pull-request',
-                to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
-                getDynamicValues() {
-                    return {
-                        breadcrumbItems: [
-                            { label: package_name, to: `/dashboard/packages/${package_name}` },
-                            { label: 'Stable Promotion Requests' }
-                        ],
-                        seoSettings: {
-                            title: `Stable Promotion Requests`,
-                            description: `Manage stable promotion requests for the package ${package_name} on LeiOS Hub`
-                        }
-                    };
+                [`/dashboard/packages/${package_name}/stable-promotion-requests`]: {
+                    isNavLink: true,
+                    label: 'Stable Promotion Requests',
+                    icon: 'i-lucide-git-pull-request',
+                    to: `/dashboard/packages/${package_name}/stable-promotion-requests`,
+                    getDynamicValues() {
+                        return {
+                            breadcrumbItems: [
+                                { label: package_name, to: `/dashboard/packages/${package_name}` },
+                                { label: 'Stable Promotion Requests' }
+                            ],
+                            seoSettings: {
+                                title: `Stable Promotion Requests`,
+                                description: `Manage stable promotion requests for the package ${package_name} on LeiOS Hub`
+                            }
+                        };
+                    }
                 }
             }
         }
-    }
-
+    });
 }
 
 const subrouterPathDynamics = useSubrouterPathDynamics({
@@ -248,6 +250,7 @@ const subrouterPathDynamics = useSubrouterPathDynamics({
     ],
     routes: getRoutesConfig()
 });
+const navigationMenuItems = subrouterPathDynamics.links;
 
 const routePathDynamicValues = await useAwaitedComputed(async () => {
     const values = await subrouterPathDynamics.getPathDynamicValues(route.path);
@@ -267,7 +270,7 @@ const routePathDynamicValues = await useAwaitedComputed(async () => {
 
             <UDashboardToolbar>
 				<!-- NOTE: The `-mx-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
-				<UNavigationMenu :items="subrouterPathDynamics.links" highlight class="-mx-1 flex-1" />
+				<UNavigationMenu :items="navigationMenuItems" highlight class="-mx-1 flex-1" />
 			</UDashboardToolbar>
 
         </template>

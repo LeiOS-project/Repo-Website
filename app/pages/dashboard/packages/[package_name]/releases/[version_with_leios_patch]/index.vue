@@ -48,8 +48,8 @@ async function onFormSubmit() {
 
             if (result.success) {
                 toast.add({
-                    title: "Package created",
-                    description: `The Package has been successfully created.`,
+                    title: "Package Release created",
+                    description: `The Package Release has been successfully created.`,
                     icon: "i-lucide-check",
                     color: "success",
                 });
