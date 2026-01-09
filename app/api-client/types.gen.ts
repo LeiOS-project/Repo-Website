@@ -946,11 +946,59 @@ export type GetDevPackagesPackageNameReleasesResponses = {
             versionWithLeiosPatch: string;
             architectures: Array<'amd64' | 'arm64'>;
             created_at: number;
+            changelog: string;
         }>;
     };
 };
 
 export type GetDevPackagesPackageNameReleasesResponse = GetDevPackagesPackageNameReleasesResponses[keyof GetDevPackagesPackageNameReleasesResponses];
+
+export type PostDevPackagesPackageNameReleasesData = {
+    body?: {
+        versionWithLeiosPatch: string;
+        changelog: string;
+    };
+    path: {
+        packageName: string;
+    };
+    query?: never;
+    url: '/dev/packages/{packageName}/releases';
+};
+
+export type PostDevPackagesPackageNameReleasesErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Package release with this version already exists
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'Package release with this version already exists';
+    };
+};
+
+export type PostDevPackagesPackageNameReleasesError = PostDevPackagesPackageNameReleasesErrors[keyof PostDevPackagesPackageNameReleasesErrors];
+
+export type PostDevPackagesPackageNameReleasesResponses = {
+    /**
+     * Package release created successfully
+     */
+    201: {
+        success: true;
+        code: 201;
+        message: 'Package release created successfully';
+        data: null;
+    };
+};
+
+export type PostDevPackagesPackageNameReleasesResponse = PostDevPackagesPackageNameReleasesResponses[keyof PostDevPackagesPackageNameReleasesResponses];
 
 export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     body?: never;
@@ -988,14 +1036,17 @@ export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
             versionWithLeiosPatch: string;
             architectures: Array<'amd64' | 'arm64'>;
             created_at: number;
+            changelog: string;
         };
     };
 };
 
 export type GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
-    body?: never;
+export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+    body?: {
+        changelog?: string;
+    };
     path: {
         packageName: string;
         versionWithLeiosPatch: string;
@@ -1004,7 +1055,7 @@ export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1014,30 +1065,30 @@ export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
         message: 'Bad Request: Syntax or validation error in request';
     };
     /**
-     * Package release with this version already exists
+     * Package release with specified version not found
      */
-    409: {
+    404: {
         success: false;
-        code: 409;
-        message: 'Package release with this version already exists';
+        code: 404;
+        message: 'Package release with specified version not found';
     };
 };
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchError = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof PostDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchError = PutDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof PutDevPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
     /**
-     * Package release created successfully
+     * Package release updated successfully
      */
-    201: {
+    200: {
         success: true;
-        code: 201;
-        message: 'Package release created successfully';
+        code: 200;
+        message: 'Package release updated successfully';
         data: null;
     };
 };
 
-export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+export type PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
 
 export type PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
     body?: {
@@ -1854,11 +1905,59 @@ export type GetAdminPackagesPackageNameReleasesResponses = {
             versionWithLeiosPatch: string;
             architectures: Array<'amd64' | 'arm64'>;
             created_at: number;
+            changelog: string;
         }>;
     };
 };
 
 export type GetAdminPackagesPackageNameReleasesResponse = GetAdminPackagesPackageNameReleasesResponses[keyof GetAdminPackagesPackageNameReleasesResponses];
+
+export type PostAdminPackagesPackageNameReleasesData = {
+    body?: {
+        versionWithLeiosPatch: string;
+        changelog: string;
+    };
+    path: {
+        packageName: string;
+    };
+    query?: never;
+    url: '/admin/packages/{packageName}/releases';
+};
+
+export type PostAdminPackagesPackageNameReleasesErrors = {
+    /**
+     * Bad Request: Syntax or validation error in request
+     */
+    400: {
+        success: false;
+        code: 400;
+        message: 'Bad Request: Syntax or validation error in request';
+    };
+    /**
+     * Package release with this version already exists
+     */
+    409: {
+        success: false;
+        code: 409;
+        message: 'Package release with this version already exists';
+    };
+};
+
+export type PostAdminPackagesPackageNameReleasesError = PostAdminPackagesPackageNameReleasesErrors[keyof PostAdminPackagesPackageNameReleasesErrors];
+
+export type PostAdminPackagesPackageNameReleasesResponses = {
+    /**
+     * Package release created successfully
+     */
+    201: {
+        success: true;
+        code: 201;
+        message: 'Package release created successfully';
+        data: null;
+    };
+};
+
+export type PostAdminPackagesPackageNameReleasesResponse = PostAdminPackagesPackageNameReleasesResponses[keyof PostAdminPackagesPackageNameReleasesResponses];
 
 export type DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     body?: never;
@@ -1933,14 +2032,17 @@ export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = 
             versionWithLeiosPatch: string;
             architectures: Array<'amd64' | 'arm64'>;
             created_at: number;
+            changelog: string;
         };
     };
 };
 
 export type GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
-    body?: never;
+export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
+    body?: {
+        changelog?: string;
+    };
     path: {
         packageName: string;
         versionWithLeiosPatch: string;
@@ -1949,7 +2051,7 @@ export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = {
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}';
 };
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
+export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
     /**
      * Bad Request: Syntax or validation error in request
      */
@@ -1959,30 +2061,30 @@ export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors = {
         message: 'Bad Request: Syntax or validation error in request';
     };
     /**
-     * Package release with this version already exists
+     * Package release with specified version not found
      */
-    409: {
+    404: {
         success: false;
-        code: 409;
-        message: 'Package release with this version already exists';
+        code: 404;
+        message: 'Package release with specified version not found';
     };
 };
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchError = PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
+export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchError = PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors[keyof PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchErrors];
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
+export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses = {
     /**
-     * Package release created successfully
+     * Package release updated successfully
      */
-    201: {
+    200: {
         success: true;
-        code: 201;
-        message: 'Package release created successfully';
+        code: 200;
+        message: 'Package release updated successfully';
         data: null;
     };
 };
 
-export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
+export type PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses[keyof PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponses];
 
 export type PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData = {
     body?: {

@@ -13,5 +13,5 @@ const route = useRoute();
 
         
 
-    </DashboardPageBody>>
+    </DashboardPageBody>
 </template>

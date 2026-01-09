@@ -1,4 +1,4 @@
-import type { GetDevPackagesPackageNameReleasesResponses, GetDevPackagesResponses, PostDevPackagesData, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchData } from "~/api-client";
+import type { GetDevPackagesPackageNameReleasesResponses, GetDevPackagesResponses, PostDevPackagesData, PostDevPackagesPackageNameReleasesData } from "~/api-client";
 
 export namespace UtilityTypes {
 
@@ -10,4 +10,4 @@ export type DevPackage = GetDevPackagesResponses["200"]["data"][number];
 export type NewDevPackage = NonNullable<PostDevPackagesData["body"]>;
 
 export type DevPackageRelease = GetDevPackagesPackageNameReleasesResponses["200"]["data"][number];
-export type NewDevPackageRelease = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchData["body"];
+export type NewDevPackageRelease = NonNullable<PostDevPackagesPackageNameReleasesData["body"]>;

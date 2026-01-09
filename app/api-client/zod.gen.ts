@@ -631,8 +631,30 @@ export const zGetDevPackagesPackageNameReleasesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
         architectures: z.array(z.enum(['amd64', 'arm64'])),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        changelog: z.string()
     }))
+});
+
+export const zPostDevPackagesPackageNameReleasesData = z.object({
+    body: z.optional(z.object({
+        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+        changelog: z.string().min(1).max(10000)
+    })),
+    path: z.object({
+        packageName: z.string()
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Package release created successfully
+ */
+export const zPostDevPackagesPackageNameReleasesResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Package release created successfully'),
+    data: z.null()
 });
 
 export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
@@ -655,12 +677,15 @@ export const zGetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
         architectures: z.array(z.enum(['amd64', 'arm64'])),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        changelog: z.string()
     })
 });
 
-export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
-    body: z.optional(z.never()),
+export const zPutDevPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
+    body: z.optional(z.object({
+        changelog: z.optional(z.string().min(1).max(10000))
+    })),
     path: z.object({
         packageName: z.string(),
         versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
@@ -669,12 +694,12 @@ export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchData = z.ob
 });
 
 /**
- * Package release created successfully
+ * Package release updated successfully
  */
-export const zPostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
+export const zPutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
     success: z.literal(true),
-    code: z.literal(201),
-    message: z.literal('Package release created successfully'),
+    code: z.literal(200),
+    message: z.literal('Package release updated successfully'),
     data: z.null()
 });
 
@@ -1238,8 +1263,30 @@ export const zGetAdminPackagesPackageNameReleasesResponse = z.object({
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
         architectures: z.array(z.enum(['amd64', 'arm64'])),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        changelog: z.string()
     }))
+});
+
+export const zPostAdminPackagesPackageNameReleasesData = z.object({
+    body: z.optional(z.object({
+        versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/),
+        changelog: z.string().min(1).max(10000)
+    })),
+    path: z.object({
+        packageName: z.string()
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Package release created successfully
+ */
+export const zPostAdminPackagesPackageNameReleasesResponse = z.object({
+    success: z.literal(true),
+    code: z.literal(201),
+    message: z.literal('Package release created successfully'),
+    data: z.null()
 });
 
 export const zDeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
@@ -1281,12 +1328,15 @@ export const zGetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse =
         id: z.int().gte(-9007199254740991).lte(9007199254740991),
         versionWithLeiosPatch: z.string(),
         architectures: z.array(z.enum(['amd64', 'arm64'])),
-        created_at: z.int().gte(-9007199254740991).lte(9007199254740991)
+        created_at: z.int().gte(-9007199254740991).lte(9007199254740991),
+        changelog: z.string()
     })
 });
 
-export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
-    body: z.optional(z.never()),
+export const zPutAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = z.object({
+    body: z.optional(z.object({
+        changelog: z.optional(z.string().min(1).max(10000))
+    })),
     path: z.object({
         packageName: z.string(),
         versionWithLeiosPatch: z.string().regex(/^(?:[0-9][0-9A-Za-z.+~\-]*leios\d+(?:\.\d+){0,2}|(?!.*leios)[0-9][0-9A-Za-z.+~\-]*)$/)
@@ -1295,12 +1345,12 @@ export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchData = z.
 });
 
 /**
- * Package release created successfully
+ * Package release updated successfully
  */
-export const zPostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
+export const zPutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = z.object({
     success: z.literal(true),
-    code: z.literal(201),
-    message: z.literal('Package release created successfully'),
+    code: z.literal(200),
+    message: z.literal('Package release updated successfully'),
     data: z.null()
 });
 

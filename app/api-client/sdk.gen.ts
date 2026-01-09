@@ -2,7 +2,7 @@
 
 import { type Client, type Composable, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteAccountApikeysApiKeyIdData, DeleteAccountApikeysApiKeyIdError, DeleteAccountApikeysApiKeyIdResponse, DeleteAccountData, DeleteAccountError, DeleteAccountResponse, DeleteAdminPackagesPackageNameData, DeleteAdminPackagesPackageNameError, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DeleteAdminPackagesPackageNameResponse, DeleteAdminUsersUserIdData, DeleteAdminUsersUserIdError, DeleteAdminUsersUserIdResponse, GetAccountApikeysData, GetAccountApikeysResponse, GetAccountData, GetAccountError, GetAccountResponse, GetAdminOsReleasesData, GetAdminOsReleasesResponse, GetAdminOsReleasesVersionData, GetAdminOsReleasesVersionError, GetAdminOsReleasesVersionPublishingLogsData, GetAdminOsReleasesVersionPublishingLogsError, GetAdminOsReleasesVersionPublishingLogsResponse, GetAdminOsReleasesVersionResponse, GetAdminPackagesData, GetAdminPackagesPackageNameData, GetAdminPackagesPackageNameError, GetAdminPackagesPackageNameReleasesData, GetAdminPackagesPackageNameReleasesResponse, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, GetAdminPackagesPackageNameResponse, GetAdminPackagesPackageNameStablePromotionRequestsData, GetAdminPackagesPackageNameStablePromotionRequestsResponse, GetAdminPackagesResponse, GetAdminStablePromotionRequestsData, GetAdminStablePromotionRequestsRequestIdData, GetAdminStablePromotionRequestsRequestIdError, GetAdminStablePromotionRequestsRequestIdResponse, GetAdminStablePromotionRequestsResponse, GetAdminTasksData, GetAdminTasksResponse, GetAdminTasksTaskIdData, GetAdminTasksTaskIdError, GetAdminTasksTaskIdLogsData, GetAdminTasksTaskIdLogsError, GetAdminTasksTaskIdLogsResponse, GetAdminTasksTaskIdResponse, GetAdminUsersData, GetAdminUsersResponse, GetAdminUsersUserIdData, GetAdminUsersUserIdError, GetAdminUsersUserIdResponse, GetAuthSessionData, GetAuthSessionError, GetAuthSessionResponse, GetDevPackagesData, GetDevPackagesPackageNameData, GetDevPackagesPackageNameError, GetDevPackagesPackageNameReleasesData, GetDevPackagesPackageNameReleasesResponse, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchData, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchError, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, GetDevPackagesPackageNameResponse, GetDevPackagesPackageNameStablePromotionRequestsData, GetDevPackagesPackageNameStablePromotionRequestsResponse, GetDevPackagesResponse, GetDevTasksData, GetDevTasksResponse, GetDevTasksTaskIdData, GetDevTasksTaskIdError, GetDevTasksTaskIdLogsData, GetDevTasksTaskIdLogsError, GetDevTasksTaskIdLogsResponse, GetDevTasksTaskIdResponse, GetPublicPackagesData, GetPublicPackagesPackageNameData, GetPublicPackagesPackageNameError, GetPublicPackagesPackageNameReleasesData, GetPublicPackagesPackageNameReleasesError, GetPublicPackagesPackageNameReleasesResponse, GetPublicPackagesPackageNameResponse, GetPublicPackagesResponse, PostAccountApikeysData, PostAccountApikeysError, PostAccountApikeysResponse, PostAdminOsReleasesData, PostAdminOsReleasesResponse, PostAdminPackagesData, PostAdminPackagesError, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, PostAdminPackagesPackageNameStablePromotionRequestsData, PostAdminPackagesPackageNameStablePromotionRequestsError, PostAdminPackagesPackageNameStablePromotionRequestsResponse, PostAdminPackagesResponse, PostAdminStablePromotionRequestsRequestIdDecideData, PostAdminStablePromotionRequestsRequestIdDecideError, PostAdminStablePromotionRequestsRequestIdDecideResponse, PostAdminUsersData, PostAdminUsersError, PostAdminUsersResponse, PostAuthLoginData, PostAuthLoginError, PostAuthLoginResponse, PostAuthLogoutData, PostAuthLogoutError, PostAuthLogoutResponse, PostAuthResetPasswordData, PostAuthResetPasswordError, PostAuthResetPasswordRequestData, PostAuthResetPasswordRequestError, PostAuthResetPasswordRequestResponse, PostAuthResetPasswordResponse, PostDevPackagesData, PostDevPackagesError, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchError, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchData, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchError, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, PostDevPackagesPackageNameStablePromotionRequestsData, PostDevPackagesPackageNameStablePromotionRequestsError, PostDevPackagesPackageNameStablePromotionRequestsResponse, PostDevPackagesResponse, PutAccountData, PutAccountError, PutAccountPasswordData, PutAccountPasswordError, PutAccountPasswordResponse, PutAccountResponse, PutAdminOsReleasesVersionData, PutAdminOsReleasesVersionError, PutAdminOsReleasesVersionResponse, PutAdminPackagesPackageNameData, PutAdminPackagesPackageNameError, PutAdminPackagesPackageNameResponse, PutAdminUsersUserIdData, PutAdminUsersUserIdError, PutAdminUsersUserIdPasswordData, PutAdminUsersUserIdPasswordError, PutAdminUsersUserIdPasswordResponse, PutAdminUsersUserIdResponse, PutDevPackagesPackageNameData, PutDevPackagesPackageNameError, PutDevPackagesPackageNameResponse } from './types.gen';
+import type { DeleteAccountApikeysApiKeyIdData, DeleteAccountApikeysApiKeyIdError, DeleteAccountApikeysApiKeyIdResponse, DeleteAccountData, DeleteAccountError, DeleteAccountResponse, DeleteAdminPackagesPackageNameData, DeleteAdminPackagesPackageNameError, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, DeleteAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DeleteAdminPackagesPackageNameResponse, DeleteAdminUsersUserIdData, DeleteAdminUsersUserIdError, DeleteAdminUsersUserIdResponse, GetAccountApikeysData, GetAccountApikeysResponse, GetAccountData, GetAccountError, GetAccountResponse, GetAdminOsReleasesData, GetAdminOsReleasesResponse, GetAdminOsReleasesVersionData, GetAdminOsReleasesVersionError, GetAdminOsReleasesVersionPublishingLogsData, GetAdminOsReleasesVersionPublishingLogsError, GetAdminOsReleasesVersionPublishingLogsResponse, GetAdminOsReleasesVersionResponse, GetAdminPackagesData, GetAdminPackagesPackageNameData, GetAdminPackagesPackageNameError, GetAdminPackagesPackageNameReleasesData, GetAdminPackagesPackageNameReleasesResponse, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, GetAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, GetAdminPackagesPackageNameResponse, GetAdminPackagesPackageNameStablePromotionRequestsData, GetAdminPackagesPackageNameStablePromotionRequestsResponse, GetAdminPackagesResponse, GetAdminStablePromotionRequestsData, GetAdminStablePromotionRequestsRequestIdData, GetAdminStablePromotionRequestsRequestIdError, GetAdminStablePromotionRequestsRequestIdResponse, GetAdminStablePromotionRequestsResponse, GetAdminTasksData, GetAdminTasksResponse, GetAdminTasksTaskIdData, GetAdminTasksTaskIdError, GetAdminTasksTaskIdLogsData, GetAdminTasksTaskIdLogsError, GetAdminTasksTaskIdLogsResponse, GetAdminTasksTaskIdResponse, GetAdminUsersData, GetAdminUsersResponse, GetAdminUsersUserIdData, GetAdminUsersUserIdError, GetAdminUsersUserIdResponse, GetAuthSessionData, GetAuthSessionError, GetAuthSessionResponse, GetDevPackagesData, GetDevPackagesPackageNameData, GetDevPackagesPackageNameError, GetDevPackagesPackageNameReleasesData, GetDevPackagesPackageNameReleasesResponse, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchData, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchError, GetDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, GetDevPackagesPackageNameResponse, GetDevPackagesPackageNameStablePromotionRequestsData, GetDevPackagesPackageNameStablePromotionRequestsResponse, GetDevPackagesResponse, GetDevTasksData, GetDevTasksResponse, GetDevTasksTaskIdData, GetDevTasksTaskIdError, GetDevTasksTaskIdLogsData, GetDevTasksTaskIdLogsError, GetDevTasksTaskIdLogsResponse, GetDevTasksTaskIdResponse, GetPublicPackagesData, GetPublicPackagesPackageNameData, GetPublicPackagesPackageNameError, GetPublicPackagesPackageNameReleasesData, GetPublicPackagesPackageNameReleasesError, GetPublicPackagesPackageNameReleasesResponse, GetPublicPackagesPackageNameResponse, GetPublicPackagesResponse, PostAccountApikeysData, PostAccountApikeysError, PostAccountApikeysResponse, PostAdminOsReleasesData, PostAdminOsReleasesResponse, PostAdminPackagesData, PostAdminPackagesError, PostAdminPackagesPackageNameReleasesData, PostAdminPackagesPackageNameReleasesError, PostAdminPackagesPackageNameReleasesResponse, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchError, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse, PostAdminPackagesPackageNameStablePromotionRequestsData, PostAdminPackagesPackageNameStablePromotionRequestsError, PostAdminPackagesPackageNameStablePromotionRequestsResponse, PostAdminPackagesResponse, PostAdminStablePromotionRequestsRequestIdDecideData, PostAdminStablePromotionRequestsRequestIdDecideError, PostAdminStablePromotionRequestsRequestIdDecideResponse, PostAdminUsersData, PostAdminUsersError, PostAdminUsersResponse, PostAuthLoginData, PostAuthLoginError, PostAuthLoginResponse, PostAuthLogoutData, PostAuthLogoutError, PostAuthLogoutResponse, PostAuthResetPasswordData, PostAuthResetPasswordError, PostAuthResetPasswordRequestData, PostAuthResetPasswordRequestError, PostAuthResetPasswordRequestResponse, PostAuthResetPasswordResponse, PostDevPackagesData, PostDevPackagesError, PostDevPackagesPackageNameReleasesData, PostDevPackagesPackageNameReleasesError, PostDevPackagesPackageNameReleasesResponse, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchData, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchError, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchArchResponse, PostDevPackagesPackageNameStablePromotionRequestsData, PostDevPackagesPackageNameStablePromotionRequestsError, PostDevPackagesPackageNameStablePromotionRequestsResponse, PostDevPackagesResponse, PutAccountData, PutAccountError, PutAccountPasswordData, PutAccountPasswordError, PutAccountPasswordResponse, PutAccountResponse, PutAdminOsReleasesVersionData, PutAdminOsReleasesVersionError, PutAdminOsReleasesVersionResponse, PutAdminPackagesPackageNameData, PutAdminPackagesPackageNameError, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, PutAdminPackagesPackageNameResponse, PutAdminUsersUserIdData, PutAdminUsersUserIdError, PutAdminUsersUserIdPasswordData, PutAdminUsersUserIdPasswordError, PutAdminUsersUserIdPasswordResponse, PutAdminUsersUserIdResponse, PutDevPackagesPackageNameData, PutDevPackagesPackageNameError, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchData, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchError, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, PutDevPackagesPackageNameResponse } from './types.gen';
 
 export type Options<TComposable extends Composable = '$fetch', TData extends TDataShape = TDataShape, ResT = unknown, DefaultT = undefined> = Options2<TComposable, TData, ResT, DefaultT> & {
     /**
@@ -256,6 +256,21 @@ export const getDevPackagesPackageNameReleases = <TComposable extends Composable
 });
 
 /**
+ * Create a new package release
+ *
+ * Create a new release for the specified package.
+ */
+export const postDevPackagesPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesPackageNameReleasesResponse = PostDevPackagesPackageNameReleasesResponse>(options: Options<TComposable, PostDevPackagesPackageNameReleasesData, PostDevPackagesPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesPackageNameReleasesResponse | DefaultT, PostDevPackagesPackageNameReleasesError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/dev/packages/{packageName}/releases',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Get package release details
  *
  * Retrieve details of a specific package release.
@@ -267,14 +282,18 @@ export const getDevPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposab
 });
 
 /**
- * Create a new package release
+ * Update a package release
  *
- * Create a new release for the specified package.
+ * Update details of a specific package release.
  */
-export const postDevPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchData, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, PostDevPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
+export const putDevPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchData, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, PutDevPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/dev/packages/{packageName}/releases/{versionWithLeiosPatch}',
-    ...options
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });
 
 /**
@@ -505,6 +524,21 @@ export const getAdminPackagesPackageNameReleases = <TComposable extends Composab
 });
 
 /**
+ * Create a new package release
+ *
+ * Create a new release for the specified package.
+ */
+export const postAdminPackagesPackageNameReleases = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesPackageNameReleasesResponse = PostAdminPackagesPackageNameReleasesResponse>(options: Options<TComposable, PostAdminPackagesPackageNameReleasesData, PostAdminPackagesPackageNameReleasesResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesPackageNameReleasesResponse | DefaultT, PostAdminPackagesPackageNameReleasesError, DefaultT>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/admin/packages/{packageName}/releases',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Delete a package release
  *
  * Delete a specific package release.
@@ -527,14 +561,18 @@ export const getAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TCompos
 });
 
 /**
- * Create a new package release
+ * Update a package release
  *
- * Create a new release for the specified package.
+ * Update details of a specific package release.
  */
-export const postAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).post<TComposable, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, PostAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
+export const putAdminPackagesPackageNameReleasesVersionWithLeiosPatch = <TComposable extends Composable = '$fetch', DefaultT extends PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse = PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse>(options: Options<TComposable, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchData, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse, DefaultT>) => (options.client ?? client).put<TComposable, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchResponse | DefaultT, PutAdminPackagesPackageNameReleasesVersionWithLeiosPatchError, DefaultT>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/admin/packages/{packageName}/releases/{versionWithLeiosPatch}',
-    ...options
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });
 
 /**

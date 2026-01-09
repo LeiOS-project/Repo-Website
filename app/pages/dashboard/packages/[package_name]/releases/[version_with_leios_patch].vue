@@ -11,7 +11,10 @@ let error = null;
 
 if (version_with_leios_patch === "new") {
 
-    const data = ref<NewDevPackageRelease>();
+    const data = ref<NewDevPackageRelease>({
+        versionWithLeiosPatch: "",
+        changelog: "",
+    });
 
     useSubrouterInjectedData<DevPackageRelease, NewDevPackageRelease>("package_release", true).provide({
         data: data,
